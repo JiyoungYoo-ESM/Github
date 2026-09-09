@@ -1,0 +1,312 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "V2 CMS 데이터 정합성 검증",
+    "description": "2026-08-05 기준 USA·PL 발주분석 V2 원천과 리드타임 API 품질 검증",
+    "generatedAt": "2026-08-05T04:40:00Z",
+    "sources": [
+      {
+        "id": "quality-analysis",
+        "label": "V2 CMS aggregate data-quality checks",
+        "path": "docs/data_quality/v2_cms_data_quality.py",
+        "query": {
+          "engine": "duckdb",
+          "language": "sql",
+          "sql": "SELECT * FROM read_json_auto('docs/data_quality/v2_cms_data_quality_report_2026-08-05/artifact.json')",
+          "description": "Loads the canonical reviewed aggregate snapshot. Upstream CMS checks are implemented in docs/data_quality/v2_cms_data_quality.py.",
+          "executed_at": "2026-08-05T04:40:00Z",
+          "tables_used": ["docs/data_quality/v2_cms_data_quality_report_2026-08-05/artifact.json"],
+          "filters": ["As of 2026-08-05", "No row-level CMS payload persisted"]
+        }
+      },
+      {
+        "id": "v2-source-code",
+        "label": "Order Logic V2 source builder",
+        "path": "backend/services/order_logic_v2_source.py"
+      },
+      {
+        "id": "v2-leadtime-code",
+        "label": "Order Logic V2 lead-time integration",
+        "path": "backend/services/order_logic_v2_service.py"
+      }
+    ],
+    "cards": [
+      {
+        "id": "card-critical",
+        "dataset": "summary",
+        "sourceId": "quality-analysis",
+        "description": "전체 V2 계산을 차단하거나 핵심 결과를 신뢰할 수 없게 만드는 항목",
+        "metrics": [
+          {"label": "Critical", "field": "critical", "format": "number"}
+        ]
+      },
+      {
+        "id": "card-high",
+        "dataset": "summary",
+        "sourceId": "quality-analysis",
+        "description": "발주량·리드타임·입고수량을 실질적으로 왜곡할 수 있는 항목",
+        "metrics": [
+          {"label": "High", "field": "high", "format": "number"}
+        ]
+      },
+      {
+        "id": "card-ready",
+        "dataset": "summary",
+        "sourceId": "quality-analysis",
+        "description": "현행 원천 빌드를 수정 없이 통과한 법인",
+        "metrics": [
+          {"label": "계산 가능 법인", "field": "entities_ready", "format": "number"},
+          {"label": "검증 법인", "field": "entities_checked", "format": "number"}
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "chart-excluded-qty",
+        "title": "Biz Type 필터 제외 수량",
+        "subtitle": "최근 13개 완료 주, 법인·Biz Type별 제외 수량",
+        "intent": "comparison",
+        "question": "V2 전체 판매와 V1 판매 모집단의 수량 차이는 어디에서 발생하는가?",
+        "rationale": "무료샘플과 기타 비정상 판매유형의 수량 규모를 비교한다.",
+        "type": "bar",
+        "dataset": "excluded_biz_qty",
+        "sourceId": "quality-analysis",
+        "encodings": {
+          "x": {"field": "label", "type": "nominal", "label": "법인 · Biz Type"},
+          "y": {"field": "qty", "type": "quantitative", "format": "compact", "label": "제외 수량", "unit": "개"}
+        },
+        "layout": "full",
+        "maxRows": 10
+      }
+    ],
+    "tables": [
+      {
+        "id": "table-issues",
+        "title": "우선순위별 정합성 이슈",
+        "subtitle": "Critical·High부터 조치하도록 정렬",
+        "dataset": "issues",
+        "sourceId": "quality-analysis",
+        "defaultSort": {"field": "priority", "direction": "asc"},
+        "density": "dense",
+        "layout": "full",
+        "columns": [
+          {"field": "priority", "label": "순번", "format": "number"},
+          {"field": "severity", "label": "심각도", "type": "text"},
+          {"field": "entity", "label": "법인", "type": "text"},
+          {"field": "check", "label": "검증 항목", "type": "text"},
+          {"field": "evidence", "label": "근거", "type": "text"},
+          {"field": "risk", "label": "영향", "type": "text"},
+          {"field": "action", "label": "권장 조치", "type": "text"}
+        ]
+      },
+      {
+        "id": "table-entity-quality",
+        "title": "법인별 핵심 품질 지표",
+        "subtitle": "판매 13주, 단가, 미입고, SKU 연결률 비교",
+        "dataset": "entity_quality",
+        "sourceId": "quality-analysis",
+        "defaultSort": {"field": "entity", "direction": "asc"},
+        "density": "spacious",
+        "layout": "full",
+        "columns": [
+          {"field": "entity", "label": "법인", "type": "text"},
+          {"field": "period_sales_rows", "label": "13주 판매 행", "format": "number"},
+          {"field": "negative_revenue_rows", "label": "음수 매출 행", "format": "number"},
+          {"field": "v1_excluded_qty_pct", "label": "V1 제외 수량 비중", "format": "number"},
+          {"field": "zero_unit_cost", "label": "0단가", "format": "number"},
+          {"field": "negative_open_po", "label": "음수 미입고", "format": "number"},
+          {"field": "sales_stock_match_pct", "label": "판매-현지재고 연결률", "format": "number"},
+          {"field": "open_po_stock_match_pct", "label": "미입고-재고 연결률", "format": "number"}
+        ]
+      },
+      {
+        "id": "table-endpoints",
+        "title": "원천별 필수값과 완전 동일 중복 후보",
+        "subtitle": "각 법인 CMS 6개 원천의 전체 조회 범위",
+        "dataset": "endpoint_quality",
+        "sourceId": "quality-analysis",
+        "defaultSort": {"field": "rows", "direction": "desc"},
+        "density": "dense",
+        "layout": "full",
+        "columns": [
+          {"field": "entity", "label": "법인", "type": "text"},
+          {"field": "endpoint", "label": "원천", "type": "text"},
+          {"field": "rows", "label": "행 수", "format": "number"},
+          {"field": "required_missing_rows", "label": "필수값 누락 행", "format": "number"},
+          {"field": "duplicate_extra_rows", "label": "동일 중복 초과 행", "format": "number"}
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# V2 CMS 데이터 정합성 검증"
+      },
+      {
+        "id": "executive-summary",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## Executive Summary\n\n- **현재 스냅샷은 수정 없이 V2 계산에 사용할 수 없습니다.** USA와 PL 모두 필수 컬럼과 13개 완료 주는 충족하지만 음수 매출 때문에 현행 V2 원천 빌드가 전역 차단됩니다.\n- **USA 판매 모집단이 특히 왜곡됩니다.** V1 기준 제외 수량은 291.4k개로 전체의 4.15%이며, FREE SAMPLE 205.7k개가 가장 큰 원인입니다.\n- **EU 리드타임 API 데이터는 계산에 쓸 수 있습니다.** RAIL 72건·SEA 178건의 유효 Packing 표본이 있으나, 현행 V2는 USA만 API 값을 동적으로 반영합니다.\n- **단가 원천은 대체로 양호합니다.** stock_ucost는 USA 71개, PL 12개만 0이며 통화는 각각 USD·EUR로 일관됩니다. 판매단가 fallback 없이 확인 필요로 처리해야 합니다."
+      },
+      {
+        "id": "headline-metrics",
+        "type": "metric-strip",
+        "cardIds": ["card-critical", "card-high", "card-ready"]
+      },
+      {
+        "id": "decision",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## 계산 차단은 결측이 아니라 변환 규칙에서 발생합니다\n\n두 법인 모두 판매일·수량·금액·Biz Type 필수값 누락이 0건이고 13개 완료 주도 모두 존재합니다. 그럼에도 허용된 Biz Type 안에 USA 300건, PL 161건의 음수 매출이 있어 첫 음수 행에서 전체 V2가 중단됩니다. 따라서 원천을 폐기할 문제가 아니라 **Biz Type 필터 → 반품·취소 정규화 → 집계** 순서로 변환 계약을 고쳐야 합니다."
+      },
+      {
+        "id": "issues-block",
+        "type": "table",
+        "tableId": "table-issues"
+      },
+      {
+        "id": "population",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## 무료샘플이 미주 수요를 정상 판매처럼 부풀립니다\n\nUSA는 V1 정책에서 4,760행·291,431개가 제외되며, 제외 수량의 대부분은 FREE SAMPLE과 ETC입니다. 제외 매출은 전체의 0.05%에 불과해 Pareto에는 영향이 작지만 수요 평균·표준편차·발주수량에는 직접 영향을 줍니다. PL의 제외 수량 비중은 0.11%로 작지만 동일한 모집단 계약을 적용해야 V1·V2 비교가 가능합니다."
+      },
+      {
+        "id": "excluded-chart-block",
+        "type": "chart",
+        "chartId": "chart-excluded-qty"
+      },
+      {
+        "id": "leadtime",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## EU 리드타임은 API 실측값으로 전환할 준비가 됐습니다\n\nEU API의 유효 표본은 AIR 218건, SEA 178건, RAIL 72건, TRUCK 5건입니다. V2 공식 시나리오에 필요한 RAIL·SEA는 모두 2건 이상이며 표준편차 계산이 가능합니다. 실측 RAIL 평균은 46.22일로 기존 36.6일보다 약 9.62일 길어 CASH 시나리오 보호기간을 과소평가할 가능성이 있습니다. USA API도 AIR 125건·SEA 121건으로 계산 요건을 충족하지만 충돌 Packing 30건(10.87%)은 계속 감시해야 합니다."
+      },
+      {
+        "id": "cost-integrity",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## 단가와 판매-재고 연결은 양호하지만 미입고 데이터는 보완이 필요합니다\n\n판매 SKU의 현지재고 연결률은 USA 100.00%, PL 99.95%이고 stock_ucost 통화도 USA=USD, PL=EUR로 일관됩니다. 반면 음수 open_qty는 USA 65행, PL 142행이며 PL 미입고 SKU 212개(16.28%)가 현지·본사 재고마스터에 연결되지 않습니다. 음수 미입고는 자동 0처리하지 말고 취소·감액 전표인지 확인해야 합니다."
+      },
+      {
+        "id": "entity-table-block",
+        "type": "table",
+        "tableId": "table-entity-quality"
+      },
+      {
+        "id": "duplicates",
+        "type": "markdown",
+        "sourceId": "quality-analysis",
+        "body": "## 완전 동일 중복 후보는 원전표 라인키 확인 전 삭제하면 안 됩니다\n\n현지 판매에는 USA 123행, PL 363행의 완전 동일 중복 초과 행이 있습니다. USA 운송에도 19행이 존재합니다. 동일 JSON 행은 적재 중복일 수도 있고 동일 송장 내 정상 복수 라인일 수도 있으므로 Invoice·Packing No·원전표 라인 식별자를 확보하기 전에는 자동 중복 제거를 적용하지 않습니다."
+      },
+      {
+        "id": "endpoint-table-block",
+        "type": "table",
+        "tableId": "table-endpoints"
+      },
+      {
+        "id": "next-steps",
+        "type": "markdown",
+        "body": "## 권장 조치 순서\n\n1. V2 판매 원천에 V1 법인별 Biz Type 필터를 공통 적용합니다.\n2. 허용 Biz Type 안의 음수 거래를 원전표·반품 식별자로 연결하고, 미확인 행은 검증 큐로 분리합니다.\n3. EU RAIL·SEA 리드타임 평균과 STDEV.S/7을 V2 설정 및 감사정보에 연결합니다.\n4. 음수 open_qty와 재고마스터 미연결 SKU를 계산불가 사유별로 화면에 노출합니다.\n5. 0 stock_ucost는 판매단가로 대체하지 않고 단가 확인 필요로 표시합니다.\n6. 판매·운송 원천에 안정적인 라인 식별자가 추가되면 중복 적재 테스트를 자동화합니다."
+      },
+      {
+        "id": "further-questions",
+        "type": "markdown",
+        "body": "## 추가 확인이 필요한 질문\n\n- CMS 판매 API에 원거래·반품·취소를 연결할 수 있는 전표 또는 라인 식별자가 있는가?\n- 음수 open_qty는 취소 전표인가, 입고 과다 정산인가, 실제 가용 입고수량 조정인가?\n- 0 stock_ucost를 FOC로 확정할 수 있는 별도 상태 필드가 있는가?\n- 미입고 SKU가 재고마스터에 없는 것은 미등록·단종·코드 변경 중 어느 경우인가?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## Caveats and assumptions\n\n검증은 2026-08-05 단일 스냅샷과 현재 API 응답을 사용하므로 장기적인 볼륨·분포 드리프트는 평가하지 않았습니다. 완전 동일 행은 중복 후보일 뿐 확정 중복이 아닙니다. 반품·취소와 음수 미입고의 업무 의미는 원전표 식별자 또는 CMS 명세 확인 전까지 확정할 수 없습니다. 리드타임 평균은 관측 표본의 기술통계이며 미래 도착일을 보장하지 않습니다."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-05T04:40:00Z",
+    "status": "ready",
+    "datasets": {
+      "summary": [
+        {"critical": 2, "high": 5, "medium": 11, "low": 1, "entities_ready": 0, "entities_checked": 2}
+      ],
+      "excluded_biz_qty": [
+        {"label": "USA · FREE SAMPLE", "entity": "USA", "biz_type": "FREE SAMPLE", "qty": 205693, "rows": 3422, "revenue": 0},
+        {"label": "USA · ETC", "entity": "USA", "biz_type": "ETC", "qty": 82014, "rows": 172, "revenue": 2626.56},
+        {"label": "PL · 자사간거래(음수)", "entity": "PL", "biz_type": "자사간거래", "qty": 8730, "rows": 66, "revenue": -56583.43},
+        {"label": "PL · FREE SAMPLE", "entity": "PL", "biz_type": "FREE SAMPLE", "qty": 3183, "rows": 141, "revenue": 0},
+        {"label": "USA · US-STAFF CA", "entity": "USA", "biz_type": "US-STAFF CA", "qty": 2730, "rows": 834, "revenue": 17081.39},
+        {"label": "USA · US-STAFF NJ", "entity": "USA", "biz_type": "US-STAFF NJ", "qty": 993, "rows": 331, "revenue": 5460.65},
+        {"label": "PL · EU-STAFFSALES", "entity": "PL", "biz_type": "EU-STAFFSALES", "qty": 593, "rows": 406, "revenue": 2911.73},
+        {"label": "PL · KR-OVERSEAS", "entity": "PL", "biz_type": "KR-OVERSEAS", "qty": 196, "rows": 21, "revenue": 1079.26},
+        {"label": "USA · KR-DOMESTIC", "entity": "USA", "biz_type": "KR-DOMESTIC", "qty": 1, "rows": 1, "revenue": 0}
+      ],
+      "lead_times": [
+        {"label": "PL · SEA", "entity": "PL", "mode": "SEA", "sample_size": 178, "mean_days": 72.736, "stdev_days": 14.0814, "sigma_weeks": 2.0116},
+        {"label": "PL · RAIL", "entity": "PL", "mode": "RAIL", "sample_size": 72, "mean_days": 46.2222, "stdev_days": 11.2052, "sigma_weeks": 1.6007},
+        {"label": "PL · TRUCK", "entity": "PL", "mode": "TRUCK", "sample_size": 5, "mean_days": 30.4, "stdev_days": 2.1909, "sigma_weeks": 0.313},
+        {"label": "USA · SEA", "entity": "USA", "mode": "SEA", "sample_size": 121, "mean_days": 29.1736, "stdev_days": 5.9395, "sigma_weeks": 0.8485},
+        {"label": "PL · AIR", "entity": "PL", "mode": "AIR", "sample_size": 218, "mean_days": 14.5092, "stdev_days": 6.0628, "sigma_weeks": 0.8661},
+        {"label": "USA · AIR", "entity": "USA", "mode": "AIR", "sample_size": 125, "mean_days": 6.152, "stdev_days": 9.1828, "sigma_weeks": 1.3118}
+      ],
+      "entity_quality": [
+        {"entity": "PL", "period_sales_rows": 69688, "negative_revenue_rows": 228, "v1_excluded_qty_pct": 0.1071, "zero_unit_cost": 12, "negative_open_po": 142, "sales_stock_match_pct": 99.9497, "open_po_stock_match_pct": 83.7174},
+        {"entity": "USA", "period_sales_rows": 112403, "negative_revenue_rows": 302, "v1_excluded_qty_pct": 4.1487, "zero_unit_cost": 71, "negative_open_po": 65, "sales_stock_match_pct": 100.0, "open_po_stock_match_pct": 95.558}
+      ],
+      "endpoint_quality": [
+        {"entity": "USA", "endpoint": "sales_local", "rows": 115310, "required_missing_rows": 0, "duplicate_extra_rows": 123},
+        {"entity": "PL", "endpoint": "sales_local", "rows": 71761, "required_missing_rows": 0, "duplicate_extra_rows": 363},
+        {"entity": "USA", "endpoint": "stock_local", "rows": 16079, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "USA", "endpoint": "stock_hq", "rows": 10406, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "USA", "endpoint": "sales_hq", "rows": 5430, "required_missing_rows": 0, "duplicate_extra_rows": 35},
+        {"entity": "PL", "endpoint": "sales_hq", "rows": 3323, "required_missing_rows": 0, "duplicate_extra_rows": 12},
+        {"entity": "PL", "endpoint": "stock_hq", "rows": 3047, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "PL", "endpoint": "stock_local", "rows": 2598, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "USA", "endpoint": "shipping", "rows": 1903, "required_missing_rows": 0, "duplicate_extra_rows": 19},
+        {"entity": "USA", "endpoint": "open_po", "rows": 1846, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "PL", "endpoint": "shipping", "rows": 1698, "required_missing_rows": 0, "duplicate_extra_rows": 0},
+        {"entity": "PL", "endpoint": "open_po", "rows": 1302, "required_missing_rows": 0, "duplicate_extra_rows": 0}
+      ],
+      "issues": [
+        {"priority": 1, "severity": "Critical", "entity": "PL", "check": "V2 source build", "evidence": "음수 매출로 전체 원천 빌드 차단", "risk": "PL V2 전체 계산 중단", "action": "Biz Type 필터 후 음수 거래 정규화"},
+        {"priority": 2, "severity": "Critical", "entity": "USA", "check": "V2 source build", "evidence": "음수 매출로 전체 원천 빌드 차단", "risk": "USA V2 전체 계산 중단", "action": "Biz Type 필터 후 음수 거래 정규화"},
+        {"priority": 3, "severity": "High", "entity": "PL", "check": "EU lead-time integration", "evidence": "API 조회 가능, V2는 USA만 동적 반영", "risk": "EU가 고정 리드타임·표준편차 사용", "action": "EU RAIL·SEA API 집계 연결"},
+        {"priority": 4, "severity": "High", "entity": "PL", "check": "Negative open-PO quantity", "evidence": "음수 미입고수량 142행", "risk": "해당 SKU 계산불가", "action": "취소·감액 전표 의미 확인"},
+        {"priority": 5, "severity": "High", "entity": "PL", "check": "Open-PO-to-stock coverage", "evidence": "재고 미연결 212 SKU (16.28%)", "risk": "미입고 수량에 재고·단가 정보 없음", "action": "재고마스터 등록 상태 대조"},
+        {"priority": 6, "severity": "High", "entity": "USA", "check": "Biz Type consistency", "evidence": "V1 제외 4,760행, 수량 4.15%", "risk": "무료샘플 등이 정상 수요에 포함", "action": "V1 Biz Type 필터 공통 적용"},
+        {"priority": 7, "severity": "High", "entity": "USA", "check": "Negative open-PO quantity", "evidence": "음수 미입고수량 65행", "risk": "해당 SKU 계산불가", "action": "취소·감액 전표 의미 확인"},
+        {"priority": 8, "severity": "Medium", "entity": "PL", "check": "Biz Type consistency", "evidence": "V1 제외 634행, 수량 0.11%", "risk": "V1·V2 모집단 불일치", "action": "V1 Biz Type 필터 공통 적용"},
+        {"priority": 9, "severity": "Medium", "entity": "PL", "check": "Exact duplicate local sales", "evidence": "완전 동일 중복 초과 363행", "risk": "정상 복수행이 아니면 수요·매출 이중 집계", "action": "원전표 라인키 확인"},
+        {"priority": 10, "severity": "Medium", "entity": "PL", "check": "Local unit cost", "evidence": "0 stock_ucost 12건", "risk": "제안금액 0 또는 미계산", "action": "단가 확인 필요 표시"},
+        {"priority": 11, "severity": "Medium", "entity": "PL", "check": "Sales-to-stock coverage", "evidence": "현지재고 미연결 1 SKU", "risk": "재고·단가 없이 수요만 존재", "action": "별도 검증 큐 노출"},
+        {"priority": 12, "severity": "Medium", "entity": "PL", "check": "Shipping-to-stock coverage", "evidence": "재고 미연결 1 SKU", "risk": "운송중수량에 상품정보 불완전", "action": "상품코드 등록 상태 대조"},
+        {"priority": 13, "severity": "Medium", "entity": "USA", "check": "Exact duplicate local sales", "evidence": "완전 동일 중복 초과 123행", "risk": "정상 복수행이 아니면 수요·매출 이중 집계", "action": "원전표 라인키 확인"},
+        {"priority": 14, "severity": "Medium", "entity": "USA", "check": "Exact duplicate shipping", "evidence": "완전 동일 중복 초과 19행", "risk": "운송중수량 이중 집계 가능", "action": "Packing No·상품 라인키 확인"},
+        {"priority": 15, "severity": "Medium", "entity": "USA", "check": "Lead-time packing conflicts", "evidence": "충돌 Packing 30건 (10.87%)", "risk": "리드타임 표본 감소", "action": "Packing별 필드 충돌 점검"},
+        {"priority": 16, "severity": "Medium", "entity": "USA", "check": "Local unit cost", "evidence": "0 stock_ucost 71건", "risk": "제안금액 0 또는 미계산", "action": "단가 확인 필요 표시"},
+        {"priority": 17, "severity": "Medium", "entity": "USA", "check": "Open-PO-to-stock coverage", "evidence": "재고 미연결 82 SKU (4.44%)", "risk": "미입고 수량에 재고·단가 정보 없음", "action": "재고마스터 등록 상태 대조"},
+        {"priority": 18, "severity": "Medium", "entity": "USA", "check": "Shipping-to-stock coverage", "evidence": "재고 미연결 24 SKU (2.03%)", "risk": "운송중수량에 상품정보 불완전", "action": "상품코드 등록 상태 대조"},
+        {"priority": 19, "severity": "Low", "entity": "PL", "check": "Lead-time packing conflicts", "evidence": "충돌 Packing 2건 (0.42%)", "risk": "리드타임 표본 소폭 감소", "action": "정기 모니터링"}
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "quality-analysis",
+      "label": "V2 CMS aggregate data-quality checks",
+      "path": "docs/data_quality/v2_cms_data_quality.py",
+      "query": {
+        "engine": "duckdb",
+        "language": "sql",
+        "sql": "SELECT * FROM read_json_auto('docs/data_quality/v2_cms_data_quality_report_2026-08-05/artifact.json')",
+        "description": "Loads the canonical reviewed aggregate snapshot. Upstream CMS checks are implemented in docs/data_quality/v2_cms_data_quality.py.",
+        "executed_at": "2026-08-05T04:40:00Z",
+        "tables_used": ["docs/data_quality/v2_cms_data_quality_report_2026-08-05/artifact.json"],
+        "filters": ["As of 2026-08-05", "No row-level CMS payload persisted"]
+      }
+    },
+    {"id": "v2-source-code", "label": "Order Logic V2 source builder", "path": "backend/services/order_logic_v2_source.py"},
+    {"id": "v2-leadtime-code", "label": "Order Logic V2 lead-time integration", "path": "backend/services/order_logic_v2_service.py"}
+  ]
+}

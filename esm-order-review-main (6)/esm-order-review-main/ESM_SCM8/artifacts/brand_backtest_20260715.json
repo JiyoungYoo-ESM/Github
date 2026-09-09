@@ -1,0 +1,904 @@
+{
+  "status": "failed",
+  "generatedAt": "2026-07-15T02:55:57.791Z",
+  "source": {
+    "apiUrl": "http://127.0.0.1:8002/api/season-trend/latest",
+    "analysisSchemaVersion": 5,
+    "analysisOptions": {
+      "start_date": "2024-07-14",
+      "end_date": "2026-07-14",
+      "metric": "qty",
+      "group_by": "month",
+      "eu_local": true,
+      "include_ingredient": true,
+      "exclude_partial_months": false,
+      "lead_time_air": 15,
+      "lead_time_sea": 70,
+      "lead_time_rail": 30,
+      "lead_time_truck": 30,
+      "average_eur_krw_rate": 1704.39,
+      "exchange_rate_basis": "원화 금액은 금일 환율 기준의 참고 환산값입니다.",
+      "exchange_rate_source": "api",
+      "exchange_rate_date": "2026-07-15"
+    },
+    "summaryRows": 28246,
+    "monthlyRows": 112952,
+    "brandCount": 71,
+    "monthCount": 25,
+    "completeMonthCount": 23
+  },
+  "metrics": {
+    "summaryAmount": 310438158.5800021,
+    "summaryQty": 52433648,
+    "monthlyAmount": 310438158.58000386,
+    "monthlyQty": 52433648,
+    "totalBrandAmount": 310438158.5799997,
+    "brandShareSum": 100.0000000000001
+  },
+  "checkSummary": {
+    "total": 18,
+    "passed": 17,
+    "failed": 1
+  },
+  "findingSummary": {
+    "total": 4,
+    "critical": 0,
+    "high": 2,
+    "medium": 2,
+    "low": 0
+  },
+  "checks": [
+    {
+      "id": "payload.status",
+      "passed": true,
+      "evidence": {
+        "status": "success"
+      }
+    },
+    {
+      "id": "payload.schema",
+      "passed": true,
+      "evidence": {
+        "schema": 5
+      }
+    },
+    {
+      "id": "source.non_empty",
+      "passed": true,
+      "evidence": {
+        "summaryRows": 28246,
+        "monthlyRows": 112952
+      }
+    },
+    {
+      "id": "source.total_amount_reconciliation",
+      "passed": true,
+      "evidence": {
+        "summaryAmount": 310438158.5800021,
+        "monthlyAmount": 310438158.58000386,
+        "difference": -0.0000017285346984863281
+      }
+    },
+    {
+      "id": "source.total_qty_reconciliation",
+      "passed": true,
+      "evidence": {
+        "summaryQty": 52433648,
+        "monthlyQty": 52433648,
+        "difference": 0
+      }
+    },
+    {
+      "id": "source.summary_grain_unique",
+      "passed": true,
+      "evidence": {
+        "duplicatedKeys": 0,
+        "affectedRows": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "source.monthly_grain_unique",
+      "passed": true,
+      "evidence": {
+        "duplicatedKeys": 0,
+        "affectedRows": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "brand.summary_monthly_reconciliation",
+      "passed": true,
+      "evidence": {
+        "brandsChecked": 71,
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "month.coverage_reconciliation",
+      "passed": true,
+      "evidence": {
+        "monthsChecked": 25,
+        "failures": []
+      }
+    },
+    {
+      "id": "growth.complete_month_only",
+      "passed": true,
+      "evidence": {
+        "completeMonths": [
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ],
+        "momTargets": [
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ],
+        "yoyTargets": [
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      }
+    },
+    {
+      "id": "domain.required_dimensions",
+      "passed": true,
+      "evidence": {
+        "invalidBrandRows": 0,
+        "invalidSkuRows": 0,
+        "unknownCountryRows": 0,
+        "uncategorizedRows": 114
+      }
+    },
+    {
+      "id": "domain.negative_metrics",
+      "passed": true,
+      "evidence": {
+        "negativeAmountRows": 0,
+        "negativeAmount": 0,
+        "negativeQtyRows": 0,
+        "negativeQty": 0
+      }
+    },
+    {
+      "id": "brand.label_normalization",
+      "passed": true,
+      "evidence": {
+        "normalizedCollisions": [],
+        "displayCollisions": []
+      }
+    },
+    {
+      "id": "brand.share_sum",
+      "passed": true,
+      "evidence": {
+        "totalBrandAmount": 310438158.5799997,
+        "brandShareSum": 100.0000000000001
+      }
+    },
+    {
+      "id": "brand.sku_concentration_denominator",
+      "passed": false,
+      "evidence": {
+        "brandsChecked": 71,
+        "affectedBrands": 60,
+        "samples": [
+          {
+            "brand": "헤이미쉬",
+            "skuCount": 92,
+            "brandAmount": 897338.8799999993,
+            "topFiveAmount": 348786.24,
+            "trueTopFiveSharePct": 38.868954391010035,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 17.427078385369875,
+            "uiTopOneSharePct": 44.835470000192664,
+            "topOneOverstatementPp": 27.40839161482279
+          },
+          {
+            "brand": "라카",
+            "skuCount": 52,
+            "brandAmount": 26247.26000000001,
+            "topFiveAmount": 5575.460000000001,
+            "trueTopFiveSharePct": 21.242064886010954,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 6.1423554306239945,
+            "uiTopOneSharePct": 28.915999756073933,
+            "topOneOverstatementPp": 22.77364432544994
+          },
+          {
+            "brand": "넘버즈인",
+            "skuCount": 24,
+            "brandAmount": 698299.3100000005,
+            "topFiveAmount": 307687.75,
+            "trueTopFiveSharePct": 44.06244508533164,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 17.23502061028815,
+            "uiTopOneSharePct": 39.11498914077665,
+            "topOneOverstatementPp": 21.8799685304885
+          },
+          {
+            "brand": "스튜디오 17",
+            "skuCount": 31,
+            "brandAmount": 1754.4000000000008,
+            "topFiveAmount": 599.8499999999999,
+            "trueTopFiveSharePct": 34.19117647058821,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 10.798563611491103,
+            "uiTopOneSharePct": 31.58289572393099,
+            "topOneOverstatementPp": 20.784332112439884
+          },
+          {
+            "brand": "조선미녀",
+            "skuCount": 79,
+            "brandAmount": 128477739.27999991,
+            "topFiveAmount": 68565650.32000001,
+            "trueTopFiveSharePct": 53.36772790698816,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 21.998736114435797,
+            "uiTopOneSharePct": 41.22104683335264,
+            "topOneOverstatementPp": 19.22231071891684
+          },
+          {
+            "brand": "퓌",
+            "skuCount": 66,
+            "brandAmount": 718556.1599999984,
+            "topFiveAmount": 217363.79,
+            "trueTopFiveSharePct": 30.250076765050693,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 8.29669179928819,
+            "uiTopOneSharePct": 27.427010727039676,
+            "topOneOverstatementPp": 19.130318927751485
+          },
+          {
+            "brand": "코스알엑스",
+            "skuCount": 118,
+            "brandAmount": 18093454.670000013,
+            "topFiveAmount": 7449744.02,
+            "trueTopFiveSharePct": 41.17369599047385,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 12.850618261725241,
+            "uiTopOneSharePct": 31.2107474264599,
+            "topOneOverstatementPp": 18.36012916473466
+          },
+          {
+            "brand": "메디큐브",
+            "skuCount": 96,
+            "brandAmount": 38440750.52,
+            "topFiveAmount": 16626167.770000003,
+            "trueTopFiveSharePct": 43.251413005970626,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 13.230762384188747,
+            "uiTopOneSharePct": 30.590358706575227,
+            "topOneOverstatementPp": 17.35959632238648
+          },
+          {
+            "brand": "마리엔메이",
+            "skuCount": 72,
+            "brandAmount": 1004864.6700000003,
+            "topFiveAmount": 262996.30999999994,
+            "trueTopFiveSharePct": 26.172311342183008,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 6.06743692163045,
+            "uiTopOneSharePct": 23.182656060839793,
+            "topOneOverstatementPp": 17.115219139209344
+          },
+          {
+            "brand": "EDGE U",
+            "skuCount": 60,
+            "brandAmount": 61073.53,
+            "topFiveAmount": 12212.09,
+            "trueTopFiveSharePct": 19.995716638615782,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 4.20517693999348,
+            "uiTopOneSharePct": 21.030388737718113,
+            "topOneOverstatementPp": 16.825211797724634
+          }
+        ]
+      }
+    },
+    {
+      "id": "brand.country_distribution_denominator",
+      "passed": true,
+      "evidence": {
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "brand.line_composition_denominator",
+      "passed": true,
+      "evidence": {
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "growth.pair_profile",
+      "passed": true,
+      "evidence": {
+        "momPairs": [
+          {
+            "target": "2024-09",
+            "comparison": "2024-08",
+            "comparableBrands": 17,
+            "newBrands": 1,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-10",
+            "comparison": "2024-09",
+            "comparableBrands": 18,
+            "newBrands": 0,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-11",
+            "comparison": "2024-10",
+            "comparableBrands": 18,
+            "newBrands": 4,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-12",
+            "comparison": "2024-11",
+            "comparableBrands": 21,
+            "newBrands": 1,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-01",
+            "comparison": "2024-12",
+            "comparableBrands": 22,
+            "newBrands": 3,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2025-02",
+            "comparison": "2025-01",
+            "comparableBrands": 24,
+            "newBrands": 0,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-03",
+            "comparison": "2025-02",
+            "comparableBrands": 23,
+            "newBrands": 0,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-04",
+            "comparison": "2025-03",
+            "comparableBrands": 23,
+            "newBrands": 0,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-05",
+            "comparison": "2025-04",
+            "comparableBrands": 23,
+            "newBrands": 10,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-06",
+            "comparison": "2025-05",
+            "comparableBrands": 33,
+            "newBrands": 1,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2025-07",
+            "comparison": "2025-06",
+            "comparableBrands": 27,
+            "newBrands": 5,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-08",
+            "comparison": "2025-07",
+            "comparableBrands": 32,
+            "newBrands": 1,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2025-09",
+            "comparison": "2025-08",
+            "comparableBrands": 29,
+            "newBrands": 1,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2025-10",
+            "comparison": "2025-09",
+            "comparableBrands": 27,
+            "newBrands": 3,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-11",
+            "comparison": "2025-10",
+            "comparableBrands": 30,
+            "newBrands": 7,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-12",
+            "comparison": "2025-11",
+            "comparableBrands": 37,
+            "newBrands": 1,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-01",
+            "comparison": "2025-12",
+            "comparableBrands": 33,
+            "newBrands": 6,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-02",
+            "comparison": "2026-01",
+            "comparableBrands": 39,
+            "newBrands": 6,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-03",
+            "comparison": "2026-02",
+            "comparableBrands": 44,
+            "newBrands": 6,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2026-04",
+            "comparison": "2026-03",
+            "comparableBrands": 49,
+            "newBrands": 5,
+            "lowBaseBrands": 4
+          },
+          {
+            "target": "2026-05",
+            "comparison": "2026-04",
+            "comparableBrands": 52,
+            "newBrands": 4,
+            "lowBaseBrands": 8
+          },
+          {
+            "target": "2026-06",
+            "comparison": "2026-05",
+            "comparableBrands": 53,
+            "newBrands": 9,
+            "lowBaseBrands": 5
+          }
+        ],
+        "yoyPairs": [
+          {
+            "target": "2025-08",
+            "comparison": "2024-08",
+            "comparableBrands": 17,
+            "newBrands": 13,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-09",
+            "comparison": "2024-09",
+            "comparableBrands": 18,
+            "newBrands": 11,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-10",
+            "comparison": "2024-10",
+            "comparableBrands": 18,
+            "newBrands": 14,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-11",
+            "comparison": "2024-11",
+            "comparableBrands": 21,
+            "newBrands": 18,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-12",
+            "comparison": "2024-12",
+            "comparableBrands": 22,
+            "newBrands": 14,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2026-01",
+            "comparison": "2025-01",
+            "comparableBrands": 24,
+            "newBrands": 17,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-02",
+            "comparison": "2025-02",
+            "comparableBrands": 23,
+            "newBrands": 23,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-03",
+            "comparison": "2025-03",
+            "comparableBrands": 23,
+            "newBrands": 28,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-04",
+            "comparison": "2025-04",
+            "comparableBrands": 23,
+            "newBrands": 31,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-05",
+            "comparison": "2025-05",
+            "comparableBrands": 33,
+            "newBrands": 25,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2026-06",
+            "comparison": "2025-06",
+            "comparableBrands": 27,
+            "newBrands": 35,
+            "lowBaseBrands": 0
+          }
+        ]
+      }
+    }
+  ],
+  "findings": [
+    {
+      "severity": "high",
+      "id": "seasonality_year_aggregation",
+      "title": "월별 추이 비교가 여러 연도의 같은 달을 합산합니다.",
+      "evidence": {
+        "years": [
+          "2025",
+          "2026",
+          "2024"
+        ],
+        "monthKeys": [
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06",
+          "2026-07"
+        ],
+        "completeCoverageCountByCalendarMonth": {
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2,
+          "5": 2,
+          "6": 2,
+          "7": 1,
+          "8": 2,
+          "9": 2,
+          "10": 2,
+          "11": 2,
+          "12": 2
+        },
+        "brandsWithDifferentPeakMonth": 7,
+        "affectedSharePct": 9.859154929577464,
+        "samples": [
+          {
+            "brand": "라운드랩",
+            "uiPeakMonth": 5,
+            "uiPeakAmount": 1126863.1699999992,
+            "normalizedPeakMonth": 7,
+            "normalizedPeakAverageAmount": 607470.76
+          },
+          {
+            "brand": "믹순",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 204815.4299999997,
+            "normalizedPeakMonth": 3,
+            "normalizedPeakAverageAmount": 73008.52500000001
+          },
+          {
+            "brand": "빌리프",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 800,
+            "normalizedPeakMonth": 12,
+            "normalizedPeakAverageAmount": 70
+          },
+          {
+            "brand": "아임프롬",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 16645.070000000003,
+            "normalizedPeakMonth": 6,
+            "normalizedPeakAverageAmount": 5534.914999999999
+          },
+          {
+            "brand": "쿤달",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 6174.9699999999975,
+            "normalizedPeakMonth": 6,
+            "normalizedPeakAverageAmount": 3073.0350000000003
+          },
+          {
+            "brand": "툴리프",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 907.8600000000001,
+            "normalizedPeakMonth": 6,
+            "normalizedPeakAverageAmount": 261.015
+          },
+          {
+            "brand": "프랭클리",
+            "uiPeakMonth": 7,
+            "uiPeakAmount": 2421.36,
+            "normalizedPeakMonth": 6,
+            "normalizedPeakAverageAmount": 195.35
+          }
+        ]
+      },
+      "impact": "장기 분석에서는 서로 다른 연도의 같은 달이 합쳐지고, 월별 관측 횟수와 부분월 포함 여부가 달라 최고월과 월별 비중이 왜곡될 수 있습니다.",
+      "recommendation": "의도가 시즌성이라면 완료월만 사용해 달력월별 관측 연도 수로 나눈 평균을 표시하고, 추이라면 year_month 축을 유지하세요."
+    },
+    {
+      "severity": "high",
+      "id": "sku_concentration_top5_denominator",
+      "title": "SKU 집중도가 브랜드 전체가 아니라 상위 5개 SKU 합계를 분모로 계산됩니다.",
+      "evidence": {
+        "affectedBrands": 60,
+        "affectedSharePct": 84.50704225352112,
+        "worstExamples": [
+          {
+            "brand": "헤이미쉬",
+            "skuCount": 92,
+            "brandAmount": 897338.8799999993,
+            "topFiveAmount": 348786.24,
+            "trueTopFiveSharePct": 38.868954391010035,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 17.427078385369875,
+            "uiTopOneSharePct": 44.835470000192664,
+            "topOneOverstatementPp": 27.40839161482279
+          },
+          {
+            "brand": "라카",
+            "skuCount": 52,
+            "brandAmount": 26247.26000000001,
+            "topFiveAmount": 5575.460000000001,
+            "trueTopFiveSharePct": 21.242064886010954,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 6.1423554306239945,
+            "uiTopOneSharePct": 28.915999756073933,
+            "topOneOverstatementPp": 22.77364432544994
+          },
+          {
+            "brand": "넘버즈인",
+            "skuCount": 24,
+            "brandAmount": 698299.3100000005,
+            "topFiveAmount": 307687.75,
+            "trueTopFiveSharePct": 44.06244508533164,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 17.23502061028815,
+            "uiTopOneSharePct": 39.11498914077665,
+            "topOneOverstatementPp": 21.8799685304885
+          },
+          {
+            "brand": "스튜디오 17",
+            "skuCount": 31,
+            "brandAmount": 1754.4000000000008,
+            "topFiveAmount": 599.8499999999999,
+            "trueTopFiveSharePct": 34.19117647058821,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 10.798563611491103,
+            "uiTopOneSharePct": 31.58289572393099,
+            "topOneOverstatementPp": 20.784332112439884
+          },
+          {
+            "brand": "조선미녀",
+            "skuCount": 79,
+            "brandAmount": 128477739.27999991,
+            "topFiveAmount": 68565650.32000001,
+            "trueTopFiveSharePct": 53.36772790698816,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 21.998736114435797,
+            "uiTopOneSharePct": 41.22104683335264,
+            "topOneOverstatementPp": 19.22231071891684
+          },
+          {
+            "brand": "퓌",
+            "skuCount": 66,
+            "brandAmount": 718556.1599999984,
+            "topFiveAmount": 217363.79,
+            "trueTopFiveSharePct": 30.250076765050693,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 8.29669179928819,
+            "uiTopOneSharePct": 27.427010727039676,
+            "topOneOverstatementPp": 19.130318927751485
+          },
+          {
+            "brand": "코스알엑스",
+            "skuCount": 118,
+            "brandAmount": 18093454.670000013,
+            "topFiveAmount": 7449744.02,
+            "trueTopFiveSharePct": 41.17369599047385,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 12.850618261725241,
+            "uiTopOneSharePct": 31.2107474264599,
+            "topOneOverstatementPp": 18.36012916473466
+          },
+          {
+            "brand": "메디큐브",
+            "skuCount": 96,
+            "brandAmount": 38440750.52,
+            "topFiveAmount": 16626167.770000003,
+            "trueTopFiveSharePct": 43.251413005970626,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 13.230762384188747,
+            "uiTopOneSharePct": 30.590358706575227,
+            "topOneOverstatementPp": 17.35959632238648
+          },
+          {
+            "brand": "마리엔메이",
+            "skuCount": 72,
+            "brandAmount": 1004864.6700000003,
+            "topFiveAmount": 262996.30999999994,
+            "trueTopFiveSharePct": 26.172311342183008,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 6.06743692163045,
+            "uiTopOneSharePct": 23.182656060839793,
+            "topOneOverstatementPp": 17.115219139209344
+          },
+          {
+            "brand": "EDGE U",
+            "skuCount": 60,
+            "brandAmount": 61073.53,
+            "topFiveAmount": 12212.09,
+            "trueTopFiveSharePct": 19.995716638615782,
+            "uiTopFiveSharePct": 100,
+            "trueTopOneSharePct": 4.20517693999348,
+            "uiTopOneSharePct": 21.030388737718113,
+            "topOneOverstatementPp": 16.825211797724634
+          }
+        ]
+      },
+      "impact": "상위 5개 막대의 표시 비중이 항상 약 100%로 합산되어 실제 브랜드 내 집중도를 과대 표시합니다.",
+      "recommendation": "분모를 selectedBrand.amount 또는 선택 브랜드의 전체 SKU 매출 합계로 변경하고 Top 1/Top 3/Top 5 합계 테스트를 추가하세요."
+    },
+    {
+      "severity": "medium",
+      "id": "partial_month_scope_difference",
+      "title": "브랜드 순위/KPI와 성장률의 반영 월 범위가 다릅니다.",
+      "evidence": {
+        "partialMonths": [
+          {
+            "month": "2024-07",
+            "status": "partial",
+            "reason": "분석 기간이 월 전체를 포함하지 않음 · 월초 데이터 범위 부족",
+            "totalAmount": 2945119.55
+          },
+          {
+            "month": "2026-07",
+            "status": "partial",
+            "reason": "분석 기간이 월 전체를 포함하지 않음 · 월말 데이터 범위 부족",
+            "totalAmount": 8381539.31
+          }
+        ],
+        "partialAmount": 11326658.86,
+        "partialAmountSharePct": 3.6486039318781227,
+        "growthCompleteMonths": [
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "impact": "순위·점유율·SKU/국가 분포에는 부분월이 포함되지만 MoM/YoY 성장률에서는 제외되어 같은 화면의 비교 기준이 달라집니다.",
+      "recommendation": "화면에 범위 차이를 명시하거나, 브랜드 요약에도 완료월 필터를 적용할지 제품 기준을 확정하세요."
+    },
+    {
+      "severity": "medium",
+      "id": "unmapped_dimensions",
+      "title": "국가 또는 카테고리 매핑이 완전하지 않습니다.",
+      "evidence": {
+        "unknownCountryRows": 0,
+        "unknownCountryAmount": 0,
+        "uncategorizedRows": 114,
+        "uncategorizedAmount": 268602.37
+      },
+      "impact": "국가 분포와 제품군 구성비에 '미상/미분류'가 포함되어 Top 5와 점유율 해석이 달라질 수 있습니다.",
+      "recommendation": "매핑률을 브랜드 탭에 함께 표시하고 미상/미분류 비중 임계치를 자동 점검하세요."
+    }
+  ]
+}

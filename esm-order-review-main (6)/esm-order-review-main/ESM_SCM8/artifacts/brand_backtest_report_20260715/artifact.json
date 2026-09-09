@@ -1,0 +1,1002 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "브랜드 탭 데이터 정합성 백테스트",
+    "description": "브랜드 탭 전체 지표의 원천 큐브 대조, 산식 재계산, 범위·매핑 품질 검토 결과입니다.",
+    "generatedAt": "2026-07-15T02:55:57.791Z",
+    "cards": [],
+    "charts": [
+      {
+        "id": "sku_share_gap_chart",
+        "title": "SKU 집중도: 화면 표시와 실제 Top 5 비중",
+        "subtitle": "오차가 큰 대표 10개 브랜드 · 선택 기간 매출 기준, 단위 %",
+        "type": "bar",
+        "dataset": "sku_share_chart",
+        "sourceId": "sku_share_sql",
+        "valueFormat": "number",
+        "encodings": {
+          "x": {
+            "field": "brand",
+            "type": "nominal",
+            "label": "브랜드"
+          },
+          "y": {
+            "field": "share_pct",
+            "type": "quantitative",
+            "label": "매출 비중 (%)"
+          },
+          "color": {
+            "field": "series",
+            "type": "nominal",
+            "label": "산식"
+          },
+          "tooltip": [
+            {
+              "field": "sku_count",
+              "type": "quantitative",
+              "label": "SKU 수"
+            },
+            {
+              "field": "true_top1_share_pct",
+              "type": "quantitative",
+              "label": "실제 Top 1 비중"
+            },
+            {
+              "field": "ui_top1_share_pct",
+              "type": "quantitative",
+              "label": "화면 Top 1 비중"
+            }
+          ]
+        },
+        "options": {
+          "grouping": "grouped",
+          "legend": {
+            "show": true
+          }
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "issues_table",
+        "title": "정합성 이슈 요약",
+        "subtitle": "영향도와 조치 우선순위 기준",
+        "dataset": "issues",
+        "sourceId": "issues_sql",
+        "defaultSort": {
+          "field": "affected_pct",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "severity",
+            "label": "심각도",
+            "type": "text"
+          },
+          {
+            "field": "issue",
+            "label": "이슈",
+            "type": "text"
+          },
+          {
+            "field": "affected",
+            "label": "영향 범위",
+            "type": "text"
+          },
+          {
+            "field": "affected_pct",
+            "label": "영향 비율",
+            "format": "number",
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "id": "sku_examples_table",
+        "title": "SKU 집중도 과대 표시 사례",
+        "subtitle": "Top 1 비중 오차가 큰 10개 브랜드, 단위 %·%p",
+        "dataset": "sku_examples",
+        "sourceId": "sku_examples_sql",
+        "defaultSort": {
+          "field": "topOneOverstatementPp",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "brand",
+            "label": "브랜드",
+            "type": "text"
+          },
+          {
+            "field": "skuCount",
+            "label": "SKU 수",
+            "format": "number"
+          },
+          {
+            "field": "trueTopFiveSharePct",
+            "label": "실제 Top 5 비중",
+            "format": "number",
+            "unit": "%"
+          },
+          {
+            "field": "trueTopOneSharePct",
+            "label": "실제 Top 1",
+            "format": "number",
+            "unit": "%"
+          },
+          {
+            "field": "uiTopOneSharePct",
+            "label": "화면 Top 1",
+            "format": "number",
+            "unit": "%"
+          },
+          {
+            "field": "topOneOverstatementPp",
+            "label": "Top 1 과대 표시",
+            "format": "number",
+            "unit": "%p"
+          }
+        ]
+      },
+      {
+        "id": "peak_examples_table",
+        "title": "다년 합산으로 최고월이 달라지는 브랜드",
+        "subtitle": "현재 화면 합산값과 완료월 연평균 기준 비교",
+        "dataset": "peak_examples",
+        "sourceId": "peak_examples_sql",
+        "defaultSort": {
+          "field": "uiPeakAmount",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "brand",
+            "label": "브랜드",
+            "type": "text"
+          },
+          {
+            "field": "uiPeakMonth",
+            "label": "화면 최고월",
+            "format": "number",
+            "unit": "월"
+          },
+          {
+            "field": "uiPeakAmount",
+            "label": "화면 합산 매출",
+            "format": "number",
+            "unit": "EUR"
+          },
+          {
+            "field": "normalizedPeakMonth",
+            "label": "완료월 평균 최고월",
+            "format": "number",
+            "unit": "월"
+          },
+          {
+            "field": "normalizedPeakAverageAmount",
+            "label": "완료월 평균 매출",
+            "format": "number",
+            "unit": "EUR"
+          }
+        ]
+      },
+      {
+        "id": "checks_table",
+        "title": "전체 검증 결과",
+        "subtitle": "원천 합계·키 유일성·브랜드별 대조·분모·성장월 검증",
+        "dataset": "checks",
+        "sourceId": "checks_sql",
+        "defaultSort": {
+          "field": "check",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "status",
+            "label": "결과",
+            "type": "text"
+          },
+          {
+            "field": "check",
+            "label": "검증 항목",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "brand_backtest_result",
+        "label": "브랜드 탭 라이브 백테스트 결과",
+        "path": "artifacts/brand_backtest_20260715.json"
+      },
+      {
+        "id": "issues_sql",
+        "label": "정합성 이슈 요약 SQL",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "sql": "SELECT severity, severity_rank, issue, affected, affected_pct, impact, recommendation FROM issues ORDER BY severity_rank DESC, affected_pct DESC",
+          "description": "검증 이슈를 심각도와 영향률 순으로 조회합니다.",
+          "executed_at": "2026-07-15T02:55:57.791Z",
+          "tables_used": [
+            "issues"
+          ],
+          "filters": [
+            "분석 기간: 2024-07-14 ~ 2026-07-14"
+          ],
+          "metric_definitions": [
+            "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+          ]
+        }
+      },
+      {
+        "id": "sku_share_sql",
+        "label": "SKU 집중도 비교 SQL",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "sql": "SELECT brand, series, share_pct, sku_count, true_top1_share_pct, ui_top1_share_pct FROM sku_share_chart ORDER BY rowid",
+          "description": "화면 표시 비중과 브랜드 전체 기준 실제 Top 5 비중을 조회합니다.",
+          "executed_at": "2026-07-15T02:55:57.791Z",
+          "tables_used": [
+            "sku_share_chart"
+          ],
+          "filters": [
+            "분석 기간: 2024-07-14 ~ 2026-07-14"
+          ],
+          "metric_definitions": [
+            "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+          ]
+        }
+      },
+      {
+        "id": "sku_examples_sql",
+        "label": "SKU 집중도 사례 SQL",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "sql": "SELECT brand, skuCount, brandAmount, topFiveAmount, trueTopFiveSharePct, uiTopFiveSharePct, trueTopOneSharePct, uiTopOneSharePct, topOneOverstatementPp FROM sku_examples ORDER BY topOneOverstatementPp DESC",
+          "description": "Top 1 과대 표시 폭이 큰 브랜드를 조회합니다.",
+          "executed_at": "2026-07-15T02:55:57.791Z",
+          "tables_used": [
+            "sku_examples"
+          ],
+          "filters": [
+            "분석 기간: 2024-07-14 ~ 2026-07-14"
+          ],
+          "metric_definitions": [
+            "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+          ]
+        }
+      },
+      {
+        "id": "peak_examples_sql",
+        "label": "최고월 왜곡 사례 SQL",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "sql": "SELECT brand, uiPeakMonth, uiPeakAmount, normalizedPeakMonth, normalizedPeakAverageAmount FROM peak_examples ORDER BY uiPeakAmount DESC",
+          "description": "다년 달력월 합산과 완료월 연평균의 최고월이 다른 브랜드를 조회합니다.",
+          "executed_at": "2026-07-15T02:55:57.791Z",
+          "tables_used": [
+            "peak_examples"
+          ],
+          "filters": [
+            "분석 기간: 2024-07-14 ~ 2026-07-14"
+          ],
+          "metric_definitions": [
+            "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+          ]
+        }
+      },
+      {
+        "id": "checks_sql",
+        "label": "전체 검증 결과 SQL",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "sql": "SELECT status, status_rank, [check], evidence FROM checks ORDER BY status_rank DESC, [check] ASC",
+          "description": "전체 백테스트 검증 결과를 실패 우선으로 조회합니다.",
+          "executed_at": "2026-07-15T02:55:57.791Z",
+          "tables_used": [
+            "checks"
+          ],
+          "filters": [
+            "분석 기간: 2024-07-14 ~ 2026-07-14"
+          ],
+          "metric_definitions": [
+            "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+          ]
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# 브랜드 탭 데이터 정합성 백테스트"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## Executive Summary\n\n- **원천 판매 큐브는 일치합니다.** 28,246개 요약행과 112,952개 월별행의 매출·수량 합계, 브랜드별 합계, SKU 집합, 월 커버리지, 키 유일성이 모두 대조됐습니다.\n- **SKU 집중도는 수정 전 의사결정에 사용하면 안 됩니다.** 60/71개 브랜드(84.5%)에서 상위 5개 합계를 분모로 사용해 집중도를 과대 표시합니다.\n- **월별 추이 비교도 장기 범위에서 보정이 필요합니다.** 서로 다른 연도의 같은 달을 합산하고 부분월까지 포함해 7개 브랜드의 최고월이 완료월 연평균 기준과 달랐습니다.\n- **운영 가능하되 두 High 이슈를 먼저 수정해야 합니다.** 그 외 부분월 범위 차이와 미분류 카테고리는 Medium 이슈로 관리할 수 있습니다."
+      },
+      {
+        "id": "high_findings_intro",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## 두 가지 High 이슈가 브랜드 집중도와 최고월 해석을 왜곡합니다\n\n산식 자체의 오류는 SKU 집중도에 집중되어 있고, 장기 월별 비교는 데이터 범위 정규화가 빠져 있습니다. 아래 표는 영향 범위와 우선 조치를 함께 정리합니다."
+      },
+      {
+        "id": "issues",
+        "type": "table",
+        "tableId": "issues_table"
+      },
+      {
+        "id": "sku_denominator_explanation",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## SKU 집중도는 상위 5개끼리의 구성비로 계산되고 있습니다\n\n현재 화면은 먼저 상위 5개 SKU만 남긴 뒤 그 5개의 매출 합계를 분모로 씁니다. 따라서 상위 5개 막대는 항상 약 100%가 되며, 브랜드의 나머지 SKU 매출이 분모에서 사라집니다. 예를 들어 조선미녀의 실제 Top 5 비중은 53.4%지만 화면 합계는 100%입니다. 집중 리스크 판단에는 브랜드 전체 매출을 분모로 써야 합니다."
+      },
+      {
+        "id": "sku_share_chart_block",
+        "type": "chart",
+        "chartId": "sku_share_gap_chart"
+      },
+      {
+        "id": "sku_examples_block",
+        "type": "table",
+        "tableId": "sku_examples_table"
+      },
+      {
+        "id": "seasonality_explanation",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## 장기 월별 비교는 달력월별 관측 횟수 차이를 보정해야 합니다\n\n분석 범위는 2024-07-14 ~ 2026-07-14의 25개월이며 완료월은 23개월입니다. 7월은 완료월 관측이 1회인 반면 다른 달은 2회씩 있어 단순 합산 비교가 동등하지 않습니다. 완료월만 사용해 달력월별 연평균으로 다시 계산하면 7개 브랜드의 최고월이 바뀝니다."
+      },
+      {
+        "id": "peak_examples_block",
+        "type": "table",
+        "tableId": "peak_examples_table"
+      },
+      {
+        "id": "passed_checks",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## 원천 합계와 주요 분포 산식은 안정적으로 일치합니다\n\n매출 합계는 310,438,158.58 EUR, 판매수량은 52,433,648개로 요약·월별 큐브가 일치했습니다. 브랜드별 매출·수량·SKU 집합, 국가 분포 분모, 제품군 구성비 분모, 점유율 합계, 완료월 성장 비교도 모두 통과했습니다."
+      },
+      {
+        "id": "checks_block",
+        "type": "table",
+        "tableId": "checks_table"
+      },
+      {
+        "id": "medium_findings",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## 부분월과 미분류 항목은 범위 표시와 모니터링으로 통제할 수 있습니다\n\n부분월은 2개월이며 전체 매출의 3.65%입니다. 순위·KPI에는 포함되지만 성장률에는 제외되므로 카드와 성장 표의 기준 범위를 분리 표기해야 합니다. 미분류 카테고리는 114행, 268,602.37 EUR로 전체 매출의 0.087%입니다. 금액 영향은 작지만 매핑률 지표로 계속 감시하는 편이 안전합니다."
+      },
+      {
+        "id": "recommendations",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## 권장 수정 순서\n\n1. **SKU 집중도 분모 수정:** `selectedSkuRows`가 아니라 선택 브랜드 전체 SKU 매출 합계를 분모로 사용합니다. Top 1·Top 3·Top 5 비중 회귀 테스트를 추가합니다.\n2. **월별 비교 의미 분리:** 시계열 추이는 `year_month`를 유지하고, 시즌성은 완료월만 사용한 달력월별 연평균으로 계산합니다.\n3. **범위 라벨 명시:** 순위/KPI의 전체 선택 기간과 성장률의 완료월 비교 기간을 각각 표시합니다.\n4. **매핑 품질 자동화:** 브랜드·SKU not-null, 국가 매핑, 미분류 카테고리 매출 비중을 배포 전 테스트로 고정합니다."
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## Further Questions\n\n- 월별 비교의 제품 의도는 연속 시계열 추이인가요, 반복 시즌성인가요?\n- 부분월을 브랜드 순위와 점유율에 포함하는 것이 운영 기준과 일치하나요?\n- 미분류 카테고리 허용 임계치를 행 기준과 매출 기준 중 어느 쪽으로 관리할까요?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "sourceId": "brand_backtest_result",
+        "body": "## Caveats and Assumptions\n\n- 결과는 로컬 최신 분석 API의 저장 스냅샷을 기준으로 하며 실시간 원천 DB 직접 조회는 아닙니다.\n- 브랜드 표시명 충돌, 음수 매출/수량, 중복 집계 키, 미상 국가는 이번 스냅샷에서 발견되지 않았습니다.\n- 환율은 화면 표시용이며 본 검증의 집계·비중 산식에는 영향을 주지 않습니다."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-15T02:55:57.791Z",
+    "status": "ready",
+    "datasets": {
+      "report_metrics": [
+        {
+          "brand_count": 71,
+          "checks_passed": 17,
+          "checks_total": 18,
+          "high_findings": 2,
+          "medium_findings": 2,
+          "summary_rows": 28246,
+          "monthly_rows": 112952,
+          "period_months": 25,
+          "complete_months": 23
+        }
+      ],
+      "issues": [
+        {
+          "severity": "High",
+          "severity_rank": 3.0,
+          "issue": "SKU 집중도 Top 5 분모 오류",
+          "affected": "60/71개 브랜드",
+          "affected_pct": 84.5,
+          "impact": "상위 5개 막대의 표시 비중이 항상 약 100%로 합산되어 실제 브랜드 내 집중도를 과대 표시합니다.",
+          "recommendation": "분모를 selectedBrand.amount 또는 선택 브랜드의 전체 SKU 매출 합계로 변경하고 Top 1/Top 3/Top 5 합계 테스트를 추가하세요."
+        },
+        {
+          "severity": "High",
+          "severity_rank": 3.0,
+          "issue": "다년 달력월 합산으로 최고월 왜곡",
+          "affected": "7/71개 브랜드",
+          "affected_pct": 9.9,
+          "impact": "장기 분석에서는 서로 다른 연도의 같은 달이 합쳐지고, 월별 관측 횟수와 부분월 포함 여부가 달라 최고월과 월별 비중이 왜곡될 수 있습니다.",
+          "recommendation": "의도가 시즌성이라면 완료월만 사용해 달력월별 관측 연도 수로 나눈 평균을 표시하고, 추이라면 year_month 축을 유지하세요."
+        },
+        {
+          "severity": "Medium",
+          "severity_rank": 2.0,
+          "issue": "부분월과 성장률의 반영 범위 차이",
+          "affected": "부분월 2/25개월",
+          "affected_pct": 8.0,
+          "impact": "순위·점유율·SKU/국가 분포에는 부분월이 포함되지만 MoM/YoY 성장률에서는 제외되어 같은 화면의 비교 기준이 달라집니다.",
+          "recommendation": "화면에 범위 차이를 명시하거나, 브랜드 요약에도 완료월 필터를 적용할지 제품 기준을 확정하세요."
+        },
+        {
+          "severity": "Medium",
+          "severity_rank": 2.0,
+          "issue": "미분류 카테고리 잔존",
+          "affected": "114/28246행",
+          "affected_pct": 0.4,
+          "impact": "국가 분포와 제품군 구성비에 '미상/미분류'가 포함되어 Top 5와 점유율 해석이 달라질 수 있습니다.",
+          "recommendation": "매핑률을 브랜드 탭에 함께 표시하고 미상/미분류 비중 임계치를 자동 점검하세요."
+        }
+      ],
+      "sku_share_chart": [
+        {
+          "brand": "헤이미쉬",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 92.0,
+          "true_top1_share_pct": 17.4,
+          "ui_top1_share_pct": 44.8
+        },
+        {
+          "brand": "헤이미쉬",
+          "series": "실제 Top 5 비중",
+          "share_pct": 38.9,
+          "sku_count": 92.0,
+          "true_top1_share_pct": 17.4,
+          "ui_top1_share_pct": 44.8
+        },
+        {
+          "brand": "라카",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 52.0,
+          "true_top1_share_pct": 6.1,
+          "ui_top1_share_pct": 28.9
+        },
+        {
+          "brand": "라카",
+          "series": "실제 Top 5 비중",
+          "share_pct": 21.2,
+          "sku_count": 52.0,
+          "true_top1_share_pct": 6.1,
+          "ui_top1_share_pct": 28.9
+        },
+        {
+          "brand": "넘버즈인",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 24.0,
+          "true_top1_share_pct": 17.2,
+          "ui_top1_share_pct": 39.1
+        },
+        {
+          "brand": "넘버즈인",
+          "series": "실제 Top 5 비중",
+          "share_pct": 44.1,
+          "sku_count": 24.0,
+          "true_top1_share_pct": 17.2,
+          "ui_top1_share_pct": 39.1
+        },
+        {
+          "brand": "스튜디오 17",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 31.0,
+          "true_top1_share_pct": 10.8,
+          "ui_top1_share_pct": 31.6
+        },
+        {
+          "brand": "스튜디오 17",
+          "series": "실제 Top 5 비중",
+          "share_pct": 34.2,
+          "sku_count": 31.0,
+          "true_top1_share_pct": 10.8,
+          "ui_top1_share_pct": 31.6
+        },
+        {
+          "brand": "조선미녀",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 79.0,
+          "true_top1_share_pct": 22.0,
+          "ui_top1_share_pct": 41.2
+        },
+        {
+          "brand": "조선미녀",
+          "series": "실제 Top 5 비중",
+          "share_pct": 53.4,
+          "sku_count": 79.0,
+          "true_top1_share_pct": 22.0,
+          "ui_top1_share_pct": 41.2
+        },
+        {
+          "brand": "퓌",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 66.0,
+          "true_top1_share_pct": 8.3,
+          "ui_top1_share_pct": 27.4
+        },
+        {
+          "brand": "퓌",
+          "series": "실제 Top 5 비중",
+          "share_pct": 30.3,
+          "sku_count": 66.0,
+          "true_top1_share_pct": 8.3,
+          "ui_top1_share_pct": 27.4
+        },
+        {
+          "brand": "코스알엑스",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 118.0,
+          "true_top1_share_pct": 12.9,
+          "ui_top1_share_pct": 31.2
+        },
+        {
+          "brand": "코스알엑스",
+          "series": "실제 Top 5 비중",
+          "share_pct": 41.2,
+          "sku_count": 118.0,
+          "true_top1_share_pct": 12.9,
+          "ui_top1_share_pct": 31.2
+        },
+        {
+          "brand": "메디큐브",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 96.0,
+          "true_top1_share_pct": 13.2,
+          "ui_top1_share_pct": 30.6
+        },
+        {
+          "brand": "메디큐브",
+          "series": "실제 Top 5 비중",
+          "share_pct": 43.3,
+          "sku_count": 96.0,
+          "true_top1_share_pct": 13.2,
+          "ui_top1_share_pct": 30.6
+        },
+        {
+          "brand": "마리엔메이",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 72.0,
+          "true_top1_share_pct": 6.1,
+          "ui_top1_share_pct": 23.2
+        },
+        {
+          "brand": "마리엔메이",
+          "series": "실제 Top 5 비중",
+          "share_pct": 26.2,
+          "sku_count": 72.0,
+          "true_top1_share_pct": 6.1,
+          "ui_top1_share_pct": 23.2
+        },
+        {
+          "brand": "EDGE U",
+          "series": "화면 표시",
+          "share_pct": 100.0,
+          "sku_count": 60.0,
+          "true_top1_share_pct": 4.2,
+          "ui_top1_share_pct": 21.0
+        },
+        {
+          "brand": "EDGE U",
+          "series": "실제 Top 5 비중",
+          "share_pct": 20.0,
+          "sku_count": 60.0,
+          "true_top1_share_pct": 4.2,
+          "ui_top1_share_pct": 21.0
+        }
+      ],
+      "sku_examples": [
+        {
+          "brand": "헤이미쉬",
+          "skuCount": 92.0,
+          "brandAmount": 897338.8799999993,
+          "topFiveAmount": 348786.24,
+          "trueTopFiveSharePct": 38.868954391010035,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 17.427078385369875,
+          "uiTopOneSharePct": 44.835470000192664,
+          "topOneOverstatementPp": 27.40839161482279
+        },
+        {
+          "brand": "라카",
+          "skuCount": 52.0,
+          "brandAmount": 26247.26000000001,
+          "topFiveAmount": 5575.460000000001,
+          "trueTopFiveSharePct": 21.242064886010954,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 6.1423554306239945,
+          "uiTopOneSharePct": 28.915999756073933,
+          "topOneOverstatementPp": 22.77364432544994
+        },
+        {
+          "brand": "넘버즈인",
+          "skuCount": 24.0,
+          "brandAmount": 698299.3100000005,
+          "topFiveAmount": 307687.75,
+          "trueTopFiveSharePct": 44.06244508533164,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 17.23502061028815,
+          "uiTopOneSharePct": 39.11498914077665,
+          "topOneOverstatementPp": 21.8799685304885
+        },
+        {
+          "brand": "스튜디오 17",
+          "skuCount": 31.0,
+          "brandAmount": 1754.4000000000008,
+          "topFiveAmount": 599.8499999999999,
+          "trueTopFiveSharePct": 34.19117647058821,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 10.798563611491103,
+          "uiTopOneSharePct": 31.58289572393099,
+          "topOneOverstatementPp": 20.784332112439884
+        },
+        {
+          "brand": "조선미녀",
+          "skuCount": 79.0,
+          "brandAmount": 128477739.27999991,
+          "topFiveAmount": 68565650.32000001,
+          "trueTopFiveSharePct": 53.36772790698816,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 21.998736114435797,
+          "uiTopOneSharePct": 41.22104683335264,
+          "topOneOverstatementPp": 19.22231071891684
+        },
+        {
+          "brand": "퓌",
+          "skuCount": 66.0,
+          "brandAmount": 718556.1599999984,
+          "topFiveAmount": 217363.79,
+          "trueTopFiveSharePct": 30.250076765050693,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 8.29669179928819,
+          "uiTopOneSharePct": 27.427010727039676,
+          "topOneOverstatementPp": 19.130318927751485
+        },
+        {
+          "brand": "코스알엑스",
+          "skuCount": 118.0,
+          "brandAmount": 18093454.670000013,
+          "topFiveAmount": 7449744.02,
+          "trueTopFiveSharePct": 41.17369599047385,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 12.850618261725241,
+          "uiTopOneSharePct": 31.2107474264599,
+          "topOneOverstatementPp": 18.36012916473466
+        },
+        {
+          "brand": "메디큐브",
+          "skuCount": 96.0,
+          "brandAmount": 38440750.52,
+          "topFiveAmount": 16626167.770000003,
+          "trueTopFiveSharePct": 43.251413005970626,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 13.230762384188747,
+          "uiTopOneSharePct": 30.590358706575227,
+          "topOneOverstatementPp": 17.35959632238648
+        },
+        {
+          "brand": "마리엔메이",
+          "skuCount": 72.0,
+          "brandAmount": 1004864.6700000003,
+          "topFiveAmount": 262996.30999999994,
+          "trueTopFiveSharePct": 26.172311342183008,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 6.06743692163045,
+          "uiTopOneSharePct": 23.182656060839793,
+          "topOneOverstatementPp": 17.115219139209344
+        },
+        {
+          "brand": "EDGE U",
+          "skuCount": 60.0,
+          "brandAmount": 61073.53,
+          "topFiveAmount": 12212.09,
+          "trueTopFiveSharePct": 19.995716638615782,
+          "uiTopFiveSharePct": 100.0,
+          "trueTopOneSharePct": 4.20517693999348,
+          "uiTopOneSharePct": 21.030388737718113,
+          "topOneOverstatementPp": 16.825211797724634
+        }
+      ],
+      "peak_examples": [
+        {
+          "brand": "라운드랩",
+          "uiPeakMonth": 5.0,
+          "uiPeakAmount": 1126863.1699999992,
+          "normalizedPeakMonth": 7.0,
+          "normalizedPeakAverageAmount": 607470.76
+        },
+        {
+          "brand": "믹순",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 204815.4299999997,
+          "normalizedPeakMonth": 3.0,
+          "normalizedPeakAverageAmount": 73008.52500000001
+        },
+        {
+          "brand": "아임프롬",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 16645.070000000003,
+          "normalizedPeakMonth": 6.0,
+          "normalizedPeakAverageAmount": 5534.914999999999
+        },
+        {
+          "brand": "쿤달",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 6174.9699999999975,
+          "normalizedPeakMonth": 6.0,
+          "normalizedPeakAverageAmount": 3073.0350000000003
+        },
+        {
+          "brand": "프랭클리",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 2421.36,
+          "normalizedPeakMonth": 6.0,
+          "normalizedPeakAverageAmount": 195.35
+        },
+        {
+          "brand": "툴리프",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 907.8600000000001,
+          "normalizedPeakMonth": 6.0,
+          "normalizedPeakAverageAmount": 261.015
+        },
+        {
+          "brand": "빌리프",
+          "uiPeakMonth": 7.0,
+          "uiPeakAmount": 800.0,
+          "normalizedPeakMonth": 12.0,
+          "normalizedPeakAverageAmount": 70.0
+        }
+      ],
+      "checks": [
+        {
+          "status": "FAIL",
+          "status_rank": 2.0,
+          "check": "brand.sku_concentration_denominator",
+          "evidence": "{\"brandsChecked\":71,\"affectedBrands\":60,\"samples\":[{\"brand\":\"헤이미쉬\",\"skuCount\":92,\"brandAmount\":897338.8799999993,\"topFiveAmount\":348786.24,\"trueTopFiveSharePct\":38.868954391010035,\"uiTopFiveSharePct\":100,\"trueTopOneSharePct\":17.427078385369875,\"uiTopOneSharePct\":44.83547000019266"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "brand.country_distribution_denominator",
+          "evidence": "{\"failures\":0,\"samples\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "brand.label_normalization",
+          "evidence": "{\"normalizedCollisions\":[],\"displayCollisions\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "brand.line_composition_denominator",
+          "evidence": "{\"failures\":0,\"samples\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "brand.share_sum",
+          "evidence": "{\"totalBrandAmount\":310438158.5799997,\"brandShareSum\":100.0000000000001}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "brand.summary_monthly_reconciliation",
+          "evidence": "{\"brandsChecked\":71,\"failures\":0,\"samples\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "domain.negative_metrics",
+          "evidence": "{\"negativeAmountRows\":0,\"negativeAmount\":0,\"negativeQtyRows\":0,\"negativeQty\":0}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "domain.required_dimensions",
+          "evidence": "{\"invalidBrandRows\":0,\"invalidSkuRows\":0,\"unknownCountryRows\":0,\"uncategorizedRows\":114}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "growth.complete_month_only",
+          "evidence": "{\"completeMonths\":[\"2024-08\",\"2024-09\",\"2024-10\",\"2024-11\",\"2024-12\",\"2025-01\",\"2025-02\",\"2025-03\",\"2025-04\",\"2025-05\",\"2025-06\",\"2025-07\",\"2025-08\",\"2025-09\",\"2025-10\",\"2025-11\",\"2025-12\",\"2026-01\",\"2026-02\",\"2026-03\",\"2026-04\",\"2026-05\",\"2026-06\"],\"momTargets\":[\"2024-09\",\"2024-"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "growth.pair_profile",
+          "evidence": "{\"momPairs\":[{\"target\":\"2024-09\",\"comparison\":\"2024-08\",\"comparableBrands\":17,\"newBrands\":1,\"lowBaseBrands\":0},{\"target\":\"2024-10\",\"comparison\":\"2024-09\",\"comparableBrands\":18,\"newBrands\":0,\"lowBaseBrands\":0},{\"target\":\"2024-11\",\"comparison\":\"2024-10\",\"comparableBrands\":18,\"newBr"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "month.coverage_reconciliation",
+          "evidence": "{\"monthsChecked\":25,\"failures\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "payload.schema",
+          "evidence": "{\"schema\":5}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "payload.status",
+          "evidence": "{\"status\":\"success\"}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "source.monthly_grain_unique",
+          "evidence": "{\"duplicatedKeys\":0,\"affectedRows\":0,\"samples\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "source.non_empty",
+          "evidence": "{\"summaryRows\":28246,\"monthlyRows\":112952}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "source.summary_grain_unique",
+          "evidence": "{\"duplicatedKeys\":0,\"affectedRows\":0,\"samples\":[]}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "source.total_amount_reconciliation",
+          "evidence": "{\"summaryAmount\":310438158.5800021,\"monthlyAmount\":310438158.58000386,\"difference\":-1.7285346984863281e-06}"
+        },
+        {
+          "status": "PASS",
+          "status_rank": 1.0,
+          "check": "source.total_qty_reconciliation",
+          "evidence": "{\"summaryQty\":52433648,\"monthlyQty\":52433648,\"difference\":0}"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "brand_backtest_result",
+      "label": "브랜드 탭 라이브 백테스트 결과",
+      "path": "artifacts/brand_backtest_20260715.json"
+    },
+    {
+      "id": "issues_sql",
+      "label": "정합성 이슈 요약 SQL",
+      "query": {
+        "engine": "sqlite",
+        "language": "sql",
+        "sql": "SELECT severity, severity_rank, issue, affected, affected_pct, impact, recommendation FROM issues ORDER BY severity_rank DESC, affected_pct DESC",
+        "description": "검증 이슈를 심각도와 영향률 순으로 조회합니다.",
+        "executed_at": "2026-07-15T02:55:57.791Z",
+        "tables_used": [
+          "issues"
+        ],
+        "filters": [
+          "분석 기간: 2024-07-14 ~ 2026-07-14"
+        ],
+        "metric_definitions": [
+          "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+        ]
+      }
+    },
+    {
+      "id": "sku_share_sql",
+      "label": "SKU 집중도 비교 SQL",
+      "query": {
+        "engine": "sqlite",
+        "language": "sql",
+        "sql": "SELECT brand, series, share_pct, sku_count, true_top1_share_pct, ui_top1_share_pct FROM sku_share_chart ORDER BY rowid",
+        "description": "화면 표시 비중과 브랜드 전체 기준 실제 Top 5 비중을 조회합니다.",
+        "executed_at": "2026-07-15T02:55:57.791Z",
+        "tables_used": [
+          "sku_share_chart"
+        ],
+        "filters": [
+          "분석 기간: 2024-07-14 ~ 2026-07-14"
+        ],
+        "metric_definitions": [
+          "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+        ]
+      }
+    },
+    {
+      "id": "sku_examples_sql",
+      "label": "SKU 집중도 사례 SQL",
+      "query": {
+        "engine": "sqlite",
+        "language": "sql",
+        "sql": "SELECT brand, skuCount, brandAmount, topFiveAmount, trueTopFiveSharePct, uiTopFiveSharePct, trueTopOneSharePct, uiTopOneSharePct, topOneOverstatementPp FROM sku_examples ORDER BY topOneOverstatementPp DESC",
+        "description": "Top 1 과대 표시 폭이 큰 브랜드를 조회합니다.",
+        "executed_at": "2026-07-15T02:55:57.791Z",
+        "tables_used": [
+          "sku_examples"
+        ],
+        "filters": [
+          "분석 기간: 2024-07-14 ~ 2026-07-14"
+        ],
+        "metric_definitions": [
+          "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+        ]
+      }
+    },
+    {
+      "id": "peak_examples_sql",
+      "label": "최고월 왜곡 사례 SQL",
+      "query": {
+        "engine": "sqlite",
+        "language": "sql",
+        "sql": "SELECT brand, uiPeakMonth, uiPeakAmount, normalizedPeakMonth, normalizedPeakAverageAmount FROM peak_examples ORDER BY uiPeakAmount DESC",
+        "description": "다년 달력월 합산과 완료월 연평균의 최고월이 다른 브랜드를 조회합니다.",
+        "executed_at": "2026-07-15T02:55:57.791Z",
+        "tables_used": [
+          "peak_examples"
+        ],
+        "filters": [
+          "분석 기간: 2024-07-14 ~ 2026-07-14"
+        ],
+        "metric_definitions": [
+          "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+        ]
+      }
+    },
+    {
+      "id": "checks_sql",
+      "label": "전체 검증 결과 SQL",
+      "query": {
+        "engine": "sqlite",
+        "language": "sql",
+        "sql": "SELECT status, status_rank, [check], evidence FROM checks ORDER BY status_rank DESC, [check] ASC",
+        "description": "전체 백테스트 검증 결과를 실패 우선으로 조회합니다.",
+        "executed_at": "2026-07-15T02:55:57.791Z",
+        "tables_used": [
+          "checks"
+        ],
+        "filters": [
+          "분석 기간: 2024-07-14 ~ 2026-07-14"
+        ],
+        "metric_definitions": [
+          "비중은 매출액 기준이며 percentage-point 값으로 저장됩니다."
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Backend build context = ESM_SCM8/. Keep only what Dockerfile.backend copies.
+frontend
+tests
+docs
+experiments
+artifacts
+infra
+.venv
+**/__pycache__
+**/*.pyc
+backend/storage
+backend/.env
+*.md
+*.bat

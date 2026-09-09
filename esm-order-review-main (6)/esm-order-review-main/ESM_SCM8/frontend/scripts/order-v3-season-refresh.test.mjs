@@ -1,0 +1,21 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { refreshProgress, refreshFailure, hasCurrentSalesPolicy } from "../components/redesign/screens/season-factor/refreshProgress.ts";
+
+assert.match(refreshProgress({ status: "queued", waiting_for_entity: "HQ" }), /HQ.*끝나면/);
+assert.match(refreshProgress({ status: "running", stage: "fetching", month: "2024-10", completed_months: 1, total_months: 24, completed_pages: 3, total_pages: 10 }), /1\/24개월.*2024-10.*3\/10페이지/);
+assert.match(refreshProgress({ status: "running", stage: "calculating" }), /계산하고 검증/);
+assert.equal(refreshProgress({ status: "succeeded" }), "");
+assert.equal(refreshProgress({ status: "failed" }), "");
+assert.equal(refreshFailure({ status: "failed", month: "2024-09", error: "수불 API 검증 실패" }), "2024-09 조회 중 · 수불 API 검증 실패");
+assert.equal(refreshFailure({ status: "failed", month: "2024-09", error: "2024-09 판매 데이터 확인 중" }), "2024-09 판매 데이터 확인 중");
+assert.match(refreshFailure({ status: "failed" }), /기존 버전은 유지/);
+assert.match(refreshFailure({ status: "failed", completed_pages: 3, total_pages: 10 }), /3\/10페이지 검증 완료/);
+assert.equal(hasCurrentSalesPolicy({}), false);
+assert.equal(hasCurrentSalesPolicy({ source_request: { demand_policy: "V3_STOCK_IN_OUT_SALE_AND_ONLINE_V1" } }), true);
+const screen = readFileSync(new URL("../components/redesign/screens/season-factor/SeasonFactorManagementScreen.tsx", import.meta.url), "utf8");
+assert.match(screen, /getSeasonFactorRefreshStatus/);
+assert.match(screen, /current !== generation.current/);
+assert.match(screen, /job.entity_code !== selectedEntity/);
+assert.match(screen, /clearTimeout\(timer\)/);
+console.log("V3 season refresh: queue/progress/source policy/entity lifecycle checks passed.");

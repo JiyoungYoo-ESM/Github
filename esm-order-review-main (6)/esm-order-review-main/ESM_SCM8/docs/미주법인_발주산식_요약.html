@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>발주분석 V2 미주법인 발주 산식 가이드</title>
+<style>
+  :root{
+    --shortage:#1f5fbf; --shortage-bg:#eaf1fd;
+    --cash:#1a8a5f; --cash-bg:#e7f7ef;
+    --ink:#1c2430; --sub:#6b7480; --line:#e3e7ec;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;color:var(--ink);line-height:1.5;max-width:900px;margin:0 auto;padding:26px 28px;background:#fff;font-size:13px;}
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--sub);font-size:12px;margin-bottom:14px;}
+  h2{font-size:14.5px;margin:20px 0 8px;color:var(--ink);border-bottom:2px solid var(--ink);padding-bottom:5px;}
+
+  .lead{background:#f7f8fa;border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:6px;padding:11px 13px;margin-bottom:4px;}
+
+  .flow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:10px 0;}
+  .box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:center;min-width:96px;}
+  .box b{display:block;font-size:12.5px;}
+  .box span{font-size:10.5px;color:var(--sub);}
+  .op{font-size:16px;color:#aab1bb;font-weight:bold;}
+  .result{background:var(--ink);color:#fff;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12.5px;text-align:center;}
+
+  table{width:100%;border-collapse:collapse;margin-bottom:6px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:#f4f6f9;color:#444;font-size:12px;}
+  th.modecol-shortage,td.modecol-shortage{background:var(--shortage-bg);}
+  th.modecol-cash,td.modecol-cash{background:var(--cash-bg);}
+
+  .note{font-size:11.5px;color:var(--sub);margin-top:3px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+  .callout{border-radius:8px;padding:10px 12px;font-size:12.5px;border:1px solid var(--line);}
+  .callout.s{background:var(--shortage-bg);border-color:#c6d9f5;}
+  .callout.c{background:var(--cash-bg);border-color:#bfe6d2;}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px;color:#fff;}
+  .pill.s{background:var(--shortage);}
+  .pill.c{background:var(--cash);}
+</style>
+</head>
+<body>
+
+<h1>발주분석 V2 미주법인 발주 산식 가이드</h1>
+<div class="sub">미주법인 4주 정기보충 (R,S) — 최근 12주 수요와 AIR·SEA 실측 리드타임 적용 방식</div>
+
+<div class="lead">
+발주량(Q)은 <b>목표재고(S) − 보유전체(IP)</b>의 부족분이며, 0보다 작으면 0으로 하고 낱개 단위로 올림합니다. 목표재고는 <b>L1 리드타임수요 + L2 안전재고(SS) + L3 검토주기수요</b>로 구성되고, <span class="pill s">쇼티지 방어</span>는 SEA, <span class="pill c">현금흐름 우선</span>은 AIR 실측 리드타임을 적용합니다.
+</div>
+
+<h2>1. 산식 전체 구조 (레이어 1·2·3)</h2>
+<div class="flow">
+  <div class="box"><b>L1 리드타임수요</b><span>d̄ × L</span></div>
+  <div class="op">+</div>
+  <div class="box"><b>L2 안전재고(SS)</b><span>Z × √(Pσ_d²+d̄²σ_L²)</span></div>
+  <div class="op">+</div>
+  <div class="box"><b>L3 검토주기수요</b><span>d̄ × 4주</span></div>
+  <div class="op">−</div>
+  <div class="box"><b>보유전체(IP)</b><span>미입고+본사+운송중+현지</span></div>
+  <div class="op">=</div>
+  <div class="result">발주량(Q)<br>0 이상·낱개 올림</div>
+</div>
+
+<h2>2. 레이어별 정의 · 산식 · 미주 기준</h2>
+<table>
+<tr><th>레이어</th><th>정의</th><th>산식</th><th>미주 기준</th></tr>
+<tr>
+  <td><b>L1</b> 리드타임수요</td>
+  <td>발주 후 현지 입고까지 팔릴 것으로 예상되는 수량</td>
+  <td>d̄ × L</td>
+  <td>L은 AIR 또는 SEA의 최근 12개월 실측 평균 리드타임(일 ÷ 7)</td>
+</tr>
+<tr>
+  <td><b>L2</b> 안전재고(SS)</td>
+  <td>수요와 리드타임 변동에 대비한 완충 재고</td>
+  <td>SS원값 = Z × √(P × σ_d² + d̄² × σ_L²)<br>SS = MIN(MAX(SS원값, d̄ × 2), d̄ × 8)</td>
+  <td>P = L + 4주 · 미주 안전재고 하한 2주분 / 상한 8주분</td>
+</tr>
+<tr>
+  <td><b>L3</b> 검토주기수요</td>
+  <td>다음 정기 검토까지 필요한 수요</td>
+  <td>d̄ × R</td>
+  <td>R = 4주</td>
+</tr>
+</table>
+<p class="note">d̄ = 현재 주를 제외한 직전 12개 완료 주의 주평균 유효수요, σ_d = 같은 12주 수요의 표본표준편차(STDEV.S), σ_L = 리드타임 표본표준편차(일 기준 STDEV.S ÷ 7). 중간값은 소수 정밀도를 유지합니다.</p>
+
+<h2>3. Z값 — 등급 × 시나리오</h2>
+<table>
+<tr><th>등급</th><th class="modecol-shortage">🛡 쇼티지 방어 · SEA</th><th class="modecol-cash">💰 현금흐름 우선 · AIR</th><th>적용 의미</th></tr>
+<tr>
+  <td><b>주력(MAJOR)</b><br><span class="note">누적 매출 상위 80% 구간</span></td>
+  <td class="modecol-shortage">Z 1.68</td>
+  <td class="modecol-cash">Z 1.28</td>
+  <td>결품 영향이 큰 주력 SKU는 더 높은 서비스 수준을 적용</td>
+</tr>
+<tr>
+  <td><b>일반(MINOR)</b></td>
+  <td class="modecol-shortage">Z 1.28</td>
+  <td class="modecol-cash">Z 1.08</td>
+  <td>일반 SKU는 주력 SKU보다 낮은 Z를 적용해 재고 부담을 조절</td>
+</tr>
+</table>
+<p class="note">두 시나리오는 같은 수요·재고·Pareto 모집단과 같은 원천 스냅샷을 사용합니다. 달라지는 값은 적용 운송수단의 L·σ_L과 등급별 Z입니다.</p>
+
+<h2>4. 계산 예시 (쇼티지 방어 · 주력 SKU)</h2>
+<table>
+<tr><th>구성</th><th class="modecol-shortage">🛡 계산</th><th class="modecol-shortage">결과</th></tr>
+<tr><td>입력값</td><td class="modecol-shortage">d̄=80개/주, σ_d=50개/주, L=8주, σ_L=1.2주, R=4주, Z=1.68, IP=650개</td><td class="modecol-shortage">P = 8 + 4 = 12주</td></tr>
+<tr><td>L1 리드타임수요</td><td class="modecol-shortage">80 × 8</td><td class="modecol-shortage">640개</td></tr>
+<tr><td>L2 안전재고(SS)</td><td class="modecol-shortage">1.68 × √(12 × 50² + 80² × 1.2²)</td><td class="modecol-shortage">332.69개<br><span class="note">하한 160 · 상한 640 안이므로 원값 적용</span></td></tr>
+<tr><td>L3 검토주기수요</td><td class="modecol-shortage">80 × 4</td><td class="modecol-shortage">320개</td></tr>
+<tr><td><b>목표재고(S)</b></td><td class="modecol-shortage">640 + 332.69 + 320</td><td class="modecol-shortage"><b>1,292.69개</b></td></tr>
+<tr><td><b>발주량(Q)</b></td><td class="modecol-shortage">CEILING(MAX(0, 1,292.69 − 650), 1)</td><td class="modecol-shortage"><b>643개</b></td></tr>
+</table>
+<p class="note">위 L과 σ_L은 손검산용 승인 예시입니다. 실제 분석에서는 실행 시점의 최근 12개월 AIR·SEA 입고완료 실측값을 사용합니다.</p>
+
+<h2>5. 시나리오는 언제 쓰나</h2>
+<div class="grid2">
+  <div class="callout s"><span class="pill s">쇼티지 방어</span>SEA 리드타임과 높은 Z를 적용해 결품 위험을 더 보수적으로 방어합니다. 현재 공식 기본 적용 시나리오입니다.</div>
+  <div class="callout c"><span class="pill c">현금흐름 우선</span>AIR 리드타임과 낮은 Z를 적용해 목표재고와 현금 부담의 균형을 우선합니다.</div>
+</div>
+
+<h2>6. 현재 웹사이트 계산 기준</h2>
+<table>
+<tr><th>항목</th><th>적용 기준</th></tr>
+<tr><td><b>수요 표본</b></td><td>현재 주 제외, 직전 12개 완료 주. 무판매 주는 0으로 채우며 FREE SAMPLE 등 무상샘플 거래행과 amount&lt;0·qty&gt;0 사고처리 행은 발주 수요·Pareto에서 제외</td></tr>
+<tr><td><b>실측 리드타임</b></td><td>최근 12개월 입고완료 Packing No 기준. AIR·SEA 각각 1~180일 유효 표본이 2건 이상이어야 하며, 부족하면 고정값으로 대체하지 않고 계산 차단</td></tr>
+<tr><td><b>보유전체(IP)</b></td><td>미입고 + 본사창고 가용 + 운송중 + 미주 현지가용. 입고완료 수량은 이미 가용재고에 반영되므로 별도로 더하지 않음</td></tr>
+<tr><td><b>최종 수량</b></td><td>Q = CEILING(MAX(0, S − IP), 1). 발주점 게이트·MOQ·박스입수·발주배수는 사용하지 않음</td></tr>
+<tr><td><b>미입고 불신 상한</b></td><td>참고값은 IP에서 미입고를 제외해 같은 S와 비교. 공식 계산값은 미입고를 인정한 기본 제안수량</td></tr>
+</table>
+
+</body>
+</html>

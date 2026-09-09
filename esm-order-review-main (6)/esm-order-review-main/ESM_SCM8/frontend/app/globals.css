@@ -1,0 +1,345 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --accent: #e6002d;
+  --accent-dark: #b80024;
+  --accent-tint: #fff5f6;
+  --bg: #f5f5f6;
+  --surface: #ffffff;
+  --surface-soft: #fafafa;
+  --sidebar: #0e0e11;
+  --dropdown-panel: #151519;
+  --border: #e8e8eb;
+  --border-soft: #ededf0;
+  --divider: #f0f0f2;
+  --row: #f4f4f5;
+  --track: #f1f1f4;
+  --seg-bg: #f1f1f3;
+  --text: #111114;
+  --text-strong: #18181b;
+  --text-700: #27272a;
+  --text-2: #3f3f46;
+  --text-3: #52525b;
+  --muted: #71717a;
+  --muted-2: #a1a1aa;
+  --pos: #16a34a;
+  --pos-strong: #15803d;
+  --pos-bg: #f0fdf4;
+  --pos-border: #bbf7d0;
+  --warn: #d97706;
+  --warn-strong: #92400e;
+  --warn-bg: #fffbeb;
+  --warn-border: #fde68a;
+  --warn-orange: #c2410c;
+  --warn-bg2: #fff7ed;
+  --warn-border2: #fed7aa;
+  --lens-country: #2563eb;
+  --lens-country-bg: #eff6ff;
+  --lens-brand: #7c3aed;
+  --lens-sku: #d97706;
+  --lens-cross: #059669;
+  --about-accent: #c0392b;
+  --about-accent-strong: #8b2520;
+  --about-warm: #f0997b;
+  --datepicker-header: var(--accent);
+  --datepicker-border: #d8d8d8;
+  --datepicker-cell: #d6d6d6;
+  --datepicker-cell-text: #555555;
+  --datepicker-selected: #f4df55;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+body {
+  margin: 0;
+  background: #f5f5f6;
+  color: #111114;
+  font-family: "Pretendard", "Pretendard Variable", -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+::selection {
+  background: #ffd8e1;
+  color: #b80024;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Keep sidebar navigation scrollable without the high-contrast native gutter. */
+.analytics-sidebar-scroll {
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  scrollbar-width: thin;
+}
+
+.analytics-sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.analytics-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.analytics-sidebar-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.analytics-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.analytics-sidebar-scroll::-webkit-scrollbar-button,
+.analytics-sidebar-scroll::-webkit-scrollbar-corner {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-26px);
+  }
+}
+
+.animate-hero-float {
+  animation: hero-float 5.4s ease-in-out infinite;
+}
+
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: translateY(8px);
+    opacity: 0.95;
+  }
+}
+
+.animate-scroll-cue {
+  animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+@keyframes route-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-route-loader {
+  animation: route-loader-spin 760ms linear infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s ease both;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.36s ease;
+}
+
+.scroll-rise {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 760ms ease,
+    transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.supports-scroll-reveal .scroll-rise {
+  opacity: 0;
+  transform: translateY(44px);
+}
+
+.scroll-rise.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-float {
+    animation: none;
+  }
+
+  .animate-scroll-cue {
+    animation: none;
+  }
+
+  .animate-fade-up,
+  .animate-shake {
+    animation: none;
+  }
+
+  .scroll-rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .silicon-analytics-shell .analytics-sidebar {
+    width: 234px;
+  }
+
+  .silicon-analytics-shell .analytics-sidebar > div:first-child {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .silicon-analytics-shell .analytics-sidebar nav button {
+    height: 34px;
+    gap: 9px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12.5px;
+  }
+
+  .silicon-analytics-shell .analytics-sidebar nav svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar {
+    min-height: 58px;
+    gap: 12px;
+    padding: 10px 18px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar h1 {
+    font-size: 17px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar > div:first-child {
+    min-width: 104px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar label {
+    max-width: 320px;
+    height: 34px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar button {
+    min-height: 32px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar > div:nth-child(2) {
+    height: 36px;
+  }
+
+  .silicon-analytics-shell .analytics-topbar > div:nth-child(2) button {
+    height: 28px;
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 12.5px;
+  }
+
+  .silicon-analytics-shell header + div,
+  .silicon-analytics-shell header + section {
+    font-size: 13px;
+  }
+
+  .silicon-analytics-shell [class*="max-w-[1320px]"] {
+    max-width: min(1120px, calc(100vw - 252px));
+  }
+
+  .silicon-analytics-shell [class*="max-w-[980px]"] {
+    max-width: min(900px, calc(100vw - 252px));
+  }
+
+  .silicon-analytics-shell [class*="grid-cols-4"] {
+    gap: 12px;
+  }
+
+  .silicon-analytics-shell table th {
+    padding: 10px 12px;
+    font-size: 11.5px;
+  }
+
+  .silicon-analytics-shell table td {
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
+  .silicon-analytics-shell table.min-w-\[1060px\] {
+    min-width: 960px;
+  }
+
+  .silicon-analytics-shell table.min-w-\[760px\] {
+    min-width: 700px;
+  }
+}

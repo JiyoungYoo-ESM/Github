@@ -1,0 +1,27 @@
+node_modules/
+.next/
+dist/
+build/
+.env
+.env.local
+.env.*.local
+*.xlsx
+!ESM_SCM8/data/category_corrections/*.xlsx
+*.xls
+*.csv
+*.log
+*.err.log
+*.out.log
+backend/storage/
+ESM_SCM8/backend/storage/
+# openapi-typescript 입력 원본. types/openapi.d.ts(커밋 대상)의 생성 재료일 뿐이라
+# 매번 백엔드에서 새로 뽑는다 — 백엔드 코드가 정본(source of truth)이다.
+ESM_SCM8/frontend/openapi.json
+outputs/
+uploads/
+**/__pycache__/
+__pycache__/
+.DS_Store
+__MACOSX/
+_tmp_*.py
+.git-backups/

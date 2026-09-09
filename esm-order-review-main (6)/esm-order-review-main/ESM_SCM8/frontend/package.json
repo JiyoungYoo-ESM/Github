@@ -1,0 +1,79 @@
+{
+  "name": "esm-scm-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:lan": "next dev -H 0.0.0.0 -p 3000",
+    "start": "next start -H ::",
+    "clean:next-dev-types": "node -e \"const fs=require('fs'); const path='.next/dev/types'; if (fs.existsSync(path)) for (const file of fs.readdirSync(path)) if (/^routes\\.d-.+\\.ts$/.test(file)) fs.rmSync(require('path').join(path,file), { force: true });\"",
+    "prebuild": "npm run clean:next-dev-types",
+    "build": "next build",
+    "pretypecheck": "npm run clean:next-dev-types",
+    "typecheck": "tsc --noEmit",
+    "lint": "node scripts/design-token-audit.mjs",
+    "lint:js": "eslint .",
+    "lint:ci": "eslint . --max-warnings 0",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/api-base-policy.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/auth-session-consistency.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/amount-permissions.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-access.test.mjs && node scripts/ui-regression.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/country-quarter-growth.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/ytd-yoy-comparison.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-analysis-data-integrity.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/brand-analysis.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/cross-analysis-share.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-summary.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/cross-analysis-mom.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-period-model.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-report-document.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-report-model.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-matrix.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/season-calendar.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/entity-permissions.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/lead-times.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/season-cache-validity.test.mjs && node scripts/order-logic-v2-lead-time-basis.test.mjs && npm run test:order-v3-scenario-comparison",
+    "test:order-v3-season-default": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-v3-season-default.test.mjs",
+    "test:order-v3-review-list": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-v3-review-list.test.mjs",
+    "test:order-v3-scenario-comparison": "node scripts/order-v3-scenario-comparison.test.mjs",
+    "test:order-v3-entity-scope": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-v3-entity-scope.test.mjs",
+    "posttest": "npm run test:order-v3-entity-scope && npm run test:order-v3-excel && npm run test:order-v3-delivery && npm run test:order-v3-export-transport",
+    "test:order-v3-export-transport": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-v3-export-transport.test.mjs",
+    "test:order-v3-delivery": "node scripts/order-v3-delivery.test.mjs && node scripts/order-v3-job-session.test.mjs",
+    "test:order-v3-excel": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-v3-excel.test.mjs",
+    "test:corporate-inventory-access": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/corporate-inventory-access.test.mjs",
+    "test:order-analysis": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-analysis-data-integrity.test.mjs",
+    "test:brand-analysis": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/brand-analysis.test.mjs",
+    "test:brand-live": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/brand-analysis-live-backtest.mjs",
+    "test:cross-live": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/cross-analysis-live-backtest.mjs",
+    "test:cross-interaction": "node scripts/cross-analysis-interaction.test.mjs",
+    "test:season-live": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/season-calendar-live-backtest.mjs",
+    "test:lead-times": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/lead-times.test.mjs",
+    "test:order-v2-lead-time-basis": "node scripts/order-logic-v2-lead-time-basis.test.mjs",
+    "smoke": "node scripts/route-smoke.mjs",
+    "test:e2e": "node scripts/e2e-workflow.mjs",
+    "smoke:deployment": "node scripts/deployment-smoke.mjs",
+    "openapi:export": "cd .. && python -m backend.scripts.export_openapi",
+    "openapi:generate": "openapi-typescript openapi.json -o types/openapi.d.ts",
+    "openapi:update": "npm run openapi:export && npm run openapi:generate",
+    "openapi:check": "npm run openapi:update && git diff --exit-code -- types/openapi.d.ts",
+    "ci": "npm run typecheck && npm run lint && npm run lint:ci && npm test && npm run build"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
+    "lucide-react": "^0.468.0",
+    "next": "16.2.11",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.6",
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.2.11",
+    "openapi-typescript": "^7.13.0",
+    "playwright": "^1.61.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
+  },
+  "overrides": {
+    "postcss": "$postcss",
+    "next": {
+      "sharp": "0.35.0"
+    },
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
+  }
+}

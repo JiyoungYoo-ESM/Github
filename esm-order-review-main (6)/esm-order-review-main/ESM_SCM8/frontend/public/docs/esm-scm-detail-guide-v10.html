@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silicon2 ESM SCM — 사용설명서(상세 가이드)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap');
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --black:#111110; --ink:#2C2C2A; --muted:#5F5E5A; --faint:#B4B2A9;
+    --line:#E8E6DF; --bg:#FAFAF8; --surface:#F4F3EF;
+    --accent:#C0392B; --accent2:#8B2520; --teal:#0F6E56; --blue:#185FA5; --amber:#854F0B;
+  }
+  html { font-size:16px; scroll-behavior:smooth; scroll-padding-top:72px; }
+  body { font-family:'Noto Sans KR','Inter',sans-serif; background:var(--bg); color:var(--ink); line-height:1.7; -webkit-font-smoothing:antialiased; }
+
+  nav { position:sticky; top:0; z-index:100; background:rgba(250,250,248,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:56px; }
+  .nav-logo { font-family:'Inter',sans-serif; font-size:14px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--black); }
+  .nav-logo span { color:var(--accent); }
+  .nav-links { display:flex; gap:1.5rem; list-style:none; }
+  .nav-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+  .nav-links a:hover { color:var(--black); }
+
+  .layout { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:200px 1fr; gap:3rem; padding:3rem 2rem; }
+  .toc { position:sticky; top:80px; align-self:start; font-size:13px; max-height:calc(100vh - 100px); overflow-y:auto; }
+  .toc-title { font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--faint); margin-bottom:1rem; }
+  .toc ul { list-style:none; }
+  .toc > ul > li > a { display:block; padding:0.35rem 0; color:var(--ink); text-decoration:none; font-weight:500; transition:color .2s; }
+  .toc ul ul { margin:0.2rem 0 0.6rem 0.75rem; border-left:1px solid var(--line); }
+  .toc ul ul a { display:block; padding:0.2rem 0 0.2rem 0.75rem; color:var(--muted); text-decoration:none; font-size:12px; transition:color .2s; }
+  .toc a:hover { color:var(--accent); }
+
+  .content { min-width:0; }
+  .doc-header { margin-bottom:3rem; }
+  .eyebrow { font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; display:flex; align-items:center; gap:0.75rem; }
+  .eyebrow::after { content:''; flex:1; max-width:40px; height:1px; background:var(--accent); }
+  .doc-title { font-family:'Inter',sans-serif; font-size:clamp(1.8rem,4vw,2.5rem); font-weight:300; color:var(--black); letter-spacing:-0.02em; line-height:1.15; }
+  .doc-title strong { font-weight:600; }
+  .doc-sub { font-size:15px; color:var(--muted); margin-top:1rem; }
+
+  h2.module { font-family:'Inter',sans-serif; font-size:1.5rem; font-weight:500; color:var(--black); margin:3.5rem 0 0.5rem; padding-top:1.5rem; border-top:2px solid var(--black); letter-spacing:-0.01em; }
+  h2.module:first-of-type { margin-top:0; }
+  .module-tag { font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1.5rem; }
+  h3.screen { font-size:1.15rem; font-weight:500; color:var(--black); margin:2.5rem 0 0.75rem; }
+  h4.sub { font-size:0.95rem; font-weight:500; color:var(--accent2); margin:1.5rem 0 0.5rem; }
+
+  p { font-size:15px; color:var(--ink); margin-bottom:0.75rem; }
+  .lead { font-size:15px; color:var(--muted); font-style:italic; border-left:3px solid var(--line); padding-left:1rem; margin:0.75rem 0 1.25rem; }
+  .note { font-size:13px; color:var(--faint); margin:0.5rem 0; }
+
+  table.t { width:100%; border-collapse:collapse; margin:1rem 0 1.5rem; border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:13.5px; }
+  table.t th { font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; text-align:left; padding:0.7rem 1rem; background:var(--surface); color:var(--muted); }
+  table.t td { padding:0.6rem 1rem; border-top:1px solid var(--line); color:var(--ink); vertical-align:top; }
+  table.t td:first-child { font-weight:500; color:var(--ink); }
+  table.t td.desc { font-weight:400; color:var(--muted); }
+
+  ul.bullets { list-style:none; margin:0.75rem 0 1.5rem; }
+  ul.bullets li { font-size:14px; color:var(--ink); padding:0.35rem 0 0.35rem 1.25rem; position:relative; line-height:1.6; }
+  ul.bullets li::before { content:'—'; position:absolute; left:0; color:var(--accent); }
+
+  ol.steps { list-style:none; counter-reset:st; margin:0.75rem 0 1.5rem; }
+  ol.steps li { counter-increment:st; position:relative; padding:0.45rem 0 0.45rem 2.4rem; font-size:14.5px; line-height:1.65; }
+  ol.steps li::before { content:counter(st); position:absolute; left:0; top:0.5rem; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--accent); color:#fff; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+  ol.steps li b { color:var(--accent2); }
+
+  .tip { background:#FDF3F1; border:1px solid #F0D5CF; border-radius:10px; padding:0.9rem 1.15rem; margin:1rem 0 1.5rem; font-size:14px; }
+  .tip b { color:var(--accent2); }
+  .word { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:0.9rem 1.15rem; margin:1rem 0 1.5rem; font-size:13.5px; color:var(--muted); }
+  .word b { color:var(--ink); }
+  .srcbox { background:#EFF4FA; border:1px solid #CBDCEE; border-radius:10px; padding:0.9rem 1.15rem; margin:0.75rem 0 1.25rem; font-size:13.5px; }
+  .srcbox b { color:var(--blue); }
+  code { background:var(--surface); border:1px solid var(--line); padding:1px 6px; border-radius:5px; font-size:12.5px; font-family:'D2Coding',Consolas,monospace; }
+
+  .calc { background:#fff; border:1px solid var(--line); border-radius:12px; padding:1.25rem 1.4rem; margin:1rem 0 1.5rem; }
+  .calc .calc-title { font-weight:700; font-size:15px; color:var(--black); margin-bottom:0.3rem; }
+  .calc .calc-why { font-size:13.5px; color:var(--muted); margin-bottom:0.75rem; }
+  .calc .calc-f { background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:0.7rem 1rem; text-align:center; font-size:15px; font-weight:500; color:var(--black); margin-bottom:0.75rem; }
+  .calc .calc-f b { color:var(--accent); }
+  .calc .calc-ex { font-size:13.5px; color:var(--ink); background:#FBF8EF; border:1px solid #EDE4C8; border-radius:8px; padding:0.6rem 1rem; }
+  .calc .calc-ex b { color:var(--amber); }
+
+  .src { display:inline-block; font-size:11px; font-weight:600; padding:1px 8px; border-radius:10px; white-space:nowrap; margin:1px 2px 1px 0; font-family:'Inter','Noto Sans KR',sans-serif; }
+  .s-mi{background:#E8F1FA;color:#185FA5;} .s-eu{background:#E6F3EE;color:#0F6E56;}
+  .s-un{background:#F1EAF9;color:#6D3FB0;} .s-sko{background:#FBEEE4;color:#A34E12;}
+  .s-sale{background:#FBF3D9;color:#854F0B;} .s-item{background:#E5F4F4;color:#0C7D80;}
+  .s-calc{background:#FBEAE7;color:#C0392B;} .s-ui{background:#EDECE8;color:#5F5E5A;} .s-fx{background:#E9EDF9;color:#3D51B5;}
+
+  footer { border-top:1px solid var(--line); padding:2rem; text-align:center; font-size:12px; color:var(--faint); font-family:'Inter',sans-serif; }
+
+  @media (max-width:840px) {
+    .layout { grid-template-columns:1fr; gap:0; }
+    .toc { display:none; }
+    nav { padding:0 1rem; } .nav-links { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Silicon<span>2</span> · ESM SCM</div>
+  <ul class="nav-links">
+    <li><a href="#start">시작</a></li>
+    <li><a href="#m1">발주</a></li>
+    <li><a href="#m2">분석</a></li>
+    <li><a href="#m3">데이터 점검</a></li>
+    <li><a href="#m4">계산 로직</a></li>
+    <li><a href="#m5">경영·지원</a></li>
+    <li><a href="#m6">용어·FAQ</a></li>
+  </ul>
+</nav>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">목차</div>
+  <ul>
+    <li><a href="#start">0. 시작하기 전에</a>
+      <ul>
+        <li><a href="#s01">0-1. 데이터 출처 배지</a></li>
+        <li><a href="#s02">0-2. 법인 · Site 매핑</a></li>
+        <li><a href="#s03">0-3. CMS 추출 설정</a></li>
+        <li><a href="#s04">0-4. 계정 권한</a></li>
+      </ul>
+    </li>
+    <li><a href="#m1">1. 발주 · Quantitative</a>
+      <ul>
+        <li><a href="#s11">1-1. 발주분석 V3</a></li>
+        <li><a href="#s12">1-2. 계절지수 관리</a></li>
+        <li><a href="#s13">1-3. V1·V2 · 재고 공백</a></li>
+      </ul>
+    </li>
+    <li><a href="#m2">2. 분석 · Insight</a>
+      <ul>
+        <li><a href="#s21">2-1. 데이터 입력</a></li>
+        <li><a href="#s22">2-2. 국가</a></li>
+        <li><a href="#s23">2-3. 브랜드</a></li>
+        <li><a href="#s24">2-4. 제품군</a></li>
+        <li><a href="#s25">2-5. SKU</a></li>
+        <li><a href="#s26">2-6. 시즌 캘린더</a></li>
+        <li><a href="#s27">2-7. 교차분석</a></li>
+        <li><a href="#s28">2-8. 브랜드 리포트</a></li>
+        <li><a href="#s29">2-9. 성분 (준비 중)</a></li>
+      </ul>
+    </li>
+    <li><a href="#m3">3. 데이터 점검 · Quality</a></li>
+    <li><a href="#m4">4. 계산 로직</a></li>
+    <li><a href="#m5">5. 경영 · 지원</a></li>
+    <li><a href="#m6">6. 용어 사전 · FAQ</a></li>
+  </ul>
+</aside>
+
+<main class="content">
+
+<div class="doc-header">
+  <div class="eyebrow">사용설명서(상세 가이드)</div>
+  <h1 class="doc-title">데이터 출처와 <strong>계산 로직</strong> 한눈에 보기</h1>
+  <p class="doc-sub">웹에 게시된 <b>사용설명서</b>의 화면 구성은 같은 상세판입니다. 여기서는 화면마다 <b>이 숫자가 어디서 오는지(데이터 출처)</b>와 <b>계산 로직</b>이 더해져 있습니다. <b>현재 운영 중인 발주 로직(버전 3 · 수요예측+계절조정, 내부 버전 v3.27)</b> 기준이며, 계산 로직은 모두 <a href="#m4">4장</a>에서 실제 숫자 예시와 함께 풀어서 설명합니다. 방향안(버전 4)은 아직 확정되지 않아 이 문서에 포함하지 않습니다.</p>
+</div>
+
+<!-- ==================== 0. 시작하기 전에 ==================== -->
+<h2 class="module" id="start">0. 시작하기 전에</h2>
+<div class="module-tag">Before You Start</div>
+
+<h3 class="screen" id="s01">0-1. 데이터 출처 배지</h3>
+<p>이 웹의 모든 숫자는 CMS에서 자동으로 가져옵니다. 문서 곳곳의 색깔 배지가 그 출처를 표시합니다.</p>
+<table class="t">
+  <thead><tr><th>배지</th><th>무엇인가</th><th>CMS의 어디서 오나</th></tr></thead>
+  <tbody>
+    <tr><td><span class="src s-sko">SKO재고</span></td><td class="desc">현지 창고의 재고·단가·최근 3개월 판매 → <b>발주 화면의 기본 데이터</b></td><td class="desc"><code>Report &gt; 재고 &gt; 법인 현지 창고 재고 현황</code></td></tr>
+    <tr><td><span class="src s-mi">미입고</span></td><td class="desc">브랜드에 주문(PO)했지만 아직 안 들어온 수량. ① 미입고 · ② PNFM확정 · ③ 입고진행중 · ④ 입고완료 4단계로 구분됩니다</td><td class="desc"><code>Report &gt; 재고 &gt; 미입고 현황</code><br><span class="note">본사는 오포 open-PO / 입고확정 API</span></td></tr>
+    <tr><td><span class="src s-eu">EU재고</span></td><td class="desc">현지로 보내기 전, 한국 창고에서 대기 중인 재고</td><td class="desc"><code>Report &gt; 재고 &gt; EU 창고 재고 현황</code></td></tr>
+    <tr><td><span class="src s-un">이송</span></td><td class="desc">지금 현지로 이동 중인 물량 (출고일·수량·운송수단)</td><td class="desc"><code>Report &gt; 해상컨테이너 상세내역</code></td></tr>
+    <tr><td><span class="src s-sale">판매이력</span></td><td class="desc">국가·브랜드·상품별 판매 기록 → <b>분석 화면의 기본 데이터</b>이자 V3 수요예측의 원천</td><td class="desc"><code>Report &gt; 판매 &gt; 판매내역상세</code></td></tr>
+    <tr><td><span class="src s-item">상품목록</span></td><td class="desc">상품의 카테고리 정보 (기능구분1 = 대분류, 기능구분2 = 중분류)</td><td class="desc"><code>CMS &gt; 상품 &gt; 상품목록</code></td></tr>
+    <tr><td><span class="src s-fx">환율</span></td><td class="desc">선택한 법인 통화 대 KRW 환율. <b>워크스페이스에 처음 들어올 때 1회 자동 조회</b>되어 원화 환산 참고값으로 쓰입니다</td><td class="desc">외부 고시환율 API</td></tr>
+    <tr><td><span class="src s-ui">설정</span></td><td class="desc">사용자가 화면에서 선택한 값 (기간·창고·발주 시나리오 등)</td><td class="desc">—</td></tr>
+    <tr><td><span class="src s-calc">계산</span></td><td class="desc">위 데이터로 웹이 계산한 값 → <a href="#m4">4장에서 풀어서 설명</a></td><td class="desc">—</td></tr>
+  </tbody>
+</table>
+<div class="word"><b>연결 방식</b> → 모든 데이터는 <b>상품코드</b>로 연결됩니다. 데이터는 <b>분석 실행</b>(발주분석 V3) 또는 <b>분석 시작</b>(인사이트 분석)을 누르는 순간 최신으로 조회되어 고정됩니다. 버튼을 누르기 전에는 화면에 반영되지 않습니다.</div>
+<div class="tip"><b>환율은 더 이상 화면에서 입력하지 않습니다</b> → 이전 버전에는 발주 데이터 입력 화면에 '적용 환율 · 재조회 · 수동 수정' UI가 있었습니다. 현재는 워크스페이스 진입 시 1회 자동 조회한 환율을 내부적으로 보관해 원화 환산 참고값으로만 사용하며, <b>발주분석 V3의 발주필요금액은 서버가 현지 통화 원값으로 계산</b>합니다(폴란드 EUR · 미국 USD · 본사 KRW). 화면·엑셀의 원화 표기는 환산 참고값이며, 환산 때문에 발주 수량이 달라지지는 않습니다.</div>
+
+<h3 class="screen" id="s02">0-2. 법인 · Site 매핑</h3>
+<div class="word"><b>법인(Site) 선택</b> → 좌측 상단에서 조회 법인을 고릅니다. 드롭다운에는 <b>본사(스킨창고)</b>와 <b>7개 해외법인</b>이 표시되지만, 현재 실제로 데이터가 연동되어 <b>서비스 중인 곳은 본사(스킨)·폴란드·미국 3곳뿐</b>입니다. 나머지 법인은 자물쇠(🔒) 표시와 함께 "데이터 연동 준비 중"으로 나타나며 선택해도 데이터가 조회되지 않습니다. 이 문서의 데이터 출처·계산 예시는 <b>폴란드(유럽법인)</b> 기준이며, 본사(스킨)의 파라미터 차이는 <a href="#c7">계산 ⑦</a>~<a href="#c9">⑨</a>에 별도로 표기합니다.</div>
+<div class="word"><b>법인 배지</b> → 법인 이름 위에 연동 범위가 배지로 표시됩니다. <b>전체 연동</b>(발주+분석 = 폴란드·미국) · <b>분석 연동</b>(분석 전체 + 발주분석 V3는 사용 가능, <b>발주분석 V1은 미제공</b> = 본사) · <b>준비 중</b>(연동 전).</div>
+<table class="t">
+  <thead><tr><th>상태</th><th>법인(국가)</th><th>CMS/화면 Site 표기</th><th>창고</th><th>수량 필터</th></tr></thead>
+  <tbody>
+    <tr><td><b style="color:var(--teal)">서비스중</b></td><td>본사(스킨창고)</td><td class="desc"><b>Silicon2 Co., Ltd.</b> <span class="note">(WH000028, 국내 B2B)</span></td><td colspan="2" class="desc">해외법인과 별도 체계 → 국내조달 단일 경로 · 분석 창고는 전체/오포(OPO) 선택</td></tr>
+    <tr><td><b style="color:var(--teal)">서비스중</b></td><td>폴란드</td><td class="desc"><b>SKO Sp. z o.o.</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--teal)">서비스중</b></td><td>미국</td><td class="desc"><b>Stylekorean Inc.</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--faint)">🔒 준비중</b></td><td>영국</td><td class="desc"><b>STYLEKOREAN UK LIMITED</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--faint)">🔒 준비중</b></td><td>중동·두바이</td><td class="desc"><b>STYLEKOREAN MIDDLE EAST TRADING FZE</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--faint)">🔒 준비중</b></td><td>멕시코</td><td class="desc"><b>STYLEKOREAN MX S. DE R.L. DE C.V.</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--faint)">🔒 준비중</b></td><td>말레이시아</td><td class="desc"><b>STYLEKOREAN MY SDN. BHD.</b></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+    <tr><td><b style="color:var(--faint)">🔒 준비중</b></td><td>베트남</td><td class="desc"><b>STYLEKOREAN VIETNAM</b> <span class="note">— 이전 문서의 'ALL(전체 조회)' 표기에서 정식 법인명 표기로 <b>변경</b>되었습니다</span></td><td><b>ALL</b></td><td class="desc">수량 0 이상</td></tr>
+  </tbody>
+</table>
+<p class="note">출처: 법인 선택·CMS Site 드롭다운 실제 화면. 그룹 공식 법인명(About 페이지 기준)과 표기가 다른 법인이 있습니다 → 영국의 공식명 <b>STYLEKOREAN UK LTD.</b>, 두바이는 공식명 <b>STYLEKOREAN MIDDLE EAST FZE</b>(CMS Site 목록에는 TRADING FZE와 TRADING CO. L.L.C. 두 개가 함께 보이며 이 중 FZE 쪽을 사용), 멕시코는 공식명 <b>STYLEKOREAN MX S.R.L. de C.V.</b>, 베트남 참고 공식명은 STYLEKOREAN VIETNAM CO.,LTD입니다. "준비중" 5개 법인은 연동이 끝나는 대로 이 표의 상태를 갱신합니다.</p>
+<div class="tip"><b>화면에 보이는 숫자는 법인마다 다릅니다</b> → 이 문서에 나오는 환율(EUR/KRW), 리드타임(L̄)·리드타임 변동성(σ_L)·발주주기(R)·SS펜스는 <b>법인·운송수단별 실측 고정값</b>입니다(폴란드 기준 예시 포함, → <a href="#c8">계산 ⑧</a>·<a href="#c9">계산 ⑨</a>). 데이터 출처 배지 체계와 계산 공식의 큰 틀은 서비스 중인 3개 법인이 동일합니다. 다만 <b>본사(스킨)는 서비스레벨(Z)·SS펜스·리드타임 기준값을 해외법인과 별도로 관리</b>하고 <b>발주 시나리오가 리드타임을 바꾸지 않습니다</b>(국내조달 단일 경로).</div>
+
+<h3 class="screen" id="s03">0-3. CMS 추출 설정 — 발주 데이터 4종</h3>
+<p>같은 리포트라도 <b>어느 법인(Site)·어느 창고</b>를 조회하느냐에 따라 숫자가 완전히 달라집니다. 발주에 쓰는 4종 중 <b>SKO재고</b>만 법인별 Site 값을 그대로 쓰고, 나머지 3종(미입고·EU재고·이송)은 한국 본사 Site·EU창고 고정이며 법인 구분은 <b>거래처</b> 필터로 합니다.</p>
+<table class="t">
+  <thead><tr><th>데이터</th><th>CMS 리포트</th><th>Site</th><th>창고</th><th>상품구분</th><th>기간·수량 필터</th><th>거래처</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="src s-sko">SKO재고</span></td>
+      <td class="desc"><code>Report &gt; 재고 &gt; 법인 현지 창고 재고 현황</code></td>
+      <td><b>법인별 Site 값</b><br><span class="note">(폴란드는 SKO Sp. z o.o.)</span></td>
+      <td><b>ALL</b></td>
+      <td>COSMETIC</td>
+      <td class="desc">수량 0 이상</td>
+      <td class="desc">—</td>
+    </tr>
+    <tr>
+      <td><span class="src s-mi">미입고</span></td>
+      <td class="desc"><code>Report &gt; 재고 &gt; 미입고 현황</code></td>
+      <td><b>(주)실리콘투</b></td>
+      <td><b>EU창고</b></td>
+      <td>COSMETIC</td>
+      <td class="desc"><b>V3: PO 등록일 최근 30일</b><br><span class="note">V1·V2: 연초(0101) ~ 현재</span> (→ <a href="#c13">계산 ⑬</a>)</td>
+      <td class="desc">법인별 Site 값</td>
+    </tr>
+    <tr>
+      <td><span class="src s-eu">EU재고</span></td>
+      <td class="desc"><code>Report &gt; 재고 &gt; EU 창고 재고 현황</code></td>
+      <td><b>(주)실리콘투</b></td>
+      <td><b>EU창고</b></td>
+      <td>COSMETIC</td>
+      <td class="desc">수량 0 이상</td>
+      <td class="desc">법인별 Site 값</td>
+    </tr>
+    <tr>
+      <td><span class="src s-un">이송</span></td>
+      <td class="desc"><code>Report &gt; 해상컨테이너 상세내역</code></td>
+      <td><b>(주)실리콘투</b></td>
+      <td><b>EU창고</b></td>
+      <td>COSMETIC</td>
+      <td class="desc">Ship date : 연초(0101) ~ 현재</td>
+      <td class="desc">법인별 Site 값 (폴란드는 SKO Sp. z o.o.)</td>
+    </tr>
+  </tbody>
+</table>
+<div class="tip"><b>Site·창고가 핵심입니다</b> → <b>SKO재고</b>만 법인마다 다른 Site 값을 쓰고 창고는 공통으로 <b>ALL</b>입니다. 나머지 3종은 법인과 무관하게 Site <b>(주)실리콘투(한국 본사)</b> · 창고 <b>EU창고</b>로 조회하고, 대신 <b>거래처</b> 필터로 법인을 구분합니다. 이 두 개를 잘못 지정하면 재고·이송 숫자가 아예 다른 물량을 가리키게 됩니다.<br>
+· <b>상품구분</b>은 4종 모두 <b>COSMETIC</b>으로 통일합니다.<br>
+· <b>기간 필터가 V3에서 바뀌었습니다</b> — 이송 Ship date는 그대로 <b>연초~현재</b>지만, <b>① 미입고 수량</b>은 <b>PO 등록일 기준 최근 30 달력일</b>로 좁혔습니다(2026-09-04 결정). ②③④는 기간 제한 없이 그대로 반영합니다 → <a href="#c13">계산 ⑬</a>.<br>
+· <b>수량 0 이상</b>은 재고가 없는 항목(0·마이너스)을 빼서 목록을 가볍게 하는 조건입니다.<br>
+· 본사(스킨)는 CMS 리포트 체계 자체가 다른 국내 B2B 창고(WH000028)이며, 미입고는 오포 open-PO API, 확정 입고는 별도 입고확정 API를 씁니다.</div>
+<p class="note">출처: 「ESM팀 발주 템플릿 — 발주 담당자 교과서」 각 IN 탭의 'CMS 추출 설정' 항목 + 2026-09-04 미입고 조회창 결정. 판매이력·상품목록(분석용 데이터)은 발주 교과서 범위 밖이라 별도 추출 설정이 정의되어 있지 않고, 화면의 분석 기간·창고 선택이 그 역할을 합니다.</p>
+
+<h3 class="screen" id="s04">0-4. 계정 권한 — 같은 화면이 계정마다 다르게 보입니다</h3>
+<div class="word"><b>계정 발급 단위</b> → 계정은 개인별이 아니라 <b>팀 단위로 발급</b>됩니다(같은 팀은 로그인 정보를 함께 씀). 팀마다 조회 권한이 다르게 부여되며(예: BM팀 계정은 서비스 중인 전체 법인, 법인별 담당 팀 계정은 그 법인만), 프랑스·싱가포르·러시아·인도네시아 등 그룹 내 다른 법인은 대상이 아닙니다. 보안 정책상 <b>회사 IP에서만 접속</b>됩니다(휴대폰도 회사 와이파이 필요).</div>
+<table class="t">
+  <thead><tr><th>권한</th><th>범위</th><th>화면·엑셀에 나타나는 방식</th></tr></thead>
+  <tbody>
+    <tr><td><b>금액 조회</b></td><td class="desc">지정된 계정만</td><td class="desc">권한이 없으면 <b>매출액·발주금액·단가·재고금액</b>이 제거됩니다 → 발주분석 V3의 '총 발주금액' 카드 미표시, 표의 금액 줄 미표시, 비교 버튼이 <b>발주수량 비교</b>로 변경, 엑셀의 단가·금액 열 숨김("금액 조회 권한 없음"), 교차분석은 '금액' 대신 <b>비중</b>으로 자동 전환, 텍스트 안의 통화 표기는 <b>[금액 제한]</b>으로 치환. <b>수량·비중·점유율·증감률·순위는 그대로</b> 보입니다</td></tr>
+    <tr><td><b>발주 메뉴</b></td><td class="desc">영업 전용 계정 제외</td><td class="desc">발주 접근이 없는 계정에서는 <b>'발주 · QUANTITATIVE' 그룹 메뉴 전체가 표시되지 않습니다</b>(데이터 입력·발주분석 V1·V2·V3·계절지수 관리·재고 공백 포함)</td></tr>
+    <tr><td><b>전사 재고 현황</b></td><td class="desc">마스터 계정 + <b>본사 법인 선택 시</b></td><td class="desc">조건을 만족할 때만 '경영 · OVERVIEW' 그룹이 사이드바에 나타납니다 (→ <a href="#m5">5장</a>)</td></tr>
+    <tr><td><b>계절지수 갱신</b></td><td class="desc">관리자만</td><td class="desc">일반 계정은 현재 적용 버전만 조회합니다 (→ <a href="#s12">1-2</a>)</td></tr>
+  </tbody>
+</table>
+
+<h3 class="screen">0-5. 사이드바 구성</h3>
+<table class="t">
+  <thead><tr><th>그룹</th><th>메뉴</th><th>출처·비고</th></tr></thead>
+  <tbody>
+    <tr><td>경영 · OVERVIEW</td><td class="desc">전사 재고 현황 <span class="note">(신설)</span></td><td class="desc">마스터 + 본사 선택 시만 표시 (→ <a href="#m5">5장</a>)</td></tr>
+    <tr><td>발주 · QUANTITATIVE</td><td class="desc">데이터 입력 · 발주분석 V1 · 발주분석 V2 · <b>발주분석 V3(BETA)</b></td><td class="desc">실제 발주 판단은 <b>V3</b> (→ <a href="#s11">1-1</a>)</td></tr>
+    <tr><td>분석 · INSIGHT <span class="note">(차원별)</span></td><td class="desc">데이터 입력 · 국가 · 브랜드 · <b>제품군</b> <span class="note">(신설)</span> · SKU</td><td class="desc"><span class="src s-sale">판매이력</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>심화</td><td class="desc">시즌 캘린더 · 교차분석 · <b>브랜드 리포트</b> <span class="note">(신설)</span></td><td class="desc"><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>데이터 점검 · QUALITY</td><td class="desc">데이터 진단</td><td class="desc">(→ <a href="#m3">3장</a>)</td></tr>
+    <tr><td>관리자 · V3 설정</td><td class="desc">계절지수 관리 <span class="note">(신설)</span></td><td class="desc">V3가 참조하는 활성 계절지수 (→ <a href="#s12">1-2</a>)</td></tr>
+    <tr><td>지원 · SUPPORT</td><td class="desc">고객센터 <span class="note">(신설)</span></td><td class="desc">FAQ·문의 접수 (→ <a href="#m5">5장</a>)</td></tr>
+    <tr><td>준비 중</td><td class="desc">성분</td><td class="desc">데이터 정합성 보강 중으로 비활성 (→ <a href="#s29">2-9</a>)</td></tr>
+  </tbody>
+</table>
+<div class="word"><b>'데이터 입력'이 두 개 보여요</b> → 발주 그룹의 '데이터 입력'은 발주분석 V1·V2용 기준값 화면(<a href="#s13">1-3</a>), 분석 그룹의 '데이터 입력'은 인사이트 분석의 기간·조건 화면(<a href="#s21">2-1</a>)입니다. <b>발주분석 V3는 두 화면 중 어느 쪽도 거치지 않고 V3 화면 안에서 직접 실행</b>합니다 — 이전 버전의 문서 구조와 달라진 가장 큰 변화입니다.</div>
+
+<!-- ==================== 1. 발주 ==================== -->
+<h2 class="module" id="m1">1. 발주</h2>
+<div class="module-tag">Quantitative</div>
+
+<h3 class="screen" id="s11">1-1. 발주분석 V3</h3>
+<p class="lead">발주가 필요한 상품과 제안수량을 자동 계산해 SKU별로 검토하는 메인 화면입니다. 계산 순서 자체는 <a href="#m4">4장</a>에서 실제 숫자로 풀어서 설명하며, 여기서는 화면 구성과 데이터 출처를 다룹니다.</p>
+
+<h4 class="sub">매주 이 순서대로 (약 5분)</h4>
+<ol class="steps">
+  <li>좌측 상단 <b>법인</b> 확인 → 화면 상단 실행 상태바에 "분석 대상 <b>법인명</b>"으로 재표시</li>
+  <li>우측 상단 <b>발주 시나리오</b> 확인 → <b>분석 실행</b> (이 시각에 CMS 4종을 조회합니다: <span class="src s-sko">SKO재고</span> <span class="src s-mi">미입고</span> <span class="src s-eu">EU재고</span> <span class="src s-un">이송</span>)</li>
+  <li>상단 카드로 규모 파악 → <b>발주 검토 대상</b> 표에서 SKU별 제안수량 확인</li>
+  <li><b>검토하기</b>로 계산 근거를 열어 권고 유지 / 수량 수정 / 발주 보류 판단 (여러 건은 <b>일괄 권고유지 · 일괄 보류</b>)</li>
+  <li>필요하면 <b>발주수량·금액 비교</b>로 시나리오 선택 시 차이를 먼저 확인</li>
+  <li>체크 → <b>엑셀 내려받기</b> → 기존 발주 절차 진행</li>
+</ol>
+
+<h4 class="sub">상단 실행 상태바 — 항목별 설명과 출처</h4>
+<table class="t">
+  <thead><tr><th>항목</th><th>의미</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>분석 대상</td><td class="desc">계산 대상 법인의 정식 법인명</td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>상태 배지</td><td class="desc">실행 전 · 계산 중 · 계산 완료 · <b>계산 차단</b>(필수 원천·정책값 미확정으로 전체 계산 불가) · 분석 중단 · 중단 중 · 중단 확인 실패</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>최근 계산 / 데이터 기준 시각</td><td class="desc">결과 계산 시각. 마우스를 올리면 <b>CMS 원천을 조회한 시각(한국 시간)</b>이 표시됩니다</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>분석 실행 / 새로 분석</td><td class="desc">최신 원천을 다시 조회해 전체 재계산. 결과가 이미 있으면 버튼 이름이 '새로 분석'</td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>분석 중단</td><td class="desc">계산 중에만 표시. 중단해도 <b>이전 완료 결과는 유지</b>됩니다(이미 시작된 원천 조회는 서버에서 마무리될 수 있음)</td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>엑셀 내려받기</td><td class="desc">발주제안·물류전망·확인필요 시트로 저장 (→ <a href="#s11x">아래</a>)</td><td><span class="src s-ui">설정</span></td></tr>
+  </tbody>
+</table>
+<div class="srcbox"><b>다중 사용자 처리</b> → 분석은 서버의 작업 큐에서 처리됩니다. 요청이 몰리면 <b>"V3 분석 요청이 접수되었습니다. 사용 가능한 분석 Worker를 기다리는 중입니다."</b>가 표시되고 순서가 오면 자동으로 시작됩니다. 통신이 지연되면 <b>같은 분석에 자동 재연결</b>하고, 브라우저를 다시 열어도 진행 중이던 분석을 이어서 확인합니다(이어붙일 수 없으면 "새로 분석해 주세요" 안내). 인사이트 분석도 같은 방식으로 큐에 들어갑니다.</div>
+
+<h4 class="sub">발주 시나리오 — 쇼티지 방어 / 현금흐름 우선</h4>
+<p><b>전사 단위 스위치</b>이며 SKU별로 개별 지정하지 않습니다. 이전 문서의 '정책모드'와 같은 기능이고 화면 명칭이 <b>발주 시나리오</b>로 바뀌었습니다. 시나리오에 따라 <b>서비스레벨(Z)</b>과 <b>운송수단 가정(리드타임)</b>이 함께 바뀝니다(→ <a href="#c6">계산 ⑥</a>·<a href="#c7">⑦</a>).</p>
+<table class="t">
+  <thead><tr><th>시나리오</th><th>적용 방침</th><th>운송수단 가정</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>쇼티지 방어</td><td class="desc">Z를 높여 가용성(품절 방지) 우선</td><td class="desc">폴란드·미국 모두 <b>해운</b></td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>현금흐름 우선</td><td class="desc">Z를 낮춰 재고에 묶인 자본 최소화</td><td class="desc">폴란드 <b>철송</b> · 미국 <b>항공</b></td><td><span class="src s-ui">설정</span></td></tr>
+  </tbody>
+</table>
+<p class="note">Z값·상품등급 경계(누적 매출 90%)·발주주기(R)·SS펜스·리드타임(L̄, σ_L)은 팀이 사전 확정한 값으로, 화면에서 개별 수정할 수 없습니다(→ <a href="#c5">계산 ⑤</a>~<a href="#c9">⑨</a>). <b>본사(스킨)는 국내조달 단일 경로라 시나리오가 리드타임을 바꾸지 않고 Z만 바꿉니다.</b></p>
+
+<h4 class="sub">발주수량·금액 비교</h4>
+<p>두 시나리오에서 <b>제안수량이 서로 다른 SKU만</b> 비교합니다(같으면 표에 나타나지 않음). 수량 차이가 큰 순으로 정렬되며, '차이' = 쇼티지 방어 − 현금흐름 우선입니다. 금액 조회 권한이 없으면 버튼 이름이 <b>발주수량 비교</b>가 되고 금액 열이 빠집니다.</p>
+
+<h4 class="sub">상단 카드</h4>
+<table class="t">
+  <thead><tr><th>카드</th><th>의미</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>발주 필요 SKU</td><td class="desc">제안수량(Q)이 0보다 큰 상품 수 (→ <a href="#c11">계산 ⑪</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>총 발주수량 / 총 발주금액</td><td class="desc">발주 필요 SKU 전체의 제안수량·제안금액 합계(선택 시나리오 기준). <b>총 발주금액 카드는 금액 조회 권한이 있는 계정에만</b> 표시</td><td><span class="src s-calc">계산</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>발주 보류·계산 차단</td><td class="desc">리드타임 표본 부족·판매이력 부족·계절지수 연결 불가 등으로 계산을 진행하지 않은 상품 수 (→ <a href="#c12">계산 ⑫</a>). 카드를 누르면 사유별 필터가 열립니다</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>검토 완료</td><td class="desc">발주 필요 SKU 중 처리를 끝낸 건수. <b>수량 수정·발주 보류도 검토 완료에 포함</b></td><td><span class="src s-ui">설정</span></td></tr>
+  </tbody>
+</table>
+<p class="note">브랜드 필터를 걸면 요약 카드도 <b>선택 브랜드 범위로 재집계</b>됩니다. 다만 보류·차단 사유 패널 상단의 "발주 보류 N건 · 계산 차단 N건"은 <b>현재 시나리오 전체</b> 기준이라 브랜드를 좁혀도 전체 규모를 확인할 수 있습니다.</p>
+
+<h4 class="sub">네 개의 상품 목록</h4>
+<table class="t">
+  <thead><tr><th>목록</th><th>판정 기준</th></tr></thead>
+  <tbody>
+    <tr><td><b>발주 검토 대상</b></td><td class="desc">계산 완료 + 발주 필요 판정. 기본 목록이며 <b>발주금액 내림차순</b> 정렬</td></tr>
+    <tr><td>발주 불필요</td><td class="desc">계산 완료 + 제안수량 0 (IP ≥ 목표재고)</td></tr>
+    <tr><td>보류·차단</td><td class="desc">계산 자체를 진행하지 않은 상품 (→ <a href="#c12">계산 ⑫</a>)</td></tr>
+    <tr><td><b>상태 확인 필요</b> <span class="note">(신설)</span></td><td class="desc">계산은 됐지만 <b>발주 필요/불필요를 확정하지 못한</b> 상품을 모아두는 안전장치. 건수가 0이면 링크가 나타나지 않습니다. 임의로 '불필요'로 밀어넣지 않는다는 설계 원칙의 결과입니다</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub">발주 검토 대상 — 컬럼별 설명과 출처</h4>
+<table class="t">
+  <thead><tr><th>컬럼</th><th>이렇게 읽으세요</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>체크박스</td><td class="desc">엑셀 내려받기 대상 선택 + 일괄 처리 대상. 헤더는 <b>현재 페이지 전체 선택</b></td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>바코드</td><td class="desc">상품 식별 코드 (모든 데이터의 연결 키). 값이 없으면 '미확인'</td><td><span class="src s-sko">SKO재고</span></td></tr>
+    <tr><td>상품</td><td class="desc">상품코드·상품명·브랜드</td><td><span class="src s-sko">SKO재고</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>추세 (91일/13주)</td><td class="desc">최근 13주 판매 스파크라인과 성장/감소/안정 방향 (→ <a href="#c1">계산 ①</a> 추세 신호). 보류·차단 목록에서는 이 자리가 <b>보류·차단 사유</b>로 바뀝니다</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>제안수량 · 금액</td><td class="desc">목표재고(S) − 총재고(IP), 단가·환율 반영 (→ <a href="#c11">계산 ⑪</a>). 담당자가 수정한 수량이 있으면 그 값이 표시됩니다. <b>금액 줄은 권한 계정만</b></td><td><span class="src s-calc">계산</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>검토</td><td class="desc">상태에 따라 버튼 이름이 바뀝니다 — <b>검토하기</b> · <b>권고 유지/수량 수정/발주 보류</b>(처리 완료) · <b>재고확인</b>(재고 원천 확인 항목 있음) · <b>사유보기</b>(보류·차단) · <b>상세보기</b></td><td><span class="src s-ui">설정</span></td></tr>
+  </tbody>
+</table>
+<p class="note">검색(상품코드·상품명·브랜드) · 브랜드 필터 · 검토상태 필터(전체/미검토/권고 유지/수량 수정/발주 보류) · 필터 초기화(✕) · 일괄 처리 바 · 페이지네이션(<b>페이지당 10건 고정</b>)을 제공합니다.</p>
+
+<h4 class="sub">검토하기 — SKU 계산 근거의 섹션별 출처</h4>
+<table class="t">
+  <thead><tr><th>섹션</th><th>내용</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>이 SKU의 발주 제안</td><td class="desc">발주필요수량(원시)·발주필요금액, 발주반영 총재고(IP), 목표재고(S). 0이면 "IP가 목표재고 이상이므로 발주필요수량은 0개입니다" (→ <a href="#c10">계산 ⑩</a>·<a href="#c11">⑪</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>① 향후 수요 예측</td><td class="desc">적용 엔진(SES / HOLT+감쇠 / Croston+SBA) 배지와 설명, <b>향후 4주(28일) 예상 수요(d_avg×4기)</b>, <b>예측오차(RMSE, EA/기)</b>, 예측에 사용한 계수 (→ <a href="#c2">계산 ②</a>·<a href="#c3">③</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td><b>계절지수 연결</b> <span class="note">(신설)</span></td><td class="desc"><b>기능구분1·2 기준</b> / <b>기능구분1 기준</b> 중 어느 범위로 연결됐는지, 그리고 <b>계산된 지수 연결 완료 / 기본값 1.0 연결 완료 / 연결 불가</b> 상태와 월별 지수 (→ <a href="#c4">계산 ④</a>·<a href="#s12">1-2</a>)</td><td><span class="src s-item">상품목록</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>② 목표재고·정기발주</td><td class="desc"><b>L1(리드타임 수요) + L2(안전재고) + L3(발주주기 수요) = 목표재고(S)</b>. <b>참고 ROP</b>(=L1+L2)는 함께 표시되지만 발주 조건으로 쓰지 않습니다 (→ <a href="#c10">계산 ⑩</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>③ 91일 판매(13주)</td><td class="desc"><b>원본 실적</b> vs <b>계절 제거 후</b> 곡선 (→ <a href="#c4">계산 ④</a>)</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>④ 자동 분류 근거</td><td class="desc">ADI·CV²·추세 → 수요 패턴 확정 (→ <a href="#c1">계산 ①</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>발주에 반영한 재고</td><td class="desc">현재 사용 가능한 재고 + 운송 중인 수량 + 미입고 수량 + 다른 거점에서 반영한 재고 − 추가 차감 수량 = <b>총재고(IP)</b> (→ <a href="#c11">계산 ⑪</a>)</td><td><span class="src s-sko">SKO재고</span> <span class="src s-mi">미입고</span> <span class="src s-eu">EU재고</span> <span class="src s-un">이송</span></td></tr>
+    <tr><td><b>재고 원천 확인</b> <span class="note">(신설)</span></td><td class="desc">① 미입고 / ② PNFM확정 / ③ 입고진행중 / ④ 입고완료 / 현지 가용 / 본사 법인창고 가용 / 오포 가용 / 운송중 중 <b>값이 비어 0으로 적용된 항목</b>과 <b>음수로 계산이 차단된 항목</b>을 항목별로 알려줍니다. 표의 검토 버튼이 <b>재고확인</b>으로 바뀝니다</td><td><span class="src s-sko">SKO재고</span> <span class="src s-mi">미입고</span> <span class="src s-un">이송</span></td></tr>
+    <tr><td>입고 소요기간과 검토 주기 / 판매 예측에 반영한 기준</td><td class="desc">리드타임(L̄)·발주주기(R), 주말·공휴일 포함 / 첫 판매일부터 경과일수, 계절지수 적용 여부 (→ <a href="#c8">계산 ⑧</a>·<a href="#c9">⑨</a>)</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+<div class="tip"><b>발주 전 확인</b> → 제안수량에는 <b>박스 단위·MOQ</b>가 아직 반영되지 않았습니다(V3-012 정책 확정 전까지 미적용, → <a href="#c11">계산 ⑪</a>). 실제 주문 전 별도 확인이 필요합니다.</div>
+
+<h4 class="sub">발주 보류·계산 차단 — 사유 필터</h4>
+<table class="t">
+  <thead><tr><th>사유 버튼</th><th>조건</th></tr></thead>
+  <tbody>
+    <tr><td>판매이력 부족</td><td class="desc">최근 13주 판매가 전부 0 (승인된 신규/무판매 정책 필요)</td></tr>
+    <tr><td>간헐형 계산 조건 확인</td><td class="desc">Croston 예측에 필요한 <b>판매 발생 완료 주가 2개 미만</b></td></tr>
+    <tr><td>추세형 계산 조건 확인</td><td class="desc">추세 판정 비교기준인 <b>앞 6주 판매 합계가 0</b>이라 추세율 계산 불가</td></tr>
+    <tr><td>입력 데이터·계산 조건 확인</td><td class="desc">리드타임 실측 표본 부족(운송수단별 10건 미만), 재고 원천 음수, <b>계절지수 연결 불가</b> 등 필수 입력·정책값 미확정</td></tr>
+  </tbody>
+</table>
+<p class="note">근거 없는 대체값을 쓰지 않고 표본이 쌓일 때까지 계산 자체를 멈춥니다 → <a href="#c12">계산 ⑫</a>.</p>
+
+<h4 class="sub" id="s11x">엑셀 내려받기 — 시트 구성</h4>
+<table class="t">
+  <thead><tr><th>시트</th><th>내용</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>발주제안</td><td class="desc">6개 열 그룹 — <b>SKU 식별 · 판매정보·미래예측 · 공급조건 · Layer 1·2·3·목표재고 · 재고현황·확보 물량 · 발주 판단·필요수량</b>. 금액 조회 권한이 없으면 단가·금액 열이 숨겨집니다</td><td><span class="src s-calc">계산</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>물류전망</td><td class="desc">같은 실행의 재고 현황과 ETA(도착 예정) 전망. 원천 ETA 우선, 없으면 출고일+운송수단별 평균 리드타임으로 추정하며 미확인 ETA는 주별 합계에서 제외해 별도 표시합니다(도착량 0을 뜻하지 않음). <b>본사 국제운송은 해당없음</b></td><td><span class="src s-un">이송</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>확인필요</td><td class="desc">같은 브랜드·검색 범위의 <b>보류·계산 차단 SKU와 사유</b></td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td><span class="note">_계산기준 · _운송원천</span></td><td class="desc">숨김 시트. 계산에 사용한 기준값과 운송·ETA 원천을 감사용으로 보존</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+<div class="tip"><b>엑셀은 값 전용 스냅샷입니다</b> → 파일 안에서 수식이 재계산되지 않습니다. 갱신하려면 웹에서 다시 분석하고 다시 내려받아야 합니다. <b>'–'</b>는 계산 조건 미충족, <b>'미확인'</b>은 원천/값 누락, <b>'미산출'</b>은 계산 차단을 뜻하며, 발주필요수량·금액은 표시 서식과 무관하게 <b>서버 원값</b>을 보존합니다(담당자 검토수량으로 재계산하지 않음).</div>
+
+<h4 class="sub">주요 조작</h4>
+<ul class="bullets">
+  <li><b>분석 실행 / 새로 분석 / 분석 중단</b> — 화면 상단 실행 상태바</li>
+  <li><b>발주 시나리오</b> 선택 → 전사 단위 재계산</li>
+  <li><b>발주수량·금액 비교</b> → 두 시나리오 결과가 다른 SKU 비교</li>
+  <li><b>검토하기</b> → SKU별 계산 근거 확인 및 처리</li>
+  <li><b>일괄 권고유지 · 일괄 보류</b> → 체크한 상품 한 번에 처리</li>
+  <li><b>브랜드 필터 · 검토상태 필터 · 검색 · 사유 필터 · 페이지네이션</b></li>
+  <li><b>엑셀 내려받기</b> → 발주제안·물류전망·확인필요</li>
+</ul>
+
+<h3 class="screen" id="s12">1-2. 계절지수 관리 (관리자)</h3>
+<p class="lead">발주분석 V3가 참조하는 <b>활성 계절지수</b>를 갱신·검증·적용하는 화면입니다. V3 계산은 <b>여기서 활성화된 버전만</b> 참조합니다.</p>
+<div class="srcbox"><b>어떻게 만들어지나</b> → <span class="src s-sale">판매이력</span>의 월별 판매를 <span class="src s-item">상품목록</span>의 <b>기능구분1·기능구분2</b>로 묶어 <b>법인별</b>로 월 계수를 산출하고, 자동 검증을 통과한 결과를 아티팩트로 저장·활성화합니다. 산출 범위는 <b>24개월</b>이며 1~12월 계수의 <b>평균이 1.0</b>이어야 합니다.</div>
+<ol class="steps">
+  <li><b>현재 적용 중인 계절지수</b> — 적용 버전, 프로파일 수, 기본값 1.0 적용 건수를 확인합니다.</li>
+  <li>갱신 실행 → <b>자동 검증</b>: 24개월 범위 · 1~12월 계수 존재 · <b>계수 평균 1.0</b> · 중복 없음 · 법인 일치.</li>
+  <li>통과 시 즉시 활성화("자동 검증을 통과해 새 계절지수가 발주분석 V3에 적용되었습니다"). 실패 시 적용하지 않고 <b>기존 버전 유지</b>("이번 갱신은 검증을 통과하지 못했습니다").</li>
+  <li><b>기능구분별 계절지수</b> 표에서 상태별로 확인 — <b>V3 자동 적용 중 / 자동 적용 가능 / V3 적용 보류 / 계산 보류 → 기본값 1.0 적용</b>. 월별 상세도 펼쳐 볼 수 있습니다.</li>
+</ol>
+<table class="t">
+  <thead><tr><th>연결 범위</th><th>적용 대상</th></tr></thead>
+  <tbody>
+    <tr><td>기능구분1·2 기준</td><td class="desc">기능구분1과 2가 모두 있는 SKU에 적용하는 세부 계절지수</td></tr>
+    <tr><td>기능구분1 기준</td><td class="desc">기능구분2가 없거나 미분류인 SKU에 같은 법인의 기능구분1 계절지수를 적용</td></tr>
+    <tr><td>연결 불가</td><td class="desc">기능구분1이 미분류이거나, 적용 가능한 같은 법인 프로파일이 없는 경우 → 그 SKU는 V3에서 <b>보류·차단</b>. <b>누락값을 임의 지수로 대체하지 않습니다</b></td></tr>
+  </tbody>
+</table>
+<div class="tip"><b>기본값 1.0</b> → 계절지수 계산이 보류된 항목은 관리자 승인 아래 1~12월 모두 1.0으로 적용합니다. 그 상품은 <b>계절성에 의한 가감 없이</b> 계산되며 분류·판매이력 등 다른 계산 조건은 유지됩니다. 검토 패널과 엑셀에는 <b>'기본값 1.0 적용'</b>으로 구분 표기됩니다.</div>
+
+<h3 class="screen" id="s13">1-3. 데이터 입력 · 발주분석 V1·V2 · 재고 공백</h3>
+<table class="t">
+  <thead><tr><th>화면</th><th>현재 역할</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>데이터 입력</td><td class="desc">발주분석 <b>V1·V2용</b> 기준값 화면 — 분석 기준일 · <b>안전재고 개월수</b> · <b>운송 리드타임</b>. 본사 법인에서는 "본사 발주 분석은 제공하지 않습니다". <b>발주분석 V3는 이 화면을 거치지 않습니다</b></td><td><span class="src s-ui">설정</span></td></tr>
+    <tr><td>발주분석 V1</td><td class="desc">이전 로직 화면. 상단에 <b>발주 추천 SKU</b> / <b>재고 공백</b> 두 하위 탭</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>재고 공백</td><td class="desc">발주분석 V1의 <b>하위 탭</b>. ETA 이전 품절 가능 SKU와 공백일·보완 수량 — 이전 문서의 "V3에서 안 보인다"는 항목은 <b>V1 하위 탭으로 위치가 유지된 것</b>으로 확인됐습니다</td><td><span class="src s-un">이송</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>발주분석 V2</td><td class="desc">이전 로직 화면으로 남아있을 뿐 업무에는 쓰지 않습니다</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+<div class="tip"><b>버전 3에서 사라진 입력값</b> → 이전(버전 1)에는 데이터 입력 화면에서 <b>안전재고 개월수</b>·<b>이송 리드타임</b>·<b>적용 환율</b>을 담당자가 직접 입력했습니다. 버전 3부터는 이 값들이 상품등급·발주 시나리오·법인·운송수단별로 <b>통계적으로 고정</b>되어 있어(→ <a href="#c5">계산 ⑤</a>~<a href="#c9">⑨</a>) 입력하지 않습니다. 대신 발주분석 V3 화면에서 <b>발주 시나리오</b>만 전사 단위로 선택합니다.</div>
+
+<!-- ==================== 2. 분석 ==================== -->
+<h2 class="module" id="m2">2. 분석</h2>
+<div class="module-tag">Insight</div>
+<p class="lead">분석 화면의 매출·판매량은 모두 <span class="src s-sale">판매이력</span>을 선택한 기간으로 집계한 값입니다. 눌러도 데이터가 바뀌지 않으니 자유롭게 탐색하세요.</p>
+<div class="word"><b>사이드바 구성</b> → '차원별'은 국가·브랜드·<b>제품군</b>·SKU 순서로 <b>하나의 기준으로</b> 보는 화면이고, '심화'는 시즌 캘린더·교차분석·<b>브랜드 리포트</b> 순서로 시즌 계획과 복합 분석·보고서 기능을 제공합니다. 성분 탭은 준비 중으로 별도 비활성화되어 있습니다.</div>
+<div class="tip"><b>금액 조회 권한의 영향</b> → 권한이 없는 계정에서는 매출액 대신 <b>비중·점유율·증감률·순위·수량</b>이 표시되고, 교차분석의 '매출액·금액'은 <b>비중</b>으로 자동 전환되며, 리포트 텍스트의 통화 표기는 <b>[금액 제한]</b>으로 치환됩니다(→ <a href="#s04">0-4</a>).</div>
+
+<h3 class="screen" id="s21">2-1. 데이터 입력</h3>
+<h4 class="sub">이렇게 사용하세요</h4>
+<ol class="steps">
+  <li>CMS 연결 상태와 마지막 동기화 시각·건수를 확인합니다.</li>
+  <li><b>분석 시작일 · 분석 종료일</b>을 고릅니다 — 한 번에 <b>최대 24개월</b>, 종료일은 오늘 이후 불가, 12개월 미만이면 시즌 판단 제한.</li>
+  <li>본사 법인은 <b>분석 창고</b>(전체 창고 / 오포창고 OPO)를 함께 고릅니다.</li>
+  <li><b>분석 시작</b> → 완료되면 국가 분석 화면으로 자동 이동합니다.</li>
+</ol>
+<table class="t">
+  <thead><tr><th>항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>장기 판매이력</td><td class="desc">국가·브랜드·상품별 판매 기록. <b>조회 가능 범위가 법인마다 다릅니다</b> — EU는 <b>2024년 4월</b>부터, 미주 현지판매 API는 <b>2015년 11월 7일</b>부터, 본사 장기 판매이력 API는 <b>시작일 제한 없음</b></td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>상품목록</td><td class="desc">상품코드·상품명·브랜드·기능구분1/2. 전체 COSMETIC 상품마스터 또는 EU 판매 SKU 기준으로 조회</td><td><span class="src s-item">상품목록</span></td></tr>
+    <tr><td>기간·분석 창고</td><td class="desc">모든 분석 화면의 집계 조건이 됩니다</td><td><span class="src s-ui">설정</span></td></tr>
+  </tbody>
+</table>
+<div class="srcbox"><b>분석 큐</b> → 요청이 몰리면 "분석 요청이 접수되었습니다. 앞선 작업이 있으면 순서대로 시작합니다."가 표시되고 순서대로 처리됩니다. <b>분석 중단</b>으로 멈출 수 있고 입력값은 유지됩니다. 기간·창고를 바꾸면 "새 기간(창고)으로 다시 분석을 시작해 주세요" 안내가 뜹니다.</div>
+
+<h3 class="screen" id="s22">2-2. 국가</h3>
+<p class="lead">"어느 국가에서 가장 잘 팔리나?"</p>
+<table class="t">
+  <thead><tr><th>화면 항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>전체 매출·매출 발생 국가/브랜드/SKU 수</td><td class="desc">선택 기간 전체 규모. %는 전월 대비 증감</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>권역별 매출 비중</td><td class="desc">국가를 권역으로 묶은 합계. 권역 지정은 데이터 점검에서</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>국가별 판매 순위</td><td class="desc">매출 기준 순위·점유율·전월 대비</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>선택 국가: 상위 브랜드·상위 SKU·월 최고 매출·Top 5 카테고리</td><td class="desc">그 나라 안에서의 순위와 가장 잘 팔린 달</td><td><span class="src s-sale">판매이력</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>국가 시즌성</td><td class="desc">월별 매출 비중 라인 → 피크월</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td><b>국가별 성장 변화</b></td><td class="desc">전월/전년 동기 대비 성장·감소 상위. <b>감소 기여율</b>로 전체 감소를 끌어내린 국가를 식별하고, 판매가 끊긴 국가는 <b>판매 소멸</b>로 표기</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td><b>리포트로 내보내기(PDF)</b></td><td class="desc">화면 내용을 PDF로 저장</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+<p class="note">이전 분석 결과를 보고 있으면 "구버전 결과 · 상위 SKU 기준(재분석 시 정확)" 안내가 표시됩니다 → 정확한 값이 필요하면 <a href="#s21">2-1</a>에서 다시 분석하세요.</p>
+
+<h3 class="screen" id="s23">2-3. 브랜드</h3>
+<p class="lead">"이 브랜드는 어떤 상품에 매출이 몰리나? 어느 국가에서 강한가?"</p>
+<table class="t">
+  <thead><tr><th>화면 항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>매출·판매수량·매출 발생 SKU·판매 국가·점유율</td><td class="desc">선택 기간 규모</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>SKU 집중도</td><td class="desc">상위 상품별 매출 비중(TOP 5 합계 % 병기). <b>집중도가 높으면 그 상품 품절 = 브랜드 매출 하락</b> → 발주 우선순위를 높일 것</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>국가 분포 / 제품군·라인 구성비</td><td class="desc">국가별 비중(TOP 5) / 라인별 비중 (카테고리는 상품목록의 기능구분 기준)</td><td><span class="src s-sale">판매이력</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>상위 SKU 상세</td><td class="desc">상품별 매출·판매수량. SKU 검색으로 좁힐 수 있습니다</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>브랜드별 성장 변화</td><td class="desc">전월(MoM)/전년 동기(YoY) 성장·감소 상위. YoY는 전년 데이터가 없으면 '산출 불가'(오류 아님)</td><td><span class="src s-sale">판매이력</span> <span class="src s-calc">계산</span></td></tr>
+    <tr><td>브랜드별 월 매출 분포 · 월별 판매 시즌성</td><td class="desc">1~12월 매출 비중을 브랜드끼리 겹쳐 비교, 최고월 표시. <b>관측 완료월 수</b>와 월평균 프로필이 함께 표시됩니다</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td><b>리포트로 내보내기(PDF)</b></td><td class="desc">브랜드 기준 분석 리포트</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="screen" id="s24">2-4. 제품군</h3>
+<p class="lead"><b>신설 화면입니다.</b> "어떤 제품군이 크고, 그 안에서 어떤 상품이 앞서 있나?"</p>
+<div class="srcbox"><b>어떻게 만들어지나</b> → <span class="src s-sale">판매이력</span>을 <span class="src s-item">상품목록</span>의 <b>기능구분1(대분류)·기능구분2(중분류)</b>로 묶어 제품군 단위로 집계합니다. 카테고리가 없는 상품은 여기서 빠지고 <a href="#m3">데이터 점검</a>의 '분류 필요 SKU'에 나타납니다 → 분류를 채울수록 이 화면이 정확해집니다.</div>
+<table class="t">
+  <thead><tr><th>화면 항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>전체 제품군 / 매출액·판매량 기준</td><td class="desc">기능구분 1·2 기준 제품군 수와 집계 기준 선택</td><td><span class="src s-ui">설정</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>제품군 전체 목록 · 제품군 검색</td><td class="desc">제품군별 매출·판매량 순위</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>선택 제품군: 전체 비중 · 구성 SKU</td><td class="desc">전사 매출 대비 비중과 소속 상품 수</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>제품군 내 비중</td><td class="desc">제품군 안에서 각 상품의 매출 비중 → 제품군 내 경쟁 위치</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td><b>리포트로 내보내기(PDF)</b></td><td class="desc">화면 내용을 PDF로 저장</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="screen" id="s25">2-5. SKU</h3>
+<p class="lead">"이 상품은 언제·어디서 잘 팔리나?" 탭 2개(월별 추이 / 발주·국가 정보)로 구성됩니다.</p>
+<table class="t">
+  <thead><tr><th>화면 항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>기능구분·카테고리</td><td class="desc">상품이 속한 기능군</td><td><span class="src s-item">상품목록</span></td></tr>
+    <tr><td>피크월 / 매출 비중</td><td class="desc">매출 비중이 가장 높은 달과 그 비중(%)</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>선택 기간 내 최고월</td><td class="desc"><b>12개월 미만 분석에서는 연중 피크월을 판단하지 않고</b> 선택 기간 내 최고월만 표시합니다</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>매출 순위 / 판매수량 / 매출</td><td class="desc">선택 범위 내 매출 순위, 선택 기간 합계. <b>매출표시 / 원화표시</b> 토글로 현지 통화와 원화 환산을 바꿔 볼 수 있습니다</td><td><span class="src s-sale">판매이력</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>국가별 판매 분포</td><td class="desc">매출 비중 상위 국가 및 차트(%)</td><td><span class="src s-sale">판매이력</span></td></tr>
+  </tbody>
+</table>
+<p class="note">이 화면에는 현재고·재고 상태·리드타임 정보가 표시되지 않습니다. 재고 상태·제안수량이 필요하면 <a href="#s11">발주분석 V3(1-1)</a>에서 확인하세요.</p>
+
+<h3 class="screen" id="s26">2-6. 시즌 캘린더</h3>
+<p class="lead">"지금 어떤 기능군이 피크인가? 이 피크 판단은 어떤 데이터로 만들어지나?"</p>
+<div class="srcbox"><b>어떻게 만들어지나</b> → <span class="src s-sale">판매이력</span>의 월별 판매를 <span class="src s-item">상품목록</span>의 <b>기능구분1(대분류)·기능구분2(중분류)</b>로 묶어 기능군별로 집계합니다. 카테고리가 없는 상품은 여기서 빠지고 <a href="#m3">데이터 점검</a>의 '분류 필요 SKU'에 나타납니다.</div>
+<ol class="steps">
+  <li>상단 카드 → <b>지금이 피크월인 기능군 / 다가오는 피크 / 그 다음 피크</b>. <b>발주 시점 여유</b>와 "지금 발주 권장"이 함께 표시됩니다.</li>
+  <li>히트맵 → 행은 기능군, 열은 1~12월, <b>진한 빨간 = 월별 수요 지수 높음</b>(완료월 기준 집계). 오른쪽에 피크월과 <b>피크강도</b>. 행의 <b>&gt;</b>로 하위 기능(기능2)을 펼칩니다.</li>
+  <li><b>판매금액 / 판매수량</b> 기준을 바꿔 볼 수 있습니다.</li>
+  <li>발주분석 V3에서는 계절지수가 예측(d_avg)과 목표재고 계층에 SKU별로 이미 반영됩니다(→ <a href="#c4">계산 ④</a>). 다만 그 반영은 SKU 단위 계산이라, 기능군 전체를 한눈에 비교하며 발주 <b>타이밍</b>을 잡는 데는 이 화면이 여전히 더 유용한 참고용입니다.</li>
+</ol>
+
+<h3 class="screen" id="s27">2-7. 교차분석</h3>
+<p class="lead">"두 기준을 한 표에서 보고 싶을 때" 씁니다.</p>
+<ol class="steps">
+  <li>조합 선택 → <b>국가×브랜드 · 국가×SKU · 브랜드×SKU</b>. <span class="note">성분 조합 3종은 성분 탭이 준비 중이라 현재 제공되지 않습니다.</span></li>
+  <li>보기 기준 → 매출액/판매량/YoY/MoM, 금액/비중. <b>YoY는 YTD(연초부터 누적) 기준</b>, 월 비교는 전월 대비입니다. <b>행/열 전환</b>으로 표를 뒤집을 수 있습니다.</li>
+  <li>국가 추가/브랜드 추가로 대상을 넣고 태그 ✕로 빼기. <b>엑셀 내보내기</b> 또는 <b>리포트로 내보내기(PDF)</b> 지원.</li>
+</ol>
+<p class="note">데이터는 모두 <span class="src s-sale">판매이력</span>입니다. 금액 조회 권한이 없는 계정에서 '매출액·금액'을 고르면 자동으로 <b>비중</b> 기준으로 전환됩니다.</p>
+
+<h3 class="screen" id="s28">2-8. 브랜드 리포트</h3>
+<p class="lead"><b>신설 화면입니다.</b> 브랜드를 선택하면 판매·재고 인사이트를 자동으로 조립해 브랜드 미팅·내부 보고용 리포트를 만들고 PDF로 출력합니다.</p>
+<table class="t">
+  <thead><tr><th>블록</th><th>내용</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>브랜드 전체 판매 현황</td><td class="desc">총매출·점유율·판매 SKU·판매 기간(선택 기간 합계, 부분 월 포함)</td><td><span class="src s-sale">판매이력</span></td></tr>
+    <tr><td>상위 SKU / 주요 판매 국가 / 카테고리·라인 매출 비중</td><td class="desc">기간 내 최고 매출월과 함께 표시</td><td><span class="src s-sale">판매이력</span> <span class="src s-item">상품목록</span></td></tr>
+    <tr><td>YTD YoY 비교</td><td class="desc">전년 동기간 데이터가 없으면 <b>산출하지 않고 생략</b>합니다</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>현재 재고 · MOI / 향후 발주 참고</td><td class="desc"><b>발주분석 결과와 결합</b>해 만듭니다. 현재 세션과 일치하는 발주분석 결과가 없으면 "발주분석을 다시 실행해 주세요"로 안내하고 <b>해당 블록만 생략</b>합니다(임의 값으로 채우지 않음)</td><td><span class="src s-calc">계산</span></td></tr>
+    <tr><td>PDF 내보내기</td><td class="desc">팝업 차단이 걸려 있으면 해제해야 창이 열립니다</td><td><span class="src s-calc">계산</span></td></tr>
+  </tbody>
+</table>
+
+<h3 class="screen" id="s29">2-9. 성분 (준비 중)</h3>
+<div class="tip" data-ingredient-status="disabled"><b>현재 비활성화</b> — 성분 탭은 데이터 정합성 보강을 위해 준비 중 상태로 비활성화되어 있습니다. 메뉴에 '준비 중'으로 표시되며 선택할 수 없고, 교차분석의 성분 조합 3종도 함께 빠져 있습니다.</div>
+<p class="lead">"어떤 성분이 뜨고 있나?" — 흩어진 표기(센텔라·시카·병풀…)를 표준 성분명으로 묶어 성분 단위로 봅니다.</p>
+<div class="srcbox"><b>왜 보강이 필요한가</b> → SKU별로 어떤 성분이 들어있는지 알려주는 <b>성분 마스터 데이터가 없습니다.</b> 그래서 <span class="src s-sale">판매이력</span>의 <b>상품명 텍스트</b>에서 성분 키워드를 찾아 표준 성분명으로 묶는 방식으로 대신해 왔습니다(예: 히알·히알루론·히알루론산 → 히알루론). <b>상품명에 성분이 없는 상품은 집계에서 빠지므로</b> '성분 미매칭 SKU'가 많을수록 순위가 실제와 다를 수 있어, 정합성 보강이 끝날 때까지 화면을 닫아 두었습니다.</div>
+<table class="t">
+  <thead><tr><th>영향</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>성분 화면</td><td class="desc">사이드바 '준비 중' 그룹에 회색으로 표시되며 클릭되지 않습니다</td></tr>
+    <tr><td>교차분석</td><td class="desc">성분×국가·브랜드·SKU 조합이 표시되지 않습니다 (<a href="#s27">2-7</a>)</td></tr>
+    <tr><td>데이터 점검</td><td class="desc"><b>'성분 미매칭 SKU' 점검 항목은 그대로 유지</b>됩니다 — 지금 정리해 두면 기능이 다시 열릴 때 바로 정확한 결과를 볼 수 있습니다</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 3. 데이터 점검 ==================== -->
+<h2 class="module" id="m3">3. 데이터 점검 — 데이터 진단</h2>
+<div class="module-tag">Quality</div>
+<p class="lead">분류가 비어 있는 상품을 정리하는 화면. 미분류를 줄일수록 발주·분석의 모든 숫자가 정확해집니다. 주 1회 5분.</p>
+<div class="tip"><b>안내</b> → CMS 시즌/성분 분석 결과를 기준으로 점검 항목이 자동 집계됩니다. 보정값을 저장한 뒤 다시 분석하면 결과에 반영됩니다.</div>
+<ol class="steps">
+  <li><b>분류 필요 SKU</b> → 판매는 있는데 카테고리가 없는 상품. 대분류·중분류 선택 → <b>선택값 저장</b>. 판매량 순 정렬이라 상위부터.</li>
+  <li><b>성분 미매칭 SKU</b> → 자동 태깅에서 성분/라인을 찾지 못한 상품 전체를 확인·정리. <span class="note">(성분 화면은 준비 중이지만 이 정리는 계속 유효)</span></li>
+  <li><b>권역 기준 확인</b> → 권역 없는 국가에 권역 지정 (0건이면 할 일 없음).</li>
+  <li>저장값은 <b>다음 분석부터</b> 반영 → 분석 탭에서 '분석 시작' 재실행.</li>
+</ol>
+<table class="t">
+  <thead><tr><th>패널</th><th>어떤 상품이 잡히나</th><th>안 고치면</th></tr></thead>
+  <tbody>
+    <tr><td>분류 필요 SKU</td><td class="desc">판매 이력은 있는데(<span class="src s-sale">판매이력</span>) 카테고리가 없음(<span class="src s-item">상품목록</span>의 기능구분 미지정)</td><td class="desc">제품군·시즌 캘린더·구성비 집계에서 빠지고, <b>발주분석 V3에서는 계절지수를 연결할 수 없어 '보류·차단'</b>이 됩니다</td></tr>
+    <tr><td>성분 미매칭 SKU</td><td class="desc">상품명에서 성분 키워드를 못 찾음</td><td class="desc">성분 분석 재개 시 집계에서 빠짐</td></tr>
+    <tr><td>권역 확인 국가</td><td class="desc">권역이 지정되지 않은 국가</td><td class="desc">권역별 비중 집계에서 빠짐</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 4. 계산 ==================== -->
+<h2 class="module" id="m4">4. 계산 로직 — 발주 로직 버전 3</h2>
+<div class="module-tag">Calculation Logic</div>
+<p class="lead">발주분석 V3가 제안수량을 만드는 과정을 순서대로 풀어서 설명합니다. ① 수요 패턴을 분류하고 → ② 그 패턴에 맞는 방법으로 향후 수요(d_avg)와 예측오차(σ)를 구하고 → ③ 계절 영향을 반영한 뒤 → ④ 상품등급·발주 시나리오에 따라 Z·리드타임·발주주기 값을 대입해 <b>목표재고(S) = L1+L2+L3</b>를 만들고 → ⑤ 보유재고(IP)와 비교해 제안수량(Q)을 냅니다. 계산 대상 SKU의 범위는 <a href="#c14">⑭</a>에 정리했습니다. 방향안(버전 4, 미확정)은 다루지 않습니다.</p>
+
+<div class="srcbox"><b>이 장에서 쓰는 예시 상황</b> → 유럽법인(폴란드) 기준, 주력 등급, 주평균 판매량(d_avg) 100개, 예측오차(σ) 45, 계절지수 1.0. 계산 단위는 <b>주(week, 7일)</b>이고 <b>1기 = 1주</b>입니다. 발주 시나리오별 예시는 이 상품 하나를 기준으로 비교합니다. 내부 로직 버전은 <b>v3.27</b>입니다.</div>
+
+<div class="calc" id="c1">
+  <div class="calc-title">① 수요 패턴 분류 — "안정형·추세형·간헐형 중 무엇인가"</div>
+  <div class="calc-why">상품 성격이 다르면 같은 방법으로 예측해도 정확도가 달라집니다. 세 지표를 정해진 순서로 계산해 패턴을 자동으로 확정합니다. 계절성이 있는 상품은 계절 영향을 제거한 조정판매량으로 먼저 계산해야 합니다.</div>
+  <div class="calc-f">① ADI(판매간격지수) = 관측기간 ÷ 판매 발생 기간 &nbsp;·&nbsp; ② CV² = (σ÷평균)² &nbsp;·&nbsp; ③ 추세 신호 = (8~13기 합계 − 1~6기 합계) ÷ 1~6기 합계</div>
+  <div class="calc-ex">순서: ADI≥<b>1.32</b> 이고 동시에 CV²≥<b>0.49</b>이면 → <b>간헐형(Croston+SBA)</b> 확정 (2026-09-02 확정 로직표 B, <b>두 조건이 모두 충족돼야 함</b>).<br>
+  둘 중 하나라도 못 넘으면 간헐형이 아니며, 추세 신호를 봅니다 → ±<b>20%</b> 넘으면 <b>추세형</b>(상승·하락 모두 HOLT+감쇠), 아니면 <b>안정형</b>.<br>
+  <b>추세 신호는 13기 중 7기(중간 기간)를 제외</b>하고 앞 6기와 최근 6기만 비교합니다. CV²의 σ는 관측 13기 <b>모집단 표준편차</b>를 씁니다(표본식을 쓰면 0.49 경계에서 분류가 달라질 수 있어 고정).<br>
+  예) ADI 1.1(기준 미달) → 추세 신호 +32% → <b>추세형</b>으로 확정, HOLT+감쇠 적용</div>
+</div>
+
+<div class="calc" id="c2">
+  <div class="calc-title">② 패턴별 예측 방법 — "d_avg를 어떻게 구하나"</div>
+  <div class="calc-why">세 방법 모두 과거 판매로 향후 평균 판매량(d_avg)을 추정하되, 반영하는 요소가 다릅니다.</div>
+  <div class="calc-f">
+  안정형 → SES: 새 추정치 = 기존 추정치 + <b>α(0.2)</b> × (실제값 − 기존 추정치)<br>
+  추세형 → HOLT+감쇠: 예측치(t) = ℓ(t−1) + <b>φ(0.9)</b>·b(t−1) &nbsp;(α=0.2, β=0.1)<br>
+  간헐형 → Croston+SBA: d_avg = (z ÷ p) × (1 − <b>α(0.2)</b>/2) &nbsp;(p=판매간격, z=판매 발생 시 판매량, SBA 보정 0.9)
+  </div>
+  <div class="calc-ex">HOLT 감쇠계수(φ=0.9)는 매 기간 갱신에서 반영되며, 예측 시점에만 적용하면 오차가 커집니다. 성장세가 영원히 유지된다고 보지 않기 때문에, 성장 초기 SKU에 결품도 많고 성장이 꺾일 때 과잉재고도 많습니다.<br>
+  <b>추세형의 L1·L3는 단순 곱셈이 아닙니다</b> — HOLT는 감쇠 때문에 기간마다 예측치가 달라지므로, L1은 0~L̄ 구간, L3는 L̄~L̄+R 구간의 <b>예측 합계</b>로 계산하고, L2에 쓰는 주평균은 0~L̄+R 구간 합계를 기간 수로 나눈 값을 씁니다.</div>
+</div>
+
+<div class="calc" id="c3">
+  <div class="calc-title">③ 예측오차(σ) — "표준편차가 아니라 예측오차를 쓰는 이유"</div>
+  <div class="calc-why">안전재고가 방어할 대상은 '판매가 평균에서 벗어나는 정도'가 아니라 '예측이 실제와 벗어나는 정도'입니다. 상품별로 예측을 산출하는 버전 3부터는 예측오차가 더 정확합니다.</div>
+  <div class="calc-f">표준편차 σ = √(Σ(실제−전체평균)² ÷ (n−1)) &nbsp;·&nbsp; 예측오차 RMSE(σ) = √(Σ(실제−예측치)² ÷ n)</div>
+  <div class="calc-ex">예) 어느 안정형 상품의 단순표준편차는 51.9개였지만 예측오차는 60.0개로 나타남 → 두 지표는 서로 다른 값을 줍니다. 안전재고 산식(→ <a href="#c10">⑩</a>)에는 <b>예측오차</b>를 대입합니다.<br>
+  <b>간헐형은 예외입니다</b> — Croston은 예측 잔차 대신 <b>판매량 분산과 판매간격을 조합한 분산식</b>으로 σ를 산출합니다(RMSE는 표시하지 않고 '–'). 판매가 드문 구간의 0을 오차로 취급하면 σ가 왜곡되기 때문입니다.</div>
+</div>
+
+<div class="calc" id="c4">
+  <div class="calc-title">④ 계절 조정 — "성수기·비수기 영향을 어떻게 다루나"</div>
+  <div class="calc-why">수요 패턴 분류와 별개로 작동합니다. 어느 패턴이든 계절성이 있으면 동일하게 적용합니다.</div>
+  <div class="calc-f">영향 제거: 조정판매량 = 실제판매량 ÷ 계절지수S(m) &nbsp;·&nbsp; 재반영: L1 × <b>f1</b>, L3 × <b>f2</b>, L2의 주평균·σ × <b>f_LR</b></div>
+  <div class="calc-ex">계절지수는 성수기 2.0~2.5, 비수기 0.4 수준으로 나타납니다. 계절 영향을 제거한 값으로 예측한 뒤, <b>목표재고의 각 계층에 해당 구간의 계절지수를 다시 곱합니다</b> — f1은 리드타임 구간, f2는 발주주기 구간, f_LR은 보호기간 전체의 평균 지수입니다.<br>
+  <b>계절지수는 관리자 화면에서 자동 검증을 통과해 활성화된 버전만 참조합니다</b>(24개월 범위, 1~12월 계수 평균 1.0, 중복·법인 일치 검증 → <a href="#s12">1-2</a>). 기능구분2가 없으면 같은 법인의 기능구분1 지수를 쓰고, 그마저 없으면 <b>임의 지수로 대체하지 않고 그 SKU의 계산을 차단</b>합니다. 관리자가 승인한 '계산 보류' 항목만 1~12월 모두 <b>기본값 1.0</b>(계절 가감 없음)으로 계산합니다.</div>
+</div>
+
+<div class="calc" id="c5">
+  <div class="calc-title">⑤ 상품등급 — "주력/일반을 무엇으로 나누나"</div>
+  <div class="calc-why">품절 손실이 큰 상품을 두껍게 방어하기 위한 구분입니다. 매출을 내림차순 정렬해 누적 매출 90%까지가 주력, 나머지가 일반입니다(파레토 법칙 기준, 2026-09-02 승인).</div>
+  <div class="calc-f">누적 매출 ≤ 전체 매출의 90% → 주력 &nbsp;·&nbsp; 그 외 → 일반</div>
+  <div class="calc-ex">등급을 더 세분화하지 않아도, 상품별 변동성(σ)이 이미 ③의 예측오차에 SKU별로 반영되어 있어 변동성에 따른 차등은 이루어지고 있습니다.</div>
+</div>
+
+<div class="calc" id="c6">
+  <div class="calc-title">⑥ 발주 시나리오 — "쇼티지 방어 / 현금흐름 우선"</div>
+  <div class="calc-why">전사 단위로 적용되는 기준이며 SKU별로 개별 판단하지 않습니다. 하나의 기준으로 Z값과 리드타임 기준값이 동시에 바뀝니다. 이전 문서의 '정책모드'와 같은 기능이며 화면 명칭이 <b>발주 시나리오</b>로 변경되었습니다.</div>
+  <div class="calc-f">쇼티지 방어: Z를 높이고 <b>해운</b> 리드타임 &nbsp;·&nbsp; 현금흐름 우선: Z를 낮추고 폴란드는 <b>철송</b> · 미국은 <b>항공</b> 리드타임</div>
+  <div class="calc-ex">실측 결과 → 폴란드 법인 전체 SKU 포트폴리오를 대상으로 발주 시나리오를 전환한 결과, 발주 금액이 약 <b>14.6% 감소</b>했습니다(개별 SKU 예시의 60%보다 작은 폭이며, 등급·변동성이 SKU마다 달라 포트폴리오 평균은 더 작게 나타납니다). 단순한 계산 파라미터가 아니라 법인 단위 자금 이용과 재고 정책을 함께 조정하는 수단입니다.<br>
+  <b>본사(스킨)는 국내조달 단일 경로</b>라 시나리오가 리드타임을 바꾸지 않고 <b>Z만 바꿉니다</b>.</div>
+</div>
+
+<div class="calc" id="c7">
+  <div class="calc-title">⑦ 서비스레벨(Z) — "등급·발주 시나리오별 Z값"</div>
+  <div class="calc-why">보호기간 수요가 발주치에 닿지 않을 목표 확률(Cycle Service Level)을 직접 지정한 뒤, 그 확률에 대응하는 표준정규분포 분위수를 그대로 씁니다.</div>
+  <div class="calc-f">PL(유럽)·USA(미주): 쇼티지·주력 Z=1.28(≈90%) · 쇼티지·일반 Z=0.84(≈80%) · 현금·주력 Z=0.52(≈70%) · 현금·일반 Z=0.25(≈60%)<br>HQ(스킨창고): 쇼티지·주력 0.84(≈80%) · 쇼티지·일반 0.52(≈70%) · 현금·주력 0.25(≈60%) · 현금·일반 0(≈50%)</div>
+  <div class="calc-ex">2026-09-02 승인된 고정 정책이며, 법인별 승인 매트릭스가 없는 법인에는 교과서 기본 매트릭스가 적용됩니다(현재 서비스 중인 3개 법인은 모두 승인 매트릭스 사용). 스킨창고는 국내 조달로 리드타임이 짧아, 같은 서비스레벨이라도 더 낮은 Z값으로 충분히 방어되어 별도 표를 씁니다. 현금·일반의 Z=0은 의도적으로 0(≈50%)으로 둔 값입니다.</div>
+</div>
+
+<div class="calc" id="c8">
+  <div class="calc-title">⑧ 발주주기(R)·SS펜스 — "언제 다시 발주 검토하나, 안전재고 상하한"</div>
+  <div class="calc-why">R은 목표재고의 L3 계층과 보호기간(P)에 함께 들어가는 고정 주기입니다. SS펜스는 σ·σ_L 조합이 극단적일 때 안전재고가 비현실적으로 커지거나 작아지는 것을 막습니다.</div>
+  <div class="calc-f">R: 스킨창고·미주법인·유럽법인 모두 <b>4주(28일)</b> 고정 &nbsp;·&nbsp; SS = MIN(MAX(SS원값, 주평균수요×펜스하한), 주평균수요×펜스상한)</div>
+  <div class="calc-ex">SS펜스 → 스킨창고 <b>1주~2주</b> · 미주법인 <b>2주~8주</b> · 유럽법인 <b>2주~10주</b>(법인별 상이). 펜스의 기준이 되는 '주평균수요'는 계절지수(f_LR)를 반영한 주평균 수요입니다. 펜스가 항상 붙어 있으면 펜스 값 자체를 재검증해야 한다는 신호입니다.</div>
+</div>
+
+<div class="calc" id="c9">
+  <div class="calc-title">⑨ 법인·운송수단별 리드타임(L̄)·변동성(σ_L)</div>
+  <div class="calc-why">보호기간(P=L̄+R)과 안전재고(L2)의 재료가 됩니다. 리드타임 자체가 매번 달라지므로, 그 변동(σ_L)을 반영하지 않으면 배송이 늦어지는 동안의 추가 수요 위험을 방어하지 못합니다.</div>
+  <div class="calc-f">L̄·σ_L = <b>직전 6개월 완료 실측</b>의 평균·표본표준편차(일) ÷ 7 → 주 단위. 운송수단별 유효 표본 <b>10건 이상</b> 필요 <span class="note">(스킨창고는 국내조달 단일 경로라 최근 12개월 입고건을 동일 가설로 집계 → 관측기간·집계방식이 해외법인과 다름)</span></div>
+  <div class="calc-ex">유럽법인 → 해운 L̄ 72.9일(σ_L 2.18주, 표본 440건) · 철송 L̄ 36.6일(σ_L 1.15주, 표본 110건) · 항공 L̄ 16.4일(σ_L 0.68주, 표본 252건). 미주법인 → 해운 30.01일 · 항공 4.48일. 스킨창고 → 국내조달 12.12일(σ_L 16.55일, 최근 12개월 입고 5,446건 기준). <b>이 값들은 실행 시점의 실측 스냅샷이라 분석을 다시 돌리면 갱신됩니다</b> — 정확한 현재값은 검토 패널의 '입고 소요기간과 검토 주기'와 엑셀 '_계산기준' 시트에서 확인하세요. 표본 10건 미만인 운송수단(트럭킹 등)은 계산 자체를 차단합니다(→ <a href="#c12">⑫</a>).</div>
+</div>
+
+<div class="calc" id="c10">
+  <div class="calc-title">⑩ 목표재고(S) — "L1·L2·L3를 어떻게 더하나" <span class="note">(수정)</span></div>
+  <div class="calc-why">세 항목을 따로 계산해 더하는 이유는 각 항목이 서로 다른 요인을 반영하기 때문입니다(리드타임↑해운이면 L2·L3는 그대로일 수 있고, σ↑여도 L1·L3는 그대로일 수 있음). 계절지수도 계층별로 다르게 곱합니다.</div>
+  <div class="calc-f">P(보호기간) = L̄ + R &nbsp;·&nbsp; L1 = d_avg × L̄ × f1 &nbsp;·&nbsp; L3 = d_avg × R × f2 &nbsp;·&nbsp; L2(=SS) = Z × √(P·σ² + d_avg²·σ_L²) → SS펜스 적용<br><b>목표재고 S = L1 + L2 + L3</b> &nbsp;·&nbsp; 참고 ROP = L1 + L2 <b>(발주 조건에 사용하지 않음)</b></div>
+  <div class="calc-ex">
+  *표. 발주 시나리오별 목표재고 계산 예시(d_avg=100, σ=45, 계절지수 1.0, 유럽법인 기준)*<br>
+  현금흐름 우선(철송): Z 0.52 · L̄ 5.23주 · R 4주 · P=9.23주 · σ_L 1.15주 → L1 <b>523개</b>, SS원값 약 93개 → SS펜스 하한(2주치=200개)에 걸려 <b>L2 200개</b>로 보정, L3 <b>400개</b> → <b>S 1,123개</b> (참고 ROP 723개)<br>
+  쇼티지 방어(해운): Z 1.28 · L̄ 10.41주 · R 4주 · P=14.41주 · σ_L 2.18주 → L1 <b>1,041개</b>, L2 약 <b>355개</b>(펜스 범위 내, 원값 그대로), L3 <b>400개</b> → <b>S 1,796개</b> (참고 ROP 1,396개)<br>
+  같은 SKU인데 약 60% 차이 나는 이유는 Z와 리드타임(실제 소요일수·변동성)이 함께 움직이기 때문입니다. 해운의 리드타임 변동(σ_L 2.18주)이 철송(1.15주)보다 훨씬 커서, 쇼티지 방어는 기간이 늘어나는 효과와 변동성이 커지는 효과가 겹칩니다. 현금흐름 우선은 Z값이 낮아 SS원값(93개)이 펜스 하한(200개)에 못 미쳐 <b>펜스가 실질적인 안전판</b> 역할을 합니다 → Z만 보면 안전재고가 지나치게 얇아 보이지만, 실제로는 펜스가 최저 방어선을 잡아 줍니다.<br>
+  <b>이전 버전 문서와 달라진 점</b> — 이전에는 "L1 = d_avg × P"로 리드타임 구간과 발주주기 구간을 합쳐 표기하고 "S = L1 + L2"로 적었습니다. 현재 화면·엑셀은 두 구간을 <b>L1(리드타임 구간)과 L3(발주주기 구간)로 분리</b>해 표시하고 <b>S = L1 + L2 + L3</b>로 계산합니다. <b>합계 S는 동일</b>하지만(위 예시의 1,123 / 1,796) 화면에 보이는 계층 내역이 달라졌고, 계절지수를 구간별로 다르게 적용할 수 있게 되었습니다. 또한 <b>참고 ROP(=L1+L2)</b>가 검토 패널·엑셀에 표시되지만 <b>발주 조건으로는 쓰지 않습니다</b> — 순수 정기발주(R,S) 모델이라 매 분석마다 IP와 S를 직접 비교합니다.</div>
+</div>
+
+<div class="calc" id="c11">
+  <div class="calc-title">⑪ 발주반영 총재고(IP)·제안수량(Q) — "몇 개 더 필요한가"</div>
+  <div class="calc-why">목표재고(S)에서 이미 확보된 재고(IP)를 뺀 값이 제안수량입니다. 박스단위·MOQ 반영은 아직 정책이 확정되지 않아(V3-012) 산출된 Q를 그대로 씁니다.</div>
+  <div class="calc-f">PL·USA: IP = 현지가용 + 본사 법인창고 가용(EU재고) + 운송중 + 입고예정 &nbsp;·&nbsp; HQ: IP = 현지가용 + 입고예정<br>입고예정 = ① 미입고 + ② PNFM확정 + ③ 입고진행중 <b>(④ 입고완료는 제외)</b> &nbsp;·&nbsp; 매 R마다 Q = MAX(0, S − IP)</div>
+  <div class="calc-ex">예) 목표재고 S 232,656개, IP(현재고 200 + 이송중 61,956 + 미입고 0) = 62,156개 → Q = 232,656 − 62,156 = <b>170,500개</b>. 발주필요금액은 Q × 상품 단가로 계산하며, <b>서버가 현지 통화 원값</b>(PL=EUR, USA=USD, HQ=KRW)으로 산출하고 원화 표기는 환산 참고값입니다. 표시 수량이나 담당자 검토수량으로 금액을 재계산하지 않습니다.<br>
+  <b>① 미입고 수량은 PO 등록일 최근 30일로 좁혀서 반영합니다</b> → <a href="#c13">⑬</a>. 재고 원천의 특정 항목이 비어 있으면 0으로 적용하고 그 사실을 '재고 원천 확인'으로 알리며, <b>음수</b>가 있으면 그 SKU의 계산을 차단합니다.</div>
+</div>
+
+<div class="calc" id="c12">
+  <div class="calc-title">⑫ 계산 차단 조건 — "발주 보류·계산 차단"</div>
+  <div class="calc-why">근거 없는 대체값으로 계산하는 것보다, 표본이 쌓일 때까지 계산 자체를 멈추는 쪽이 더 안전하다는 판단입니다.</div>
+  <div class="calc-f">① 해당 운송수단의 직전 6개월 리드타임 실측 표본 &lt; 10건 &nbsp;·&nbsp; ② 최근 13주 전체 판매 0 &nbsp;·&nbsp; ③ Croston 기준 판매 발생 완료 주 &lt; 2개 &nbsp;·&nbsp; ④ 추세 판정 기준인 앞 6주 판매 합계 = 0 &nbsp;·&nbsp; ⑤ 계절지수 연결 불가(기능구분 미분류 또는 해당 법인 프로파일 없음/계산 실패) &nbsp;·&nbsp; ⑥ 재고 원천 음수 등 입력·정책값 무효</div>
+  <div class="calc-ex">위 조건 중 하나라도 해당하면 그 SKU는 결과를 산출하지 않고 '발주 보류·계산 차단'으로 표시됩니다. 전사 평균 등으로 대체하지 않습니다. 화면의 사유 필터는 이 조건들을 <b>판매이력 부족 · 간헐형 계산 조건 확인 · 추세형 계산 조건 확인 · 입력 데이터·계산 조건 확인</b> 네 그룹으로 묶어 보여줍니다.</div>
+</div>
+
+<div class="calc" id="c13">
+  <div class="calc-title">⑬ 미입고 조회창 — "① 미입고만 PO 등록일 최근 30일" <span class="note">(신설 · 2026-09-04)</span></div>
+  <div class="calc-why">이전에는 미입고 현황을 <b>연초(1월 1일)부터 전부</b> 가져왔습니다. 그 창은 운송중 조회와 공유하던 값이라, PO 등록일이 오래된 잔량까지 계속 입고예정으로 누적돼 <b>IP가 과대계상되고 실제로 발주가 필요한 SKU가 제안수량 0으로 판정되는 사례</b>가 확인됐습니다.</div>
+  <div class="calc-f">① 미입고 수량만 <b>PO 등록일 기준 분석 기준일 포함 최근 30 달력일</b>(기준일−29일 ~ 기준일)로 제한 &nbsp;·&nbsp; ② PNFM확정 · ③ 입고진행중 · ④ 입고완료는 <b>기간 제한 없음</b></div>
+  <div class="calc-ex">②③④는 <b>이미 입고 통보되었거나 입고가 진행 중인, 확실히 들어올 물량</b>이므로 PO 등록일이 오래되었다는 이유로 빼지 않습니다. 창은 <b>수량 하나만</b> 바꾸며, SKU의 원천 행 존재 여부·상품명·바코드 등 식별 증거와 계산 모집단은 창 적용 전과 같습니다 — 상품이 분석에서 사라지지 않습니다. 운송중·재고·판매·리드타임 조회창과 발주분석 V1·V2의 조회창은 <b>변경하지 않았습니다</b>.<br>
+  법인별 적용 지점은 원천 API 형태에 따라 다릅니다 — 본사(오포)는 행마다 PO 등록일이 있어 창을 벗어난 행의 잔량만 0으로 만들고, 폴란드·미국은 상품 단위 집계라 같은 피드를 전체 창과 30일 창으로 두 번 조회해 ① 계열 수량만 30일 창 값으로 교체합니다.</div>
+</div>
+
+<div class="calc" id="c14">
+  <div class="calc-title">⑭ 계산 모집단 — "어떤 SKU가 분석 대상인가" <span class="note">(신설)</span></div>
+  <div class="calc-why">상품 식별(상품코드·바코드) 검증을 통과한 SKU만 계산 대상이 되며, 예외는 상품명 규칙이 아니라 <b>명시적으로 승인된 법인·SKU 목록</b>으로만 관리합니다.</div>
+  <div class="calc-f">식별 검증 통과 SKU 전체 − 법인별 승인 제외 목록 <span class="note">(2026-08-31 승인: 미국법인 3개 SKU)</span></div>
+  <div class="calc-ex">제외는 정책 설정값이며 감사 기록(건수·정책 지문)으로 남습니다. 상품명 패턴이나 자동 판정으로 상품을 빼지 않습니다.</div>
+</div>
+
+<div class="tip"><b>아직 정해지지 않은 부분 (버전 3 기준)</b> → ① CV²&gt;0.49일 때 σ를 얼마나 강화할지(현재는 <b>표시만</b> 하고 계수를 바꾸지 않음 — 간헐형 분류 자체는 ADI·CV² 동시 충족으로 확정됐지만, σ 강화 계수는 별개로 미정) ② 신규 상품·판매이력 0~1회 SKU의 최초 d_avg·σ 기준 ③ 박스단위·MOQ·팔레트 단위 반영(V3-012) ④ 간헐형 예측 상한(필드는 준비돼 있으나 <b>현재 적용하지 않음</b>) ⑤ 시즌팩터 거버넌스의 잔여 항목(연 마감일, 롤백 절차). 확정되는 대로 이 문서에 반영합니다.</div>
+<p class="note">이용 시 주의할 점 → 수요변동과 리드타임변동은 서로 독립이라고 가정하므로, 성수기에 수요 급증과 선적 지연이 동시에 발생하면 실제 위험을 과소평가할 수 있습니다. 현금흐름 우선 시나리오는 철송·항공 리드타임을 가정하지만 실제로 해운으로 이동 중인 재고는 별도 확인이 필요합니다. IP 계산에서 이송중 수량이 누락되면 제안수량이 과다 산출되고, 반대로 오래된 미입고 잔량이 남아 있으면 과소 산출됩니다 — 후자를 막기 위해 ⑬의 30일 창을 도입했습니다.</p>
+
+<!-- ==================== 5. 경영 · 지원 ==================== -->
+<h2 class="module" id="m5">5. 경영 · 지원</h2>
+<div class="module-tag">Overview &amp; Support</div>
+
+<h3 class="screen">5-1. 전사 재고 현황</h3>
+<p class="lead"><b>신설 화면입니다.</b> 전사 보유 재고를 법인과 창고 단위로 확인합니다. <b>마스터 계정이 본사 법인을 선택했을 때만</b> 사이드바 '경영 · OVERVIEW'에 나타납니다.</p>
+<table class="t">
+  <thead><tr><th>화면 항목</th><th>설명</th><th>출처</th></tr></thead>
+  <tbody>
+    <tr><td>관리 기준 총 재고 · 기준일</td><td class="desc">전사 보유 재고 합계</td><td><span class="src s-sko">SKO재고</span> <span class="src s-eu">EU재고</span></td></tr>
+    <tr><td><b>보유재고 평가 기준</b></td><td class="desc"><b>장부금액</b>(입고 시점 원화 단가가 반영된 장부금액) ↔ <b>현재환율 평가액</b>(조회 기준일 이하 최근 고시환율 적용) 토글. 법인별 금액은 선택 기준에 따라 바뀌고 두 기준의 <b>차이</b>도 함께 표시됩니다</td><td><span class="src s-ui">설정</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>법인별 보유 재고 상세 · 창고별 재고금액</td><td class="desc">법인을 선택하면 창고 상세와 적용 환율(통화 단위·원 환산)을 확인</td><td><span class="src s-sko">SKO재고</span> <span class="src s-fx">환율</span></td></tr>
+    <tr><td>운송중 재고</td><td class="desc">도착 법인별·운송수단별 운송중 재고. 원화 환산 기준은 <b>인보이스에 기록된 계약환율</b>이며 현재환율 전환 대상이 아닙니다</td><td><span class="src s-un">이송</span></td></tr>
+  </tbody>
+</table>
+<div class="tip"><b>'산출 불가'의 의미</b> → 금액을 0원으로 대체하거나 부분 합계로 채우지 않습니다. 값을 만들어 보여주지 않는 것이 이 화면의 원칙입니다.</div>
+
+<h3 class="screen">5-2. 고객센터</h3>
+<p class="lead"><b>신설 화면입니다.</b> FAQ를 카테고리·검색으로 찾고, 해결되지 않으면 <b>Microsoft Forms</b>로 문의를 접수합니다(팝업 차단 해제 필요).</p>
+<p class="note">화면 조작에 관한 질문은 고객센터 FAQ가, 숫자의 계산 근거는 이 문서의 <a href="#m4">4장</a>이 더 자세합니다.</p>
+
+<!-- ==================== 6. 용어·FAQ ==================== -->
+<h2 class="module" id="m6">6. 용어 사전 · FAQ</h2>
+<div class="module-tag">Reference</div>
+
+<h4 class="sub">용어 사전</h4>
+<table class="t">
+  <thead><tr><th>용어</th><th>쉽게 말하면</th></tr></thead>
+  <tbody>
+    <tr><td>SKU</td><td class="desc">관리 단위가 되는 개별 상품</td></tr>
+    <tr><td>발주 시나리오</td><td class="desc">쇼티지 방어 / 현금흐름 우선. 전사 단위 스위치, Z·리드타임 가정이 함께 바뀜 — 이전 문서의 '정책모드' (→ <a href="#c6">계산 ⑥</a>)</td></tr>
+    <tr><td>상품등급</td><td class="desc">누적 매출 90%까지 주력, 나머지 일반. 등급마다 Z값이 다름 (→ <a href="#c5">계산 ⑤</a>·<a href="#c7">⑦</a>)</td></tr>
+    <tr><td>수요 패턴(안정형/추세형/간헐형)</td><td class="desc">ADI·CV²·추세 신호로 자동 분류, 패턴마다 예측 방법이 다름 (→ <a href="#c1">계산 ①</a>·<a href="#c2">②</a>)</td></tr>
+    <tr><td>d_avg / 예측오차(σ, RMSE)</td><td class="desc">1주(7일)당 기초 수요예측 / 예측이 실제에서 벗어나는 정도. 간헐형은 RMSE 대신 분산식으로 σ 산출 (→ <a href="#c3">계산 ③</a>)</td></tr>
+    <tr><td>보호기간(P) / 발주주기(R)</td><td class="desc">P=L̄+R, 안전재고 산식에 들어가는 기간 / 다음 발주 검토까지의 주기(4주 고정) (→ <a href="#c8">계산 ⑧</a>)</td></tr>
+    <tr><td>리드타임(L̄) / σ_L</td><td class="desc">법인·운송수단별 실측 평균 리드타임과 그 변동성(직전 6개월, 표본 10건 이상) (→ <a href="#c9">계산 ⑨</a>)</td></tr>
+    <tr><td>목표재고(S)</td><td class="desc"><b>L1(리드타임 수요) + L2(안전재고, SS펜스 적용) + L3(발주주기 수요)</b> (→ <a href="#c10">계산 ⑩</a>)</td></tr>
+    <tr><td>참고 ROP</td><td class="desc">L1 + L2. 화면·엑셀에 표시되지만 <b>발주 조건으로는 사용하지 않는 참고값</b> (→ <a href="#c10">계산 ⑩</a>)</td></tr>
+    <tr><td>발주반영 총재고(IP) / 제안수량(Q)</td><td class="desc">현지가용+본사 법인창고 가용+운송중+입고예정 / Q=MAX(0, S−IP) (→ <a href="#c11">계산 ⑪</a>)</td></tr>
+    <tr><td>입고예정</td><td class="desc">① 미입고 + ② PNFM확정 + ③ 입고진행중 (④ 입고완료 제외). ①만 PO 등록일 최근 30일 (→ <a href="#c13">계산 ⑬</a>)</td></tr>
+    <tr><td>계절지수 / 기본값 1.0</td><td class="desc">기능구분별 월 계수(1~12월 평균 1.0), 관리자 화면에서 검증·활성화 / 계산 보류 항목에 적용하는 중립값 (→ <a href="#c4">계산 ④</a>·<a href="#s12">1-2</a>)</td></tr>
+    <tr><td>발주 보류·계산 차단</td><td class="desc">리드타임·판매이력 표본 부족, 계절지수 연결 불가 등으로 계산을 진행하지 않은 상품 (→ <a href="#c12">계산 ⑫</a>)</td></tr>
+    <tr><td>상태 확인 필요</td><td class="desc">발주 필요/불필요를 확정하지 못한 상품을 모아두는 안전장치 목록</td></tr>
+    <tr><td>현재고 / 운송중 / 미입고</td><td class="desc">현지 창고 가용 수량 / 이동 중인 수량 / PO는 넣었지만 미도착 수량</td></tr>
+    <tr><td>ETA</td><td class="desc">이송 중인 물량의 도착 예정일. 원천 ETA 우선, 없으면 출고일+운송수단별 평균 리드타임으로 추정</td></tr>
+    <tr><td>재고 공백 / 부족 수량</td><td class="desc">재고가 비어 못 파는 기간 / 그때 놓치는 판매량 → 발주분석 V1의 하위 탭</td></tr>
+    <tr><td>기능구분1 / 2</td><td class="desc">상품의 대분류 / 중분류 → 제품군·시즌 캘린더·계절지수의 분류 기준</td></tr>
+    <tr><td>MoM / YoY</td><td class="desc">전월 대비 / 전년 동기 대비 증가율(교차분석의 YoY는 YTD 기준)</td></tr>
+  </tbody>
+</table>
+
+<h4 class="sub">자주 묻는 질문</h4>
+<table class="t">
+  <thead><tr><th>질문</th><th>답</th></tr></thead>
+  <tbody>
+    <tr><td>발주분석 V3는 어디서 실행하나요?</td><td class="desc"><b>발주분석 V3 화면 안</b>의 상단 실행 상태바에서 <b>분석 실행 / 새로 분석</b>을 누릅니다. 발주 그룹의 '데이터 입력' 화면은 V1·V2용이며 V3와 무관합니다 (→ <a href="#s13">1-3</a>).</td></tr>
+    <tr><td>여러 명이 동시에 분석을 돌리면?</td><td class="desc">서버 작업 큐에서 순서대로 처리됩니다. "사용 가능한 분석 Worker를 기다리는 중"이라고 안내되고 순서가 오면 자동 시작되며, 그동안 이전 완료 결과는 유지됩니다. 통신 지연 시 같은 분석에 자동 재연결합니다.</td></tr>
+    <tr><td>목표재고 공식이 이전 문서와 달라요 (S=L1+L2 → L1+L2+L3)</td><td class="desc">합계 S는 동일하고 <b>표기 방식이 바뀐 것</b>입니다. 이전에는 L1을 보호기간(P=L̄+R) 전체 수요로 묶어 적었고, 현재는 <b>L1(리드타임 구간)과 L3(발주주기 구간)을 분리</b>해 표시합니다. 계절지수를 구간별로 다르게 적용하기 위한 변경이며, 화면·엑셀도 세 계층을 각각 보여줍니다 (→ <a href="#c10">계산 ⑩</a>).</td></tr>
+    <tr><td>참고 ROP는 왜 표시하면서 안 쓰나요?</td><td class="desc">V3는 <b>순수 정기발주(R,S) 모델</b>이라 매 분석마다 IP와 목표재고(S)를 직접 비교합니다. ROP(=L1+L2)는 계층 구성을 점검하기 위한 참고값으로만 남겨 두었습니다.</td></tr>
+    <tr><td>제안수량이 0인데 실제로는 재고가 부족해요</td><td class="desc">오래된 미입고 잔량이 입고예정으로 계속 누적되면 IP가 과대계상됩니다. 2026-09-04부터 <b>① 미입고 수량을 PO 등록일 최근 30일로 제한</b>해 이 문제를 줄였습니다 (→ <a href="#c13">계산 ⑬</a>). 그래도 0이면 검토 패널의 '발주에 반영한 재고'에서 어떤 항목이 IP를 채웠는지 확인하세요.</td></tr>
+    <tr><td>금액이 안 보여요 / '[금액 제한]'으로 나와요</td><td class="desc">금액 조회 권한이 없는 계정입니다. 수량·비중·점유율·순위는 그대로 보이며 엑셀의 단가·금액 열도 숨겨집니다 (→ <a href="#s04">0-4</a>).</td></tr>
+    <tr><td>'상태 확인 필요' 목록은 뭔가요?</td><td class="desc">계산은 됐지만 발주 필요/불필요를 확정하지 못한 상품을 모아두는 <b>안전장치</b>입니다. 임의로 '불필요'로 처리하지 않기 위한 목록이며, 건수가 0이면 링크가 나타나지 않습니다.</td></tr>
+    <tr><td>발주 보류·계산 차단이 된 이유</td><td class="desc">리드타임 표본 부족(운송수단 10건 미만), 최근 13주 판매 부족, 간헐형·추세형 계산 조건 미충족, <b>계절지수 연결 불가</b>, 재고 원천 음수 등입니다 (→ <a href="#c12">계산 ⑫</a>). 표본이 쌓이면 자동으로 계산 대상에 포함됩니다.</td></tr>
+    <tr><td>계절지수는 누가 갱신하나요?</td><td class="desc">관리자입니다. 자동 검증(24개월 범위·계수 평균 1.0·중복·법인 일치)을 통과한 버전만 V3에 적용되고, 실패하면 기존 버전이 유지됩니다 (→ <a href="#s12">1-2</a>).</td></tr>
+    <tr><td>발주 시나리오를 잘못 바꾸면? (Z·등급 값)</td><td class="desc">시나리오 자체는 화면에서 고를 수 있지만, 그 안의 Z값·상품등급 경계는 팀이 통계적으로 확정해 둔 값이라 개별 수정할 수 없습니다 (→ <a href="#c5">계산 ⑤</a>~<a href="#c7">⑦</a>).</td></tr>
+    <tr><td>환율은 어디서 바꾸나요?</td><td class="desc">현재는 화면에서 입력하지 않습니다. 워크스페이스 진입 시 1회 자동 조회한 고시환율을 원화 환산 참고값으로 사용하며, 발주필요금액은 서버가 <b>현지 통화 원값</b>으로 계산합니다 (→ <a href="#s01">0-1</a>).</td></tr>
+    <tr><td>성분 탭이 비활성화되어 있어요.</td><td class="desc">데이터 정합성 보강을 위해 준비 중 상태입니다. 교차분석의 성분 조합도 함께 빠져 있고, 데이터 점검의 '성분 미매칭 SKU' 정리는 계속 유효합니다 (→ <a href="#s29">2-9</a>).</td></tr>
+    <tr><td>재고 공백 화면이 안 보여요.</td><td class="desc">사이드바 별도 메뉴가 아니라 <b>발주분석 V1 화면의 하위 탭</b>입니다 (→ <a href="#s13">1-3</a>).</td></tr>
+    <tr><td>ETA 미확인이 많아요</td><td class="desc">이송 기록의 출고일 또는 운송수단(해운·항공·철송·트럭킹)이 빠진 상태입니다. 물류 담당자에게 보완을 요청하세요. 미확인 ETA는 주별 합계에서 제외하고 별도 표시하며, 도착량 0을 뜻하지 않습니다.</td></tr>
+    <tr><td>숫자가 이상해요</td><td class="desc">① 분석을 다시 실행 → ② 그 SKU의 <b>검토하기</b>에서 수요 패턴·예측엔진·계절지수 연결·목표재고 계층 확인 → ③ 데이터 점검에서 미분류·미매칭 정리 → ④ 그래도 이상하면 <a href="#m4">4장</a>의 계산 로직에 따라 상품 하나를 직접 계산해 보세요.</td></tr>
+    <tr><td>YoY '산출 불가'</td><td class="desc">전년 동기간 데이터가 없어서입니다. 정상 동작입니다.</td></tr>
+    <tr><td>분석 기간을 더 길게 잡고 싶어요</td><td class="desc">직접 선택은 최대 24개월입니다. 조회 시작 가능 시점은 법인별로 다릅니다(EU 2024-04, 미주 2015-11-07, 본사 제한 없음). 시즌 분석은 최근 1년 이상 권장.</td></tr>
+    <tr><td>다른 법인이 안 보여요 / 자물쇠(🔒)가 붙어 있어요</td><td class="desc">두 가지 경우가 있습니다. ① 현재 <b>서비스 중인 법인은 본사(스킨)·폴란드·미국 3곳뿐</b>이라 나머지(영국·중동·두바이·멕시코·말레이시아·베트남)는 팀 권한과 무관하게 누구에게도 "데이터 연동 준비 중"으로 잠겨 있습니다 → 정상이며 순차 오픈 예정입니다(→ <a href="#s02">0-2</a>). ② 서비스 중인 법인 중에서도 안 보이는 곳이 있다면 팀 계정의 조회 권한 문제입니다 → 계정은 팀 단위로 발급되며 팀마다 권한이 다르게 부여됩니다.</td></tr>
+    <tr><td>버튼을 잘못 누르면 큰일 나나요?</td><td class="desc">아니오. 모든 버튼은 조회·저장용입니다. 실제 발주는 엑셀 내려받기 후 별도 절차에서만 일어납니다.</td></tr>
+  </tbody>
+</table>
+
+</main>
+</div>
+
+<footer>© ESM Team — 내부용 문서. 무단 외부 배포 금지 · Silicon2 ESM SCM 사용설명서(상세 가이드) v14 (발주 로직 버전 3 · 내부 v3.27 기준 · 2026-09-04 갱신: 목표재고 S=L1+L2+L3 정정 · 참고 ROP · 미입고 30일 조회창 · 계절지수 관리 · 계산 모집단 · V3 화면 내 실행·다중 사용자 큐 · 금액 권한 · 제품군·브랜드 리포트·전사 재고 현황·고객센터)</footer>
+</body>
+</html>

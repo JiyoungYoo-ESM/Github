@@ -1,0 +1,642 @@
+{
+  "status": "passed_with_warnings",
+  "generatedAt": "2026-07-15T04:47:49.600Z",
+  "source": {
+    "apiUrl": "http://127.0.0.1:8002/api/season-trend/latest",
+    "analysisSchemaVersion": 5,
+    "analysisOptions": {
+      "start_date": "2024-07-14",
+      "end_date": "2026-07-14",
+      "metric": "qty",
+      "group_by": "month",
+      "eu_local": true,
+      "include_ingredient": true,
+      "exclude_partial_months": false,
+      "lead_time_air": 15,
+      "lead_time_sea": 70,
+      "lead_time_rail": 30,
+      "lead_time_truck": 30,
+      "average_eur_krw_rate": 1704.39,
+      "exchange_rate_basis": "원화 금액은 금일 환율 기준의 참고 환산값입니다.",
+      "exchange_rate_source": "api",
+      "exchange_rate_date": "2026-07-15"
+    },
+    "summaryRows": 28246,
+    "monthlyRows": 112952,
+    "brandCount": 71,
+    "monthCount": 25,
+    "completeMonthCount": 23
+  },
+  "metrics": {
+    "summaryAmount": 310438158.5800021,
+    "summaryQty": 52433648,
+    "monthlyAmount": 310438158.58000386,
+    "monthlyQty": 52433648,
+    "totalBrandAmount": 310438158.5799997,
+    "brandShareSum": 100.0000000000001
+  },
+  "checkSummary": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0
+  },
+  "findingSummary": {
+    "total": 2,
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 1
+  },
+  "checks": [
+    {
+      "id": "payload.status",
+      "passed": true,
+      "evidence": {
+        "status": "success"
+      }
+    },
+    {
+      "id": "payload.schema",
+      "passed": true,
+      "evidence": {
+        "schema": 5
+      }
+    },
+    {
+      "id": "source.non_empty",
+      "passed": true,
+      "evidence": {
+        "summaryRows": 28246,
+        "monthlyRows": 112952
+      }
+    },
+    {
+      "id": "source.total_amount_reconciliation",
+      "passed": true,
+      "evidence": {
+        "summaryAmount": 310438158.5800021,
+        "monthlyAmount": 310438158.58000386,
+        "difference": -0.0000017285346984863281
+      }
+    },
+    {
+      "id": "source.total_qty_reconciliation",
+      "passed": true,
+      "evidence": {
+        "summaryQty": 52433648,
+        "monthlyQty": 52433648,
+        "difference": 0
+      }
+    },
+    {
+      "id": "source.summary_grain_unique",
+      "passed": true,
+      "evidence": {
+        "duplicatedKeys": 0,
+        "affectedRows": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "source.monthly_grain_unique",
+      "passed": true,
+      "evidence": {
+        "duplicatedKeys": 0,
+        "affectedRows": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "brand.summary_monthly_reconciliation",
+      "passed": true,
+      "evidence": {
+        "brandsChecked": 71,
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "month.coverage_reconciliation",
+      "passed": true,
+      "evidence": {
+        "monthsChecked": 25,
+        "failures": []
+      }
+    },
+    {
+      "id": "growth.complete_month_only",
+      "passed": true,
+      "evidence": {
+        "completeMonths": [
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ],
+        "momTargets": [
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ],
+        "yoyTargets": [
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      }
+    },
+    {
+      "id": "domain.required_dimensions",
+      "passed": true,
+      "evidence": {
+        "invalidBrandRows": 0,
+        "invalidSkuRows": 0,
+        "unknownCountryRows": 0,
+        "uncategorizedRows": 114
+      }
+    },
+    {
+      "id": "domain.negative_metrics",
+      "passed": true,
+      "evidence": {
+        "negativeAmountRows": 0,
+        "negativeAmount": 0,
+        "negativeQtyRows": 0,
+        "negativeQty": 0
+      }
+    },
+    {
+      "id": "brand.label_normalization",
+      "passed": true,
+      "evidence": {
+        "normalizedCollisions": [],
+        "displayCollisions": []
+      }
+    },
+    {
+      "id": "brand.share_sum",
+      "passed": true,
+      "evidence": {
+        "totalBrandAmount": 310438158.5799997,
+        "brandShareSum": 100.0000000000001
+      }
+    },
+    {
+      "id": "brand.sku_concentration_denominator",
+      "passed": true,
+      "evidence": {
+        "brandsChecked": 71,
+        "affectedBrands": 0,
+        "maxDifferencePp": 9.237055564881302e-14,
+        "samples": []
+      }
+    },
+    {
+      "id": "brand.country_distribution_denominator",
+      "passed": true,
+      "evidence": {
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "brand.line_composition_denominator",
+      "passed": true,
+      "evidence": {
+        "failures": 0,
+        "samples": []
+      }
+    },
+    {
+      "id": "growth.pair_profile",
+      "passed": true,
+      "evidence": {
+        "momPairs": [
+          {
+            "target": "2024-09",
+            "comparison": "2024-08",
+            "comparableBrands": 17,
+            "newBrands": 1,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-10",
+            "comparison": "2024-09",
+            "comparableBrands": 18,
+            "newBrands": 0,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-11",
+            "comparison": "2024-10",
+            "comparableBrands": 18,
+            "newBrands": 4,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2024-12",
+            "comparison": "2024-11",
+            "comparableBrands": 21,
+            "newBrands": 1,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-01",
+            "comparison": "2024-12",
+            "comparableBrands": 22,
+            "newBrands": 3,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2025-02",
+            "comparison": "2025-01",
+            "comparableBrands": 24,
+            "newBrands": 0,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-03",
+            "comparison": "2025-02",
+            "comparableBrands": 23,
+            "newBrands": 0,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-04",
+            "comparison": "2025-03",
+            "comparableBrands": 23,
+            "newBrands": 0,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-05",
+            "comparison": "2025-04",
+            "comparableBrands": 23,
+            "newBrands": 10,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-06",
+            "comparison": "2025-05",
+            "comparableBrands": 33,
+            "newBrands": 1,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2025-07",
+            "comparison": "2025-06",
+            "comparableBrands": 27,
+            "newBrands": 5,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-08",
+            "comparison": "2025-07",
+            "comparableBrands": 32,
+            "newBrands": 1,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2025-09",
+            "comparison": "2025-08",
+            "comparableBrands": 29,
+            "newBrands": 1,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2025-10",
+            "comparison": "2025-09",
+            "comparableBrands": 27,
+            "newBrands": 3,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-11",
+            "comparison": "2025-10",
+            "comparableBrands": 30,
+            "newBrands": 7,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-12",
+            "comparison": "2025-11",
+            "comparableBrands": 37,
+            "newBrands": 1,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-01",
+            "comparison": "2025-12",
+            "comparableBrands": 33,
+            "newBrands": 6,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-02",
+            "comparison": "2026-01",
+            "comparableBrands": 39,
+            "newBrands": 6,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-03",
+            "comparison": "2026-02",
+            "comparableBrands": 44,
+            "newBrands": 6,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2026-04",
+            "comparison": "2026-03",
+            "comparableBrands": 49,
+            "newBrands": 5,
+            "lowBaseBrands": 4
+          },
+          {
+            "target": "2026-05",
+            "comparison": "2026-04",
+            "comparableBrands": 52,
+            "newBrands": 4,
+            "lowBaseBrands": 8
+          },
+          {
+            "target": "2026-06",
+            "comparison": "2026-05",
+            "comparableBrands": 53,
+            "newBrands": 9,
+            "lowBaseBrands": 5
+          }
+        ],
+        "yoyPairs": [
+          {
+            "target": "2025-08",
+            "comparison": "2024-08",
+            "comparableBrands": 17,
+            "newBrands": 13,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-09",
+            "comparison": "2024-09",
+            "comparableBrands": 18,
+            "newBrands": 11,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-10",
+            "comparison": "2024-10",
+            "comparableBrands": 18,
+            "newBrands": 14,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2025-11",
+            "comparison": "2024-11",
+            "comparableBrands": 21,
+            "newBrands": 18,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2025-12",
+            "comparison": "2024-12",
+            "comparableBrands": 22,
+            "newBrands": 14,
+            "lowBaseBrands": 2
+          },
+          {
+            "target": "2026-01",
+            "comparison": "2025-01",
+            "comparableBrands": 24,
+            "newBrands": 17,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-02",
+            "comparison": "2025-02",
+            "comparableBrands": 23,
+            "newBrands": 23,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-03",
+            "comparison": "2025-03",
+            "comparableBrands": 23,
+            "newBrands": 28,
+            "lowBaseBrands": 1
+          },
+          {
+            "target": "2026-04",
+            "comparison": "2025-04",
+            "comparableBrands": 23,
+            "newBrands": 31,
+            "lowBaseBrands": 0
+          },
+          {
+            "target": "2026-05",
+            "comparison": "2025-05",
+            "comparableBrands": 33,
+            "newBrands": 25,
+            "lowBaseBrands": 3
+          },
+          {
+            "target": "2026-06",
+            "comparison": "2025-06",
+            "comparableBrands": 27,
+            "newBrands": 35,
+            "lowBaseBrands": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "brand.seasonality_complete_month_average",
+      "passed": true,
+      "evidence": {
+        "years": [
+          "2025",
+          "2026",
+          "2024"
+        ],
+        "completeCoverageCountByCalendarMonth": {
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2,
+          "5": 2,
+          "6": 2,
+          "7": 1,
+          "8": 2,
+          "9": 2,
+          "10": 2,
+          "11": 2,
+          "12": 2
+        },
+        "failures": 0,
+        "correctedLegacyPeakDistortions": 7,
+        "correctedSamples": [
+          {
+            "brand": "라운드랩",
+            "previousPeakMonth": 5,
+            "previousPeakAmount": 1126863.1699999992,
+            "correctedPeakMonth": 7,
+            "correctedPeakAverageAmount": 607470.76
+          },
+          {
+            "brand": "믹순",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 204815.4299999997,
+            "correctedPeakMonth": 3,
+            "correctedPeakAverageAmount": 73008.52500000001
+          },
+          {
+            "brand": "빌리프",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 800,
+            "correctedPeakMonth": 12,
+            "correctedPeakAverageAmount": 70
+          },
+          {
+            "brand": "아임프롬",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 16645.070000000003,
+            "correctedPeakMonth": 6,
+            "correctedPeakAverageAmount": 5534.914999999999
+          },
+          {
+            "brand": "쿤달",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 6174.9699999999975,
+            "correctedPeakMonth": 6,
+            "correctedPeakAverageAmount": 3073.0350000000003
+          },
+          {
+            "brand": "툴리프",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 907.8600000000001,
+            "correctedPeakMonth": 6,
+            "correctedPeakAverageAmount": 261.015
+          },
+          {
+            "brand": "프랭클리",
+            "previousPeakMonth": 7,
+            "previousPeakAmount": 2421.36,
+            "correctedPeakMonth": 6,
+            "correctedPeakAverageAmount": 195.35
+          }
+        ],
+        "samples": []
+      }
+    }
+  ],
+  "findings": [
+    {
+      "severity": "medium",
+      "id": "unmapped_dimensions",
+      "title": "국가 또는 카테고리 매핑이 완전하지 않습니다.",
+      "evidence": {
+        "unknownCountryRows": 0,
+        "unknownCountryAmount": 0,
+        "uncategorizedRows": 114,
+        "uncategorizedAmount": 268602.37
+      },
+      "impact": "국가 분포와 제품군 구성비에 '미상/미분류'가 포함되어 Top 5와 점유율 해석이 달라질 수 있습니다.",
+      "recommendation": "매핑률을 브랜드 탭에 함께 표시하고 미상/미분류 비중 임계치를 자동 점검하세요."
+    },
+    {
+      "severity": "low",
+      "id": "partial_month_scope_difference",
+      "title": "브랜드 순위/KPI와 성장률의 반영 월 범위가 다릅니다.",
+      "evidence": {
+        "partialMonths": [
+          {
+            "month": "2024-07",
+            "status": "partial",
+            "reason": "분석 기간이 월 전체를 포함하지 않음 · 월초 데이터 범위 부족",
+            "totalAmount": 2945119.55
+          },
+          {
+            "month": "2026-07",
+            "status": "partial",
+            "reason": "분석 기간이 월 전체를 포함하지 않음 · 월말 데이터 범위 부족",
+            "totalAmount": 8381539.31
+          }
+        ],
+        "partialAmount": 11326658.86,
+        "partialAmountSharePct": 3.6486039318781227,
+        "growthCompleteMonths": [
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12",
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12",
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "impact": "순위·점유율·SKU/국가 분포는 선택기간 전체, 성장률·시즌성은 완료월 기준이며 화면의 집계 기준 배너에서 이를 구분합니다.",
+      "recommendation": "부분월 포함 정책이 변경되면 집계 기준 배너와 보고서 메타데이터를 함께 갱신하세요."
+    }
+  ]
+}

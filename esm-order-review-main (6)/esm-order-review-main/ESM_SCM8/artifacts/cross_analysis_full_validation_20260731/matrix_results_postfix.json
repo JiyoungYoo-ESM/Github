@@ -1,0 +1,272 @@
+{
+  "status": "passed",
+  "generatedAt": "2026-07-31T07:37:35.413Z",
+  "primarySnapshot": {
+    "path": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\latest_season_trend\\latest_hnb_team__PL.json",
+    "savedAt": "2026-07-31T06:39:56.094275+00:00",
+    "range": [
+      "2024-04-01",
+      "2024-12-31"
+    ],
+    "sourceRows": [
+      {
+        "key": "sales_history",
+        "role": "sales_history",
+        "original_name": "CMS /eu/sales/local",
+        "saved_name": "CMS /eu/sales/local",
+        "source": "source_api",
+        "score": null,
+        "rows": 24995,
+        "columns": 12,
+        "detected_columns": [
+          "invc_no",
+          "prod_cd",
+          "prod_nm",
+          "brand_nm",
+          "qty",
+          "amount",
+          "amount_krw",
+          "curr",
+          "ship_dt",
+          "biz_type",
+          "site",
+          "country"
+        ],
+        "matched_required_columns": [],
+        "missing_required_columns": [],
+        "api_total": 24995,
+        "pages": 13
+      },
+      {
+        "key": "prod_list",
+        "role": "prod_list",
+        "original_name": "CMS /eu/products",
+        "saved_name": "CMS /eu/products",
+        "source": "source_api",
+        "score": null,
+        "rows": 2932,
+        "columns": 10,
+        "detected_columns": [
+          "prod_cd",
+          "prod_nm",
+          "brand_nm",
+          "class1",
+          "class1_nm",
+          "class2",
+          "class2_nm",
+          "bar_code",
+          "prod_gbn",
+          "use_yn"
+        ],
+        "matched_required_columns": [],
+        "missing_required_columns": [],
+        "api_total": 2888,
+        "pages": 2
+      }
+    ]
+  },
+  "ytdSnapshot": {
+    "path": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\latest_season_trend\\latest_bm3__PL.json",
+    "savedAt": "2026-07-31T00:09:58.539443+00:00",
+    "range": [
+      "2024-07-30",
+      "2026-07-30"
+    ],
+    "sourceRows": [
+      {
+        "key": "sales_history",
+        "role": "sales_history",
+        "original_name": "CMS /eu/sales/local",
+        "saved_name": "CMS /eu/sales/local",
+        "source": "source_api",
+        "score": null,
+        "rows": 302680,
+        "columns": 12,
+        "detected_columns": [
+          "invc_no",
+          "prod_cd",
+          "prod_nm",
+          "brand_nm",
+          "qty",
+          "amount",
+          "amount_krw",
+          "curr",
+          "ship_dt",
+          "biz_type",
+          "site",
+          "country"
+        ],
+        "matched_required_columns": [],
+        "missing_required_columns": [],
+        "api_total": 302680,
+        "pages": 152
+      },
+      {
+        "key": "prod_list",
+        "role": "prod_list",
+        "original_name": "CMS /eu/products",
+        "saved_name": "CMS /eu/products",
+        "source": "source_api",
+        "score": null,
+        "rows": 2964,
+        "columns": 10,
+        "detected_columns": [
+          "prod_cd",
+          "prod_nm",
+          "brand_nm",
+          "class1",
+          "class1_nm",
+          "class2",
+          "class2_nm",
+          "bar_code",
+          "prod_gbn",
+          "use_yn"
+        ],
+        "matched_required_columns": [],
+        "missing_required_columns": [],
+        "api_total": 2905,
+        "pages": 2
+      }
+    ]
+  },
+  "static": {
+    "results": [
+      {
+        "axis": "country-brand",
+        "metric": "sales",
+        "rows": 30,
+        "columns": 22,
+        "cells": 660,
+        "nonZeroCells": 434,
+        "zeroCells": 226,
+        "negativeCells": 0,
+        "matrixTotal": 36192.677269999964,
+        "shareTotal": 100
+      },
+      {
+        "axis": "country-brand",
+        "metric": "quantity",
+        "rows": 30,
+        "columns": 22,
+        "cells": 660,
+        "nonZeroCells": 434,
+        "zeroCells": 226,
+        "negativeCells": 0,
+        "matrixTotal": 574.3296999999997,
+        "shareTotal": 100
+      },
+      {
+        "axis": "country-sku",
+        "metric": "sales",
+        "rows": 30,
+        "columns": 534,
+        "cells": 16020,
+        "nonZeroCells": 5767,
+        "zeroCells": 10253,
+        "negativeCells": 0,
+        "matrixTotal": 36192.67727000002,
+        "shareTotal": 100
+      },
+      {
+        "axis": "country-sku",
+        "metric": "quantity",
+        "rows": 30,
+        "columns": 534,
+        "cells": 16020,
+        "nonZeroCells": 5767,
+        "zeroCells": 10253,
+        "negativeCells": 0,
+        "matrixTotal": 574.3296999999784,
+        "shareTotal": 100
+      },
+      {
+        "axis": "brand-sku",
+        "metric": "sales",
+        "rows": 22,
+        "columns": 534,
+        "cells": 11748,
+        "nonZeroCells": 534,
+        "zeroCells": 11214,
+        "negativeCells": 0,
+        "matrixTotal": 36192.677269999935,
+        "shareTotal": 100
+      },
+      {
+        "axis": "brand-sku",
+        "metric": "quantity",
+        "rows": 22,
+        "columns": 534,
+        "cells": 11748,
+        "nonZeroCells": 534,
+        "zeroCells": 11214,
+        "negativeCells": 0,
+        "matrixTotal": 574.3296999999986,
+        "shareTotal": 100
+      }
+    ],
+    "cellsChecked": 56856
+  },
+  "mom": {
+    "result": [
+      {
+        "axis": "country-brand",
+        "monthViews": 9,
+        "cellsChecked": 5940
+      },
+      {
+        "axis": "country-sku",
+        "monthViews": 9,
+        "cellsChecked": 144180
+      },
+      {
+        "axis": "brand-sku",
+        "monthViews": 9,
+        "cellsChecked": 105732
+      }
+    ],
+    "cellsChecked": 255852,
+    "rowTotalsChecked": 738,
+    "cardRisk": {
+      "validCells": 7445,
+      "positiveCells": 2084,
+      "negativeCells": 5301,
+      "zeroCells": 60
+    }
+  },
+  "ytd": {
+    "latestYear": 2026,
+    "previousYear": 2025,
+    "latestCompleteMonth": 6,
+    "result": [
+      {
+        "axis": "country-brand",
+        "baseMonthViews": 6,
+        "cellsChecked": 19980
+      },
+      {
+        "axis": "country-sku",
+        "baseMonthViews": 6,
+        "cellsChecked": 511710
+      },
+      {
+        "axis": "brand-sku",
+        "baseMonthViews": 6,
+        "cellsChecked": 1244700
+      }
+    ],
+    "cellsChecked": 1776390,
+    "rowTotalsChecked": 984,
+    "cardRisk": {
+      "validCells": 21783,
+      "positiveCells": 6413,
+      "negativeCells": 15320,
+      "zeroCells": 50
+    }
+  },
+  "summaryRegressionCoverage": {
+    "positiveOnlySelections": 8497,
+    "negativeOnlySelections": 20621,
+    "zeroOnlySelections": 110,
+    "expectedBehavior": "positive-only has no maximum decline; negative-only has no maximum growth; zero-only has neither"
+  }
+}

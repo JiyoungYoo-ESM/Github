@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>골든 스냅샷 리포트</title>
+  <style>
+
+    :root {
+      --brand: #e90035;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --soft: #f8fafc;
+      --row: #fafafb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: var(--ink);
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.55;
+    }
+    .report-shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 24px auto;
+      background: #fff;
+      border-left: 8px solid var(--brand);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, .12);
+    }
+    section { padding: 36px 48px; border-bottom: 1px solid var(--line); page-break-inside: avoid; }
+    .cover { min-height: 520px; display: grid; align-content: center; gap: 22px; }
+    .eyebrow { margin: 0 0 8px; color: var(--brand); font-size: 12px; font-weight: 900; letter-spacing: 0; }
+    h1, h2, h3 { margin: 0; line-height: 1.15; letter-spacing: 0; }
+    h1 { font-size: 44px; }
+    h2 { font-size: 28px; }
+    h3 { font-size: 20px; }
+    .lead, .section-lead, .security, .block-header p, .metric-sub { color: var(--muted); font-weight: 700; }
+    .cover-meta, .metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .cover-meta div, .metric-card, .block-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .cover-meta span, .metric-label { display: block; color: var(--muted); font-size: 12px; font-weight: 900; }
+    .cover-meta strong, .metric-value { display: block; margin-top: 6px; font-size: 20px; font-weight: 900; }
+    .badge {
+      display: inline-block;
+      width: fit-content;
+      margin: 0;
+      border: 1px solid rgba(233, 0, 53, .25);
+      border-radius: 999px;
+      background: #fff1f4;
+      color: var(--brand);
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .section-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .section-nav a {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      padding: 8px 12px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .section-nav span { color: var(--brand); }
+    .block-list { display: grid; gap: 22px; margin-top: 18px; }
+    .ordered-blocks { page-break-inside: auto; }
+    .block-card { break-inside: avoid-page; page-break-inside: avoid; }
+    .block-header { display: grid; gap: 6px; }
+    .block-header span { color: var(--brand); font-size: 12px; font-weight: 900; }
+    .insight {
+      border-left: 3px solid var(--brand);
+      background: var(--soft);
+      padding: 12px 14px;
+      font-weight: 800;
+    }
+    .report-card-visual {
+      margin: 18px 0 0;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      padding: 24px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+    }
+    .web-dom-snapshot {
+      overflow: auto;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+    }
+    .web-dom-snapshot [data-exported-web-card="true"] {
+      max-width: 100%;
+    }
+    .web-card-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .web-card-tile { border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: #fff; }
+    .web-card-tile span, .web-card-row span { display: block; color: var(--muted); font-size: 11px; font-weight: 900; }
+    .web-card-row small { position: relative; z-index: 1; display: block; margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .web-card-tile strong { display: block; margin-top: 8px; font-size: 22px; font-weight: 900; }
+    .web-card-bars, .web-growth-card { display: grid; gap: 14px; }
+    .web-card-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 18px; overflow: visible; border: 0; border-radius: 0; padding: 0 0 8px; background: transparent; }
+    .web-card-row-copy { min-width: 0; }
+    .web-card-row strong, .growth-row strong { position: relative; z-index: 1; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font-weight: 900; }
+    .web-card-row em, .growth-row span { position: relative; z-index: 1; color: #05060a; font-style: normal; font-weight: 900; white-space: nowrap; }
+    .web-card-track { grid-column: 1 / -1; height: 6px; overflow: hidden; border-radius: 999px; background: #f0f0f0; box-shadow: inset 0 -1px 2px rgba(15,23,42,.16); }
+    .web-card-track i { display: block; width: var(--w); height: 100%; border-radius: inherit; background: var(--brand); }
+    .web-full-ranking { overflow: auto; }
+    .web-ranking-summary { margin-bottom: 12px; color: var(--muted); font-size: 12px; font-weight: 900; }
+    .web-full-ranking table { width: 100%; border-collapse: collapse; }
+    .web-full-ranking td { border-bottom: 1px solid var(--line); padding: 10px 8px; vertical-align: middle; font-size: 13px; }
+    .web-full-ranking tr:last-child td { border-bottom: 0; }
+    .web-full-ranking .rank { width: 44px; color: var(--muted); font-weight: 900; }
+    .web-full-ranking strong { display: block; font-weight: 900; }
+    .web-full-ranking small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .web-full-ranking .amount { text-align: right; white-space: nowrap; font-weight: 900; }
+    .web-growth-card { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .growth-panel { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
+    .growth-panel h4 { margin: 0 0 10px; font-size: 14px; }
+    .growth-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 9px 0; border-top: 1px solid var(--line); }
+    .growth-row:first-of-type { border-top: 0; }
+    .growth-row em { grid-column: 1 / -1; color: var(--muted); font-style: normal; font-size: 12px; }
+    .growth-row.down span { color: #b42318; }
+    .web-matrix { display: grid; grid-template-columns: minmax(120px, 1.1fr) repeat(var(--cols), minmax(70px, 1fr)); gap: 6px; align-items: stretch; }
+    .web-matrix span, .matrix-label { color: var(--muted); font-size: 11px; font-weight: 900; }
+    .matrix-cell { border-radius: 6px; background: rgba(233, 0, 53, calc(.08 + var(--a) * .6)); padding: 9px; text-align: right; font-size: 12px; font-weight: 900; }
+    .season-web-card { display: block; border: 0; background: transparent; padding: 0; }
+    .season-web-summary > .report-card-visual { margin: 0; border: 0; padding: 0; background: transparent; }
+    .season-web-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 6px 16px rgba(15,23,42,.06); }
+    .season-web-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding: 18px 20px; }
+    .season-web-head h4 { margin: 0; font-size: 15px; font-weight: 900; color: var(--ink); }
+    .season-web-head p { display: inline; margin: 0 0 0 7px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .season-web-head > div:first-child { display: flex; align-items: baseline; gap: 0; }
+    .season-web-actions { display: flex; align-items: center; gap: 14px; }
+    .season-web-legend { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .season-web-legend i { display: inline-flex; width: 54px; height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(233,0,53,.35), rgba(233,0,53,.6), rgba(233,0,53,.8), rgba(233,0,53,1)); }
+    .season-web-legend b { display: inline-flex; width: 10px; height: 10px; border-radius: 3px; border: 2px solid var(--ink); background: var(--brand); }
+    .season-check { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; font-size: 18px; font-weight: 900; }
+    .season-web-grid { display: grid; grid-template-columns: 420px 1fr 92px; align-items: center; }
+    .season-web-grid > b { background: var(--soft); color: var(--muted); font-size: 12px; font-weight: 900; padding: 11px 16px; }
+    .season-month-head { display: grid; grid-template-columns: repeat(12, minmax(32px, 1fr)); gap: 8px; background: var(--soft); color: var(--muted); padding: 11px 10px; text-align: center; font-size: 12px; font-weight: 900; }
+    .season-web-row-label { display: flex; align-items: center; gap: 8px; min-height: 41px; border-top: 1px solid var(--line); padding: 8px 16px; }
+    .season-web-row-label strong { font-size: 13px; font-weight: 900; }
+    .season-web-row-label small { color: var(--muted); font-size: 11px; font-weight: 800; }
+    .season-expand { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); font-size: 18px; font-weight: 700; line-height: 1; }
+    .season-level { border: 1px solid var(--line); border-radius: 6px; background: var(--soft); color: var(--muted); padding: 3px 7px; font-size: 11px; font-weight: 900; }
+    .season-cell { display: grid; place-items: center; min-height: 34px; margin: 5px 4px; border-radius: 6px; background: rgba(233, 0, 53, calc(.18 + var(--a) * .68)); color: var(--ink); border: 1px solid transparent; font-size: 10px; font-style: normal; font-weight: 900; }
+    .season-cell.peak { border: 2px solid var(--ink); background: var(--brand); color: #fff; }
+    .season-peak-label { display: grid; place-items: center; min-height: 41px; border-top: 1px solid var(--line); color: var(--ink); font-size: 13px; font-style: normal; font-weight: 900; }
+    .web-trend-card { display: grid; gap: 14px; }
+    .web-composite-card { display: grid; gap: 16px; }
+    .web-card-section { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .web-card-section h4 { margin: 0 0 12px; font-size: 14px; font-weight: 900; }
+    .trend-series { display: grid; grid-template-columns: 150px repeat(12, minmax(34px, 1fr)); gap: 6px; align-items: end; min-height: 120px; }
+    .trend-series strong { align-self: center; font-size: 12px; }
+    .trend-series span { display: grid; align-items: end; gap: 4px; height: 100px; }
+    .trend-series i { display: block; min-height: 4px; height: var(--h); border-radius: 5px 5px 0 0; background: var(--brand); }
+    .trend-series em { color: var(--muted); font-size: 10px; font-style: normal; text-align: center; }
+    .snapshot-details { margin-top: 10px; }
+    .snapshot-details summary { cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 900; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th {
+      background: var(--brand);
+      color: #fff;
+      text-align: left;
+      font-size: 12px;
+      padding: 10px;
+      white-space: nowrap;
+    }
+    td {
+      border-top: 1px solid var(--line);
+      padding: 9px 10px;
+      font-size: 12px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: var(--row); }
+    .detail-list { display: grid; gap: 0; margin: 12px 0 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .detail-list li { display: grid; grid-template-columns: 180px 1fr; gap: 12px; padding: 10px 12px; border-top: 1px solid var(--line); }
+    .detail-list li:first-child { border-top: 0; }
+    .detail-list span { color: var(--muted); font-size: 12px; font-weight: 900; }
+    .detail-list strong { font-size: 13px; }
+    .empty-state { margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--muted); padding: 18px; font-weight: 800; }
+    .watermark {
+      position: fixed;
+      inset: 42% auto auto 22%;
+      transform: rotate(-28deg);
+      color: rgba(233, 0, 53, .08);
+      font-size: 76px;
+      font-weight: 900;
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+    @media print {
+      body { background: #fff; }
+      .report-shell { width: 100%; margin: 0; box-shadow: none; }
+      section { page-break-inside: avoid; }
+      .table-wrap { overflow: visible; }
+    }
+    @media (max-width: 760px) {
+      .report-shell { width: 100%; margin: 0; border-left-width: 5px; }
+      section { padding: 24px 18px; }
+      h1 { font-size: 32px; }
+      .cover-meta, .metric-grid { grid-template-columns: 1fr; }
+      .detail-list li { grid-template-columns: 1fr; }
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="watermark">PARTNER VIEW · 민감정보 제외</div>
+  <main class="report-shell">
+    <section class="cover">
+      <div>
+        <p class="eyebrow">SILICON2 SCM ANALYTICS</p>
+        <h1>골든 스냅샷 리포트</h1>
+        <p class="lead">Report Cart Export</p>
+      </div>
+      <div class="cover-meta">
+        <div><span>보고 대상</span><strong>거래처용</strong></div>
+        <div><span>생성일</span><strong><GENERATED_AT></strong></div>
+        <div><span>담긴 블록</span><strong>8개</strong></div>
+      </div>
+      <p class="badge">PARTNER VIEW · 민감정보 제외</p>
+      <p class="security">본 보고서는 외부 공유 기준에 따라 원가, 마진, 거래처 집계값 및 경쟁사 실명 정보를 마스킹해 생성했습니다.</p>
+    </section>
+
+    <section class="summary">
+      <p class="eyebrow">REPORT SUMMARY</p>
+      <h2>보고서 구성</h2>
+      <p class="section-lead">8개 분석 블록을 선택한 용도 기준으로 마스킹해 HTML 파일로 생성했습니다.</p>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">전체 매출</div>
+          <div class="metric-value">€144.3M</div>
+          <div class="metric-sub">담긴 블록 기준 최대 매출</div>
+        </div>
+        
+
+        <div class="metric-card">
+          <div class="metric-label">매출 발생 국가</div>
+          <div class="metric-value">6개국</div>
+          <div class="metric-sub">snapshot 국가 필드 기준</div>
+        </div>
+        
+
+        <div class="metric-card">
+          <div class="metric-label">브랜드 수</div>
+          <div class="metric-value">4개</div>
+          <div class="metric-sub">마스킹 후 표시 기준</div>
+        </div>
+        
+
+        <div class="metric-card">
+          <div class="metric-label">데이터 행</div>
+          <div class="metric-value">28행</div>
+          <div class="metric-sub">PPT/XLSX 반영 rows</div>
+        </div>
+        </div>
+      <nav class="section-nav"><a href="#block-1"><span>01</span>국가별 판매 순위</a><a href="#block-2"><span>02</span>권역별 매출 비중</a><a href="#block-3"><span>03</span>Germany 국가 판매 상세</a><a href="#block-4"><span>04</span>경쟁사 A 브랜드 판매 순위</a><a href="#block-5"><span>05</span>[EU] 경쟁사 C크림 50ml SKU 분석</a><a href="#block-6"><span>06</span>[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보</a><a href="#block-7"><span>07</span>국가 × 브랜드 교차분석</a><a href="#block-8"><span>08</span>성분 × 국가 교차분석</a></nav>
+    </section>
+
+    <section class="section ordered-blocks">
+      <p class="eyebrow">REPORT BLOCKS</p>
+      <h2>담긴 순서대로 보는 분석</h2>
+      <p class="section-lead">장바구니에 올려둔 순서와 동일합니다.</p>
+      <div class="block-list">
+    <article class="block-card" id="block-1">
+      <header class="block-header">
+        <span>BLOCK 01 · 국가 · 권역</span>
+        <h3>국가별 판매 순위</h3>
+        <p>2개국 · 매출 기준</p>
+      </header>
+      <div class="report-card-visual web-card-bars">
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>미국</strong>
+            <span>북미</span>
+            <small>약 ₩21.1억</small>
+          </div>
+          <em>60%</em>
+          <div class="web-card-track"><i style="--w:100.0%"></i></div>
+        </div>
+        
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>일본</strong>
+            <span>아시아</span>
+            <small>약 ₩14.1억</small>
+          </div>
+          <em>40%</em>
+          <div class="web-card-track"><i style="--w:66.7%"></i></div>
+        </div>
+        </div>
+    </article>
+    
+
+    <article class="block-card" id="block-2">
+      <header class="block-header">
+        <span>BLOCK 02 · 국가 · 권역</span>
+        <h3>권역별 매출 비중</h3>
+        <p>유럽 · 점유율 99.9%</p>
+      </header>
+      <div class="report-card-visual web-card-bars">
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>유럽</strong>
+            
+            <small>약 ₩2,512.1억</small>
+          </div>
+          <em>99.9%</em>
+          <div class="web-card-track"><i style="--w:100.0%"></i></div>
+        </div>
+        </div>
+    </article>
+    
+
+    <article class="block-card" id="block-3">
+      <header class="block-header">
+        <span>BLOCK 03 · 국가 · 권역</span>
+        <h3>Germany 국가 판매 상세</h3>
+        <p>유럽 · 총 매출 €52.2M · 점유율 16.8%</p>
+      </header>
+      <div class="report-card-visual web-country-detail-card"><div class="report-card-visual web-card-tiles"><div class="web-card-tile"><span>선택 국가</span><strong>Germany</strong></div><div class="web-card-tile"><span>총 매출</span><strong>€52.2M · 약 ₩919.0억</strong></div><div class="web-card-tile"><span>점유율</span><strong>점유율 16.8%</strong></div><div class="web-card-tile"><span>월 최고 매출</span><strong>6월 · €7.5M · 약 ₩132.0억</strong></div></div><section class="web-card-section"><h4>상위 브랜드 · 미리보기</h4><div class="report-card-visual web-card-bars">
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>경쟁사 C</strong>
+            <span>약 ₩267.6억</span>
+            
+          </div>
+          <em>€15.2M</em>
+          <div class="web-card-track"><i style="--w:100.0%"></i></div>
+        </div>
+        
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>메디큐브</strong>
+            <span>약 ₩191.9억</span>
+            
+          </div>
+          <em>€10.9M</em>
+          <div class="web-card-track"><i style="--w:71.7%"></i></div>
+        </div>
+        </div></section><section class="web-card-section"><h4>Top 5 카테고리</h4><div class="web-pill-list"><span class="web-pill">썬케어 &gt; 크림</span><span class="web-pill">스킨케어 &gt; 크림</span></div></section></div>
+    </article>
+    
+
+    <article class="block-card" id="block-4">
+      <header class="block-header">
+        <span>BLOCK 04 · 브랜드</span>
+        <h3>경쟁사 A 브랜드 판매 순위</h3>
+        <p>아누아 · 경쟁사 A · 경쟁사 B · 경쟁사 C</p>
+      </header>
+      <div class="report-card-visual web-card-bars">
+        <div class="web-card-row">
+          <div class="web-card-row-copy">
+            <strong>경쟁사 A</strong>
+            
+            <small>약 ₩123.2억</small>
+          </div>
+          <em>€7.0M</em>
+          <div class="web-card-track"><i style="--w:100.0%"></i></div>
+        </div>
+        </div>
+    </article>
+    
+
+    <article class="block-card" id="block-5">
+      <header class="block-header">
+        <span>BLOCK 05 · SKU</span>
+        <h3>[EU] 경쟁사 C크림 50ml SKU 분석</h3>
+        <p>경쟁사 C · 피크 10월 · €2.74M</p>
+      </header>
+      <div class="report-card-visual web-card-tiles"><div class="web-card-tile"><span>8월</span><strong>€0.62M 약 ₩10.9억</strong></div><div class="web-card-tile"><span>10월</span><strong>€1.20M 약 ₩21.1억</strong></div><div class="web-card-tile"><span>Estonia</span><strong>€1.21M 약 ₩21.4억</strong></div></div>
+    </article>
+    
+
+    <article class="block-card" id="block-6">
+      <header class="block-header">
+        <span>BLOCK 06 · SKU</span>
+        <h3>[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보</h3>
+        <p>메디큐브 · 피크 6월 · MECUP10-PKREUP</p>
+      </header>
+      <div class="report-card-visual web-card-tiles"><div class="web-card-tile"><span>매출 순위</span><strong>10위 / 613 SKU -</strong></div><div class="web-card-tile"><span>피크 3개월 전 준비월</span><strong>3월 6월 피크 기준</strong></div><div class="web-card-tile"><span>판매수량</span><strong>613.6K개 -</strong></div><div class="web-card-tile"><span>매출</span><strong>€5.1M 약 ₩89.8억</strong></div><div class="web-card-tile"><span>판매 국가</span><strong>34개국 -</strong></div><div class="web-card-tile"><span>피크월 매출</span><strong>€658.3K 약 ₩11.6억</strong></div></div>
+    </article>
+    
+
+    <article class="block-card" id="block-7">
+      <header class="block-header">
+        <span>BLOCK 07 · 교차분석</span>
+        <h3>국가 × 브랜드 교차분석</h3>
+        <p>United Kingdom, Estonia, Netherlands The × 경쟁사 C</p>
+      </header>
+      <div class="report-card-visual web-matrix" style="--cols:1"><div></div><span>경쟁사 C</span><div class="matrix-label">Estonia</div><div class="matrix-cell" style="--a:1.00"><strong>€10.1M</strong><small>약 ₩177.8억</small></div><div class="matrix-total">€10.1M</div><div class="matrix-label">United Kingdom</div><div class="matrix-cell" style="--a:0.26"><strong>€2.6M</strong><small>약 ₩45.8억</small></div><div class="matrix-total">€2.6M</div><div class="matrix-label">Netherlands The</div><div class="matrix-cell" style="--a:0.23"><strong>€2.3M</strong><small>약 ₩40.5억</small></div><div class="matrix-total">€2.3M</div></div>
+    </article>
+    
+
+    <article class="block-card" id="block-8">
+      <header class="block-header">
+        <span>BLOCK 08 · 교차분석</span>
+        <h3>성분 × 국가 교차분석</h3>
+        <p>스네일뮤신 × Estonia</p>
+      </header>
+      <div class="report-card-visual web-matrix" style="--cols:2"><div></div><span>Estonia</span><span>Germany</span><div class="matrix-label">스네일뮤신</div><div class="matrix-cell" style="--a:1.00"><strong>€676.1K</strong><small>약 ₩11.9억</small></div><div class="matrix-cell" style="--a:0.32"><strong>€218.4K</strong><small>약 ₩3.84억</small></div><div class="matrix-total">€894.5K</div></div>
+    </article>
+    </div>
+    </section>
+  </main>
+</body>
+</html>

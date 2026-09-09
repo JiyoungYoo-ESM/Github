@@ -1,0 +1,21 @@
+{
+  "stock_gap_historical_base_date": {
+    "baseDate": "2026-01-01",
+    "stockoutDate": "2026-04-10",
+    "observedStatus": "needs_check",
+    "expectedStatusUsingBaseDate": "sufficient"
+  },
+  "sku_concentration_window": {
+    "declared_window": "2026-02-01 through 2026-04-30",
+    "expected_in_window_qty": 1.0,
+    "expected_in_window_amount_krw": 100.0,
+    "observed_qty": 10.0,
+    "observed_amount_krw": 1000.0,
+    "out_of_window_row_included": true
+  },
+  "sku_concentration_missing_identity": {
+    "observed_product_name": "nan",
+    "observed_brand": "nan",
+    "nan_rendered_as_identity": true
+  }
+}

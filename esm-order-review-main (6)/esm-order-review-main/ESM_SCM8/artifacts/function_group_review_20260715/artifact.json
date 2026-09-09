@@ -1,0 +1,630 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "CMS 기능군 분석 탭 검토",
+    "description": "기능구분 기반 판매·재고·발주 분석의 데이터 적합성과 구현 순서를 검토한 보고서",
+    "generatedAt": "2026-07-15T12:00:00+09:00",
+    "sources": [
+      {
+        "id": "cms_season_cache",
+        "label": "CMS 판매·상품 캐시",
+        "path": "cms_function_group_data_quality.ipynb",
+        "query": {
+          "engine": "reviewed artifact snapshot",
+          "language": "SQL",
+          "sql": "SELECT *\nFROM chart_function_groups\nORDER BY amount_rank ASC;",
+          "description": "검토 완료된 기능구분 집계에서 차트와 표에 표시할 필드를 선택합니다. 원천 계산은 연결된 노트북에 있습니다.",
+          "executed_at": "2026-07-15T12:00:00+09:00",
+          "tables_used": [
+            "chart_function_groups"
+          ],
+          "filters": [
+            "판매기간 2024-07-15~2026-07-14",
+            "판매금액 순위 상위 10개 기능구분 조합"
+          ],
+          "metric_definitions": [
+            "매출 비중 = 기능구분 조합 판매금액 합계 / 전체 분석대상 판매금액"
+          ]
+        }
+      },
+      {
+        "id": "cms_order_cache",
+        "label": "CMS 발주 검토 캐시",
+        "path": "cms_function_group_data_quality.ipynb"
+      },
+      {
+        "id": "joined_review",
+        "label": "기능군 데이터 품질 검토 노트북",
+        "path": "cms_function_group_data_quality.ipynb",
+        "query": {
+          "engine": "reviewed artifact snapshot",
+          "language": "SQL",
+          "sql": "SELECT *\nFROM operational_coverage\nORDER BY sku_coverage_pct DESC;",
+          "description": "검토 완료된 연결률 집계에서 차트와 품질 표에 표시할 필드를 선택합니다. 원천 계산은 연결된 노트북에 있습니다.",
+          "executed_at": "2026-07-15T12:00:00+09:00",
+          "tables_used": [
+            "operational_coverage",
+            "quality_findings",
+            "implementation_steps"
+          ],
+          "filters": [
+            "상품코드 공백 제외",
+            "기능구분 상품 마스터와 정확 일치"
+          ],
+          "metric_definitions": [
+            "SKU 연결률 = 기능구분 상품 마스터와 일치한 고유 SKU / 원천 고유 SKU",
+            "수량 연결률 = 연결된 행의 절대 수량 합계 / 전체 절대 수량 합계"
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "top_function_groups_chart",
+        "title": "상위 기능구분 조합 매출 비중",
+        "subtitle": "EU 현지 판매, 2024년 7월 15일~2026년 7월 14일, 판매금액 기준",
+        "type": "leaderboard",
+        "dataset": "chart_function_groups",
+        "sourceId": "cms_season_cache",
+        "encodings": {
+          "x": {
+            "field": "function_group",
+            "type": "nominal",
+            "label": "기능구분 조합"
+          },
+          "y": {
+            "field": "amount_share_pct",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "매출 비중",
+            "unit": "%"
+          },
+          "tooltip": [
+            {
+              "field": "sku_count",
+              "type": "quantitative",
+              "label": "SKU 수"
+            }
+          ]
+        },
+        "yAxisTitle": "매출 비중 (%)",
+        "valueFormat": "number",
+        "unit": "%",
+        "layout": "full",
+        "maxRows": 8
+      },
+      {
+        "id": "operational_coverage_chart",
+        "title": "원천 데이터별 기능구분 SKU 연결률",
+        "subtitle": "EU 판매 상품 마스터 2,926개 SKU와 정확 일치한 고유 SKU 비율",
+        "type": "horizontalBar",
+        "dataset": "operational_coverage",
+        "sourceId": "joined_review",
+        "encodings": {
+          "x": {
+            "field": "dataset_label",
+            "type": "nominal",
+            "label": "원천 데이터"
+          },
+          "y": {
+            "field": "sku_coverage_pct",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "SKU 연결률",
+            "unit": "%"
+          },
+          "tooltip": [
+            {
+              "field": "unique_sku",
+              "type": "quantitative",
+              "label": "고유 SKU"
+            },
+            {
+              "field": "mapped_unique_sku",
+              "type": "quantitative",
+              "label": "연결 SKU"
+            },
+            {
+              "field": "measure_coverage_pct",
+              "type": "quantitative",
+              "format": "number",
+              "label": "수량 연결률",
+              "unit": "%"
+            }
+          ]
+        },
+        "yAxisTitle": "SKU 연결률 (%)",
+        "valueFormat": "number",
+        "unit": "%",
+        "layout": "full",
+        "maxRows": 6
+      }
+    ],
+    "unused_tables": [
+      {
+        "id": "top_function_groups_table",
+        "title": "핵심 기능구분 후보 10개",
+        "subtitle": "기능구분 1·2 조합을 판매금액으로 순위화한 정확값",
+        "dataset": "top_function_groups",
+        "defaultSort": {
+          "field": "amount_rank",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "cms_season_cache",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "amount_rank",
+            "label": "순위",
+            "format": "number"
+          },
+          {
+            "field": "function_group",
+            "label": "기능구분 조합",
+            "type": "text"
+          },
+          {
+            "field": "sku_count",
+            "label": "SKU 수",
+            "format": "number"
+          },
+          {
+            "field": "sales_qty",
+            "label": "판매수량",
+            "format": "number"
+          },
+          {
+            "field": "sales_amount_eur",
+            "label": "판매금액(EUR)",
+            "format": "currency"
+          },
+          {
+            "field": "amount_share_pct",
+            "label": "매출 비중(%)",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "quality_findings_table",
+        "title": "데이터 품질 판정",
+        "subtitle": "현재 기능군 분석 탭에 미치는 영향과 최소 보완 조치",
+        "dataset": "quality_findings",
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "joined_review",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "우선순위",
+            "format": "number"
+          },
+          {
+            "field": "area",
+            "label": "검토 영역",
+            "type": "text"
+          },
+          {
+            "field": "severity",
+            "label": "위험도",
+            "type": "text"
+          },
+          {
+            "field": "evidence",
+            "label": "근거",
+            "type": "text"
+          },
+          {
+            "field": "action",
+            "label": "권장 조치",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "implementation_steps_table",
+        "title": "권장 구현 순서",
+        "subtitle": "기존 시즌 분석 로직을 재사용하는 최소 구현 경로",
+        "dataset": "implementation_steps",
+        "defaultSort": {
+          "field": "step",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "joined_review",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "step",
+            "label": "단계",
+            "format": "number"
+          },
+          {
+            "field": "work",
+            "label": "작업",
+            "type": "text"
+          },
+          {
+            "field": "acceptance",
+            "label": "완료 기준",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# CMS 기능군 분석 탭 검토"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "body": "## Executive Summary\n\n- **구현 가능합니다.** 기존 코드가 이미 CMS 판매이력과 상품 마스터의 기능구분 1·2를 SKU로 결합하고 있어, 기능군 판매 분석은 새 파이프라인 없이 확장할 수 있습니다.\n\n- **핵심 10개 우선 운영도 타당합니다.** 최신 24개월 판매 기준 상위 10개 기능구분 조합이 분석 대상 매출의 85.37%를 차지합니다. 상위 58개 SKU는 매출의 69.98%이며 17개 기능구분 조합에 걸쳐 있습니다.\n\n- **재고·운송은 준비됐지만 미입고는 보강이 필요합니다.** EU 현지 재고와 운송 데이터의 기능구분 SKU 연결률은 각각 99.73%, 99.87%지만 미입고는 80.54%입니다. 신규·미판매 SKU가 EU 판매 전용 상품 마스터에 없기 때문일 가능성이 큽니다.\n\n- **화면용 기능군 매핑을 별도 관리해야 합니다.** CMS의 계층형 분류를 그대로 노출하면 `썬케어 > 크림`과 `스킨케어 > 크림`처럼 같은 이름이 다른 의미로 보입니다. `분석기능군` 파생 차원을 두고 두 필드를 함께 매핑하는 방식이 안전합니다."
+      },
+      {
+        "id": "scope_definition",
+        "type": "markdown",
+        "body": "## 검토 기준\n\n판매 데이터는 2024년 7월 15일부터 2026년 7월 14일까지의 EU 현지 판매 288,759행입니다. 상품 마스터는 EU 판매 기준 2,926개 SKU이며, 분석에는 기존 Biz Type 필터·기능구분 보정·샘플 및 비핵심 상품 제외 규칙을 동일하게 적용했습니다. 기능군 선정은 판매금액으로 순위화하되, 실제 수요 표시는 판매수량을 함께 유지합니다.",
+        "sourceId": "cms_season_cache"
+      },
+      {
+        "id": "function_group_finding",
+        "type": "markdown",
+        "body": "## 매출은 소수 기능구분 조합에 충분히 집중돼 있습니다\n\n상위 10개 조합이 매출의 85.37%를 포괄해 초기 화면을 10개 안팎으로 제한해도 전체 흐름을 크게 잃지 않습니다. 다만 이 순위는 CMS의 원시 기능구분 조합이므로, 실제 화면에서는 `선크림`, `클렌징 오일`, `마스크팩` 같은 사용자 언어로 재매핑해야 합니다. 아래 차트는 후보를 고르는 근거이며 최종 화면 명칭 자체는 아닙니다.",
+        "sourceId": "cms_season_cache"
+      },
+      {
+        "id": "top_function_groups_chart_block",
+        "type": "chart",
+        "chartId": "top_function_groups_chart",
+        "layout": "full"
+      },
+      {
+        "id": "integration_finding",
+        "type": "markdown",
+        "body": "## 재고·운송 연결성은 높고, 미입고가 유일한 큰 공백입니다\n\n판매, 현지 재고, 본사 재고, 운송은 기능구분 상품 마스터와 대부분 연결됩니다. 미입고는 SKU 기준 80.54%에 그치지만 수량 기준으로는 92.92%가 연결됩니다. 즉 미연결 SKU가 많아도 물량 영향은 상대적으로 작습니다. 기능군별 향후 공급까지 보려면 EU 판매 전용 목록이 아니라 전체 `/eu/products` 상품 마스터로 미입고 SKU를 보충해야 합니다.",
+        "sourceId": "joined_review"
+      },
+      {
+        "id": "quality_finding",
+        "type": "markdown",
+        "body": "## 데이터는 사용 가능하지만 세 가지 통제가 필요합니다\n\n- **미입고 상품 연결:** SKU 연결률 80.54%, 미입고 수량 연결률 92.92%입니다. 전체 상품 마스터에서 신규·미판매 SKU를 보충해야 합니다.\n\n- **기능군 표준:** `기능구분1 + 기능구분2 → 분석기능군` 매핑을 버전 관리해야 합니다. `마스크 > 마사지/팩` 48개 SKU는 현재 공식 허용값과 다르고 분석 매출의 4.36%를 차지합니다.\n\n- **API 계약과 판매 정책:** 실제 API에 존재하는 `/eu/products`와 응답 필드를 OpenAPI 문서·회귀 테스트에 반영해야 합니다. 음수 수량 1행과 음수 금액 612행은 반품·취소 여부를 확정해 총수요 집계 정책에 포함해야 합니다.",
+        "sourceId": "joined_review"
+      },
+      {
+        "id": "recommended_next_steps",
+        "type": "markdown",
+        "body": "## 권장 구현 순서\n\n**1차 릴리스는 조회 기능에 집중하는 것이 좋습니다.** 품절 위험은 개별 SKU MOI를 단순 평균하지 말고 `기능군 총 가용재고 ÷ 기능군 월평균 판매수량`으로 다시 계산해야 합니다.\n\n1. 분석기능군 매핑표와 포함 규칙을 승인합니다.\n\n2. 기존 시즌 분석 응답에 기능군별 판매수량·판매금액 집계를 추가합니다.\n\n3. 발주 검토 결과를 SKU로 연결해 가용재고·운송중·미입고를 같은 기능군 행에 집계합니다.\n\n4. 전체 상품 마스터 보충으로 open PO SKU 연결률 95% 이상 또는 미연결 수량 2% 이하를 달성합니다.\n\n5. 핵심 10개 필터와 기능군 MOI를 화면에 노출합니다.\n\n6. 분류 누락·비표준값·SKU 미연결·스키마 드리프트 품질 경보를 자동화합니다."
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## 추가 결정이 필요한 질문\n\n- `크림`은 스킨케어 일반 크림만 의미합니까, 수분크림·아이크림까지 포함합니까?\n\n- `선크림`은 `썬케어` 전체를 묶습니까, `썬케어 > 크림`만 포함합니까?\n\n- `마스크팩`은 시트마스크와 워시오프/마사지팩을 하나로 합칩니까?\n\n- 기능군 순위는 매출금액, 판매수량, 최근 3개월 성장률 중 무엇을 기본 기준으로 삼습니까?\n\n- 반품·취소 음수 행은 순수요에서 차감할지 별도 표시할지 정책이 필요합니다."
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## 가정과 한계\n\n- 이 보고서는 2026년 7월 15일에 저장된 판매·상품 캐시와 2026년 7월 14일에 생성된 발주 검토 캐시의 스냅샷입니다. 실시간 API 상태를 의미하지 않습니다.\n\n- 상품 마스터의 원시 기능구분2는 83개 SKU에서 비어 있었지만 기존 상품명 추론·보정 후 분석 대상 미분류 매출은 0%였습니다. 이 결과는 보정 규칙의 지속 관리에 의존합니다.\n\n- `마스크 > 마사지/팩`은 현재 공식 허용값 목록과 불일치하며 분석 대상 매출의 4.36%를 차지합니다. `마스크/팩`과의 표준화 여부를 CMS 담당자와 확인해야 합니다.\n\n- 미입고 데이터에는 ETA 또는 예상 입고일 필드가 없어 수량·금액 집계는 가능하지만 도착 시점은 해당 API만으로 직접 표시할 수 없습니다."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-15T12:00:00+09:00",
+    "status": "ready",
+    "datasets": {
+      "chart_function_groups": [
+        {
+          "amount_rank": 1,
+          "function_group": "썬케어 · 크림",
+          "sku_count": 115,
+          "amount_share_pct": 16.72
+        },
+        {
+          "amount_rank": 2,
+          "function_group": "스킨케어 · 크림",
+          "sku_count": 205,
+          "amount_share_pct": 12.68
+        },
+        {
+          "amount_rank": 3,
+          "function_group": "스킨케어 · 세럼",
+          "sku_count": 226,
+          "amount_share_pct": 12.26
+        },
+        {
+          "amount_rank": 4,
+          "function_group": "마스크 · 시트마스크",
+          "sku_count": 153,
+          "amount_share_pct": 11.75
+        },
+        {
+          "amount_rank": 5,
+          "function_group": "스킨케어 · 토너",
+          "sku_count": 174,
+          "amount_share_pct": 9.18
+        },
+        {
+          "amount_rank": 6,
+          "function_group": "클렌징 · 오일/워터/밀크",
+          "sku_count": 50,
+          "amount_share_pct": 5.49
+        },
+        {
+          "amount_rank": 7,
+          "function_group": "스킨케어 · 아이크림",
+          "sku_count": 46,
+          "amount_share_pct": 4.57
+        },
+        {
+          "amount_rank": 8,
+          "function_group": "스킨케어 · 수분크림",
+          "sku_count": 7,
+          "amount_share_pct": 4.36
+        }
+      ],
+      "top_function_groups": [
+        {
+          "amount_rank": 1,
+          "function_group": "썬케어 · 크림",
+          "category1": "썬케어",
+          "category2": "크림",
+          "sku_count": 115,
+          "sales_qty": 9013909,
+          "sales_amount_eur": 51899180.66,
+          "amount_share_pct": 16.72
+        },
+        {
+          "amount_rank": 2,
+          "function_group": "스킨케어 · 크림",
+          "category1": "스킨케어",
+          "category2": "크림",
+          "sku_count": 205,
+          "sales_qty": 4910587,
+          "sales_amount_eur": 39362742.6,
+          "amount_share_pct": 12.68
+        },
+        {
+          "amount_rank": 3,
+          "function_group": "스킨케어 · 세럼",
+          "category1": "스킨케어",
+          "category2": "세럼",
+          "sku_count": 226,
+          "sales_qty": 5996293,
+          "sales_amount_eur": 38055455.79,
+          "amount_share_pct": 12.26
+        },
+        {
+          "amount_rank": 4,
+          "function_group": "마스크 · 시트마스크",
+          "category1": "마스크",
+          "category2": "시트마스크",
+          "sku_count": 153,
+          "sales_qty": 9253198,
+          "sales_amount_eur": 36485181.74,
+          "amount_share_pct": 11.75
+        },
+        {
+          "amount_rank": 5,
+          "function_group": "스킨케어 · 토너",
+          "category1": "스킨케어",
+          "category2": "토너",
+          "sku_count": 174,
+          "sales_qty": 4589763,
+          "sales_amount_eur": 28497126.19,
+          "amount_share_pct": 9.18
+        },
+        {
+          "amount_rank": 6,
+          "function_group": "클렌징 · 오일/워터/밀크",
+          "category1": "클렌징",
+          "category2": "클렌징오일/워터/밀크",
+          "sku_count": 50,
+          "sales_qty": 2675489,
+          "sales_amount_eur": 17041630.64,
+          "amount_share_pct": 5.49
+        },
+        {
+          "amount_rank": 7,
+          "function_group": "스킨케어 · 아이크림",
+          "category1": "스킨케어",
+          "category2": "아이크림",
+          "sku_count": 46,
+          "sales_qty": 2601203,
+          "sales_amount_eur": 14194425.7,
+          "amount_share_pct": 4.57
+        },
+        {
+          "amount_rank": 8,
+          "function_group": "스킨케어 · 수분크림",
+          "category1": "스킨케어",
+          "category2": "수분크림",
+          "sku_count": 7,
+          "sales_qty": 1671416,
+          "sales_amount_eur": 13535309.76,
+          "amount_share_pct": 4.36
+        },
+        {
+          "amount_rank": 9,
+          "function_group": "마스크 · 마사지/팩",
+          "category1": "마스크",
+          "category2": "마사지/팩",
+          "sku_count": 48,
+          "sales_qty": 1976606,
+          "sales_amount_eur": 13523293.17,
+          "amount_share_pct": 4.36
+        },
+        {
+          "amount_rank": 10,
+          "function_group": "클렌징 · 클렌징폼",
+          "category1": "클렌징",
+          "category2": "클렌징폼",
+          "sku_count": 100,
+          "sales_qty": 2819476,
+          "sales_amount_eur": 12426119.38,
+          "amount_share_pct": 4.0
+        }
+      ],
+      "operational_coverage": [
+        {
+          "dataset_label": "EU 현지 재고",
+          "dataset": "stock_local",
+          "unique_sku": 2572,
+          "mapped_unique_sku": 2565,
+          "sku_coverage_pct": 99.73,
+          "measure": "최근 3개월 판매수량",
+          "measure_coverage_pct": 100.0
+        },
+        {
+          "dataset_label": "본사 EU 창고 재고",
+          "dataset": "stock_hq",
+          "unique_sku": 2989,
+          "mapped_unique_sku": 2841,
+          "sku_coverage_pct": 95.05,
+          "measure": "최근 3개월 판매수량",
+          "measure_coverage_pct": 100.0
+        },
+        {
+          "dataset_label": "EU 현지 판매",
+          "dataset": "sales_local",
+          "unique_sku": 1856,
+          "mapped_unique_sku": 1855,
+          "sku_coverage_pct": 99.95,
+          "measure": "판매수량",
+          "measure_coverage_pct": 99.99
+        },
+        {
+          "dataset_label": "본사→EU 판매",
+          "dataset": "sales_hq",
+          "unique_sku": 1850,
+          "mapped_unique_sku": 1850,
+          "sku_coverage_pct": 100.0,
+          "measure": "판매수량",
+          "measure_coverage_pct": 100.0
+        },
+        {
+          "dataset_label": "운송중",
+          "dataset": "shipping",
+          "unique_sku": 792,
+          "mapped_unique_sku": 791,
+          "sku_coverage_pct": 99.87,
+          "measure": "운송수량",
+          "measure_coverage_pct": 99.99
+        },
+        {
+          "dataset_label": "미입고",
+          "dataset": "open_po",
+          "unique_sku": 1249,
+          "mapped_unique_sku": 1006,
+          "sku_coverage_pct": 80.54,
+          "measure": "미입고수량",
+          "measure_coverage_pct": 92.92
+        }
+      ],
+      "quality_findings": [
+        {
+          "priority": 1,
+          "area": "미입고 상품 연결",
+          "severity": "높음",
+          "evidence": "SKU 연결률 80.54%, 미입고 수량 연결률 92.92%",
+          "action": "전체 상품 마스터에서 신규·미판매 SKU를 보충하고 미연결률 경보 추가"
+        },
+        {
+          "priority": 2,
+          "area": "화면용 기능군 정의",
+          "severity": "높음",
+          "evidence": "동일한 기능구분2 '크림'이 썬케어와 스킨케어에 각각 존재",
+          "action": "기능구분1·2 조합을 분석기능군으로 매핑하는 버전 관리 테이블 도입"
+        },
+        {
+          "priority": 3,
+          "area": "분류 표준값",
+          "severity": "중간",
+          "evidence": "마스크 > 마사지/팩 48 SKU, 분석 매출의 4.36%",
+          "action": "CMS 허용값 마스크/팩과 통합 여부 확정 후 원천 또는 보정값 정규화"
+        },
+        {
+          "priority": 4,
+          "area": "판매 음수 행",
+          "severity": "중간",
+          "evidence": "음수 수량 1행, 음수 금액 612행",
+          "action": "반품·취소·할인 정의를 확정하고 총수요·순수요 계산 정책 테스트"
+        },
+        {
+          "priority": 5,
+          "area": "API 계약",
+          "severity": "높음",
+          "evidence": "저장 OpenAPI 명세에 /eu/products가 없고 실제 응답 필드와 차이",
+          "action": "OpenAPI 갱신과 필수 필드·스키마 드리프트 회귀 테스트 추가"
+        },
+        {
+          "priority": 6,
+          "area": "미입고 도착 시점",
+          "severity": "중간",
+          "evidence": "open PO 응답에 ETA·예상 입고일 필드 없음",
+          "action": "별도 입고예정 데이터 연계 전까지 수량·금액만 표시하고 시점 미제공 명시"
+        }
+      ],
+      "implementation_steps": [
+        {
+          "step": 1,
+          "work": "분석기능군 매핑표 정의",
+          "acceptance": "선크림·클렌징 오일·토너·앰플·세럼·크림·로션·마스크팩의 포함 규칙 승인"
+        },
+        {
+          "step": 2,
+          "work": "백엔드 기능군 집계 추가",
+          "acceptance": "판매수량·판매금액·가용재고·운송중·미입고를 동일 SKU 집합에서 집계"
+        },
+        {
+          "step": 3,
+          "work": "전체 상품 마스터 보충",
+          "acceptance": "open PO SKU 연결률 95% 이상 또는 미연결 미입고 수량 2% 이하"
+        },
+        {
+          "step": 4,
+          "work": "분석 탭과 핵심 10개 필터 구현",
+          "acceptance": "기능군 선택 시 판매·재고·파이프라인·기능군 MOI가 같은 기준으로 갱신"
+        },
+        {
+          "step": 5,
+          "work": "데이터 품질 게이트 자동화",
+          "acceptance": "분류 누락·비표준값·SKU 미연결·스키마 드리프트가 기준 초과 시 경고"
+        },
+        {
+          "step": 6,
+          "work": "CMS 상품 담당자 보정 흐름 연결",
+          "acceptance": "미분류 SKU를 웹에서 보정하고 다음 분석부터 자동 반영"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "cms_season_cache",
+      "label": "CMS 판매·상품 캐시",
+      "path": "cms_function_group_data_quality.ipynb"
+    },
+    {
+      "id": "cms_order_cache",
+      "label": "CMS 발주 검토 캐시",
+      "path": "cms_function_group_data_quality.ipynb"
+    },
+    {
+      "id": "joined_review",
+      "label": "기능군 데이터 품질 검토 노트북",
+      "path": "cms_function_group_data_quality.ipynb"
+    }
+  ]
+}

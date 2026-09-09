@@ -1,0 +1,53 @@
+{
+  "overall_assessment": "Share with caveats",
+  "analysis_period": [
+    "2024-07-14",
+    "2026-07-14"
+  ],
+  "saved_at": "2026-07-15T02:50:02.594608+00:00",
+  "source_sales_rows": 288759,
+  "analytical_rows": 273610,
+  "sku_count": 2145,
+  "country_sku_summary_rows": 28246,
+  "country_sku_monthly_rows": 112952,
+  "reconciliation_failures": 0,
+  "coverage_failures": 0,
+  "partial_months": [
+    "2024-07",
+    "2026-07"
+  ],
+  "identity_conflict_skus": 0,
+  "near_duplicate_sku_groups": 0,
+  "negative_sales_rows": 610,
+  "missing_field_rows": 114,
+  "total_sales_amount_eur": 310438158.58000004,
+  "total_sales_qty": 52433648.0,
+  "partial_month_peak_changed_skus": 131,
+  "negative_month_skus": 171,
+  "uncategorized_skus": 21,
+  "uncategorized_sales_amount_eur": 268602.37,
+  "uncategorized_sales_share_pct": 0.08652363202662829,
+  "unknown_country_skus": 0,
+  "unknown_country_sales_amount_eur": 0.0,
+  "unknown_country_sales_share_pct": 0.0,
+  "issues": [
+    {
+      "severity": "Medium",
+      "issue": "부분월이 시즌 비중에 포함됨",
+      "count": 2,
+      "affected_peak_skus": 131
+    },
+    {
+      "severity": "Medium",
+      "issue": "반품/취소 추정 음수 판매행 포함",
+      "count": 610,
+      "affected_skus": 171
+    },
+    {
+      "severity": "Medium",
+      "issue": "기능구분2 미분류",
+      "count": 114,
+      "affected_skus": 21
+    }
+  ]
+}

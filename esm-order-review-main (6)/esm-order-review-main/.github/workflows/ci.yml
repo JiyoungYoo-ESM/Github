@@ -1,0 +1,217 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deployment_origin:
+        description: Production frontend origin to smoke-test (overrides the GitHub Environment variable)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ESM_SCM8
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            ESM_SCM8/requirements.txt
+            ESM_SCM8/requirements-dev.txt
+      - name: Install Python dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt -r requirements-dev.txt
+      - name: Verify Python dependency consistency
+        run: python -m pip check
+      - name: Compile Python sources
+        run: python -m compileall -q backend core tests
+      - name: Run backend and API integration tests
+        env:
+          SCM_PRE_ANALYSIS_ENABLED: "false"
+        run: python -m pytest -q
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ESM_SCM8/frontend/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: ESM_SCM8/frontend
+        run: npm ci
+      - name: Fail on critical production dependency vulnerabilities
+        working-directory: ESM_SCM8/frontend
+        # Gate on critical only: the outstanding "high" is a build-time transitive
+        # DoS (brace-expansion via exceljs/glob) with no non-breaking fix, and the
+        # ALB is restricted to the office network. Revisit when exceljs ships a fix.
+        run: npm audit --omit=dev --audit-level=critical
+      - name: Run type, design, lint, regression, and build checks
+        working-directory: ESM_SCM8/frontend
+        env:
+          FASTAPI_INTERNAL_BASE_URL: http://127.0.0.1:8002
+        run: npm run ci
+
+  openapi-types:
+    name: OpenAPI types up to date
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            ESM_SCM8/requirements.txt
+            ESM_SCM8/requirements-dev.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ESM_SCM8/frontend/package-lock.json
+      - name: Install dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements.txt -r requirements-dev.txt
+          npm ci --prefix frontend
+      - name: Regenerate OpenAPI types and fail if committed types are stale
+        run: npm run openapi:check --prefix frontend
+
+  browser-smoke:
+    name: Browser integration smoke
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            ESM_SCM8/requirements.txt
+            ESM_SCM8/requirements-dev.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ESM_SCM8/frontend/package-lock.json
+      - name: Install integration dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements.txt -r requirements-dev.txt
+          npm ci --prefix frontend
+          npm exec --prefix frontend -- playwright install --with-deps chromium
+      - name: Build frontend
+        working-directory: ESM_SCM8/frontend
+        env:
+          FASTAPI_INTERNAL_BASE_URL: http://127.0.0.1:8002
+        run: npm run build
+      - name: Start application and run route smoke test
+        env:
+          AUTH_ADMINMASTER_PASSWORD_HASH: pbkdf2_sha256$600000$FIZ-xEmDmALtqWywKZBwKQ$f7p_gZE9xf9JSq1YPUrkxfv7K3oBqga7zcvDTJxZOqA
+          SMOKE_LOGIN_ID: adminmaster
+          SMOKE_LOGIN_PASSWORD: ci-password
+          SCM_PRE_ANALYSIS_ENABLED: "false"
+          FASTAPI_INTERNAL_BASE_URL: http://127.0.0.1:8002
+          SMOKE_BASE_URL: http://127.0.0.1:3000
+        run: |
+          python -m uvicorn backend.main:app --host 127.0.0.1 --port 8002 > backend-ci.log 2>&1 &
+          (cd frontend && npm start > ../frontend-ci.log 2>&1) &
+          for attempt in {1..60}; do
+            curl --fail --silent http://127.0.0.1:8002/api/health >/dev/null \
+              && curl --fail --silent http://127.0.0.1:3000/login >/dev/null \
+              && break
+            if [ "$attempt" -eq 60 ]; then
+              cat backend-ci.log frontend-ci.log
+              exit 1
+            fi
+            sleep 1
+          done
+          npm run smoke --prefix frontend
+      - name: Upload smoke diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-smoke-diagnostics
+          path: |
+            ESM_SCM8/backend-ci.log
+            ESM_SCM8/frontend-ci.log
+            ESM_SCM8/frontend/scripts/route-smoke-screenshots/latest
+          if-no-files-found: ignore
+
+  deployment-smoke:
+    name: Deployed production smoke
+    needs: [backend, frontend]
+    # On main, run only after DEPLOYMENT_ORIGIN has been configured. The
+    # workflow_dispatch path remains available for a one-off release check.
+    if: github.event_name == 'workflow_dispatch' || vars.DEPLOYMENT_ORIGIN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment: production
+    env:
+      DEPLOYMENT_ORIGIN: ${{ inputs.deployment_origin || vars.DEPLOYMENT_ORIGIN }}
+      DEPLOYMENT_SMOKE_TIMEOUT_SECONDS: "300"
+      DEPLOYMENT_SMOKE_RETRY_DELAY_MS: "10000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify deployed frontend and backend boundary
+        working-directory: ESM_SCM8/frontend
+        run: npm run smoke:deployment
+
+  deployment-e2e:
+    name: Deployed authenticated browser E2E
+    needs: [deployment-smoke]
+    if: github.event_name == 'workflow_dispatch' || vars.DEPLOYMENT_ORIGIN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      E2E_BASE_URL: ${{ inputs.deployment_origin || vars.DEPLOYMENT_ORIGIN }}
+      E2E_LOGIN_ID: ${{ secrets.E2E_LOGIN_ID }}
+      E2E_LOGIN_PASSWORD: ${{ secrets.E2E_LOGIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ESM_SCM8/frontend/package-lock.json
+      - name: Require protected E2E credentials
+        shell: bash
+        run: |
+          test -n "$E2E_LOGIN_ID"
+          test -n "$E2E_LOGIN_PASSWORD"
+      - name: Install browser test dependencies
+        working-directory: ESM_SCM8/frontend
+        run: |
+          npm ci
+          npm exec -- playwright install --with-deps chromium
+      - name: Run deployed authenticated workflow
+        working-directory: ESM_SCM8/frontend
+        run: npm run test:e2e

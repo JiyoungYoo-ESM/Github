@@ -1,0 +1,238 @@
+{
+  "status": "passed",
+  "generatedAt": "2026-07-31T07:02:58.257534+00:00",
+  "snapshots": [
+    {
+      "snapshot": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\latest_season_trend\\latest_hnb_team__PL.json",
+      "rawCache": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\cms_fetch_cache\\5324936ddbd3a8e212f456a723d3a08eb46df6017c0f74eef32c900b5877e00e.json",
+      "savedAt": "2026-07-31T06:39:56.094275+00:00",
+      "analysisRange": [
+        "2024-04-01",
+        "2024-12-31"
+      ],
+      "entityCode": "PL",
+      "sourceRows": {
+        "sales": 24995,
+        "productMaster": 2932
+      },
+      "pipelineStages": {
+        "rawRows": 24995,
+        "postStandardizeMergeRows": 22384,
+        "cosmeticRows": 22360,
+        "diagnosticRows": 24,
+        "finalRows": 22098,
+        "unknownCountryRowsExcluded": 0
+      },
+      "cubeRows": {
+        "countrySkuSummary": 5767,
+        "countrySkuMonthly": 13039,
+        "monthCoverage": 9
+      },
+      "totals": {
+        "rawFilteredAmount": 36192677.269999996,
+        "summaryAmount": 36192677.269999996,
+        "monthlyAmount": 36192677.269999996,
+        "coverageAmount": 36192677.27,
+        "rawFilteredQuantity": 5743297.0,
+        "summaryQuantity": 5743297.0,
+        "monthlyQuantity": 5743297.0,
+        "coverageQuantity": 5743297.0
+      },
+      "summaryReconciliation": {
+        "key_mismatches": 0,
+        "amount_mismatches": 0,
+        "quantity_mismatches": 0,
+        "max_amount_delta": 0.0,
+        "max_quantity_delta": 0.0
+      },
+      "monthlyReconciliation": {
+        "key_mismatches": 0,
+        "amount_mismatches": 0,
+        "quantity_mismatches": 0,
+        "max_amount_delta": 0.0,
+        "max_quantity_delta": 0.0
+      },
+      "requiredFieldNulls": {
+        "출고일": 0,
+        "국가": 0,
+        "상품코드": 0,
+        "브랜드": 0,
+        "상품명": 0,
+        "판매수량": 0,
+        "판매금액": 0
+      },
+      "requiredFieldBlanks": {
+        "출고일": 0,
+        "국가": 0,
+        "상품코드": 0,
+        "브랜드": 0,
+        "상품명": 0,
+        "판매수량": 0,
+        "판매금액": 0
+      },
+      "dimensionIntegrity": {
+        "skuCount": 534,
+        "skuCodesWithMultipleBrands": 0,
+        "skuCodesWithMultipleNames": 0,
+        "productMasterDuplicateCodeRows": 0,
+        "productMasterDuplicateCodes": 0
+      },
+      "sourceDuplicateRisk": {
+        "stableIdColumn": null,
+        "exactDuplicateRowsObserved": 126,
+        "exactDuplicateGroupsObserved": 63,
+        "candidateGroupsInAnalysisPopulation": 63,
+        "candidateRowsInAnalysisPopulation": 126,
+        "candidateExcessRows": 63,
+        "candidateAmount": 61599.03,
+        "candidateAmountSharePct": 0.169412
+      },
+      "measureEdgeCounts": {
+        "summaryNegativeAmountCells": 0,
+        "summaryZeroAmountCells": 0,
+        "summaryNegativeQuantityCells": 0,
+        "summaryZeroQuantityCells": 0,
+        "monthlyNegativeAmountCells": 4,
+        "monthlyZeroAmountCells": 0,
+        "monthlyNegativeQuantityCells": 0,
+        "monthlyZeroQuantityCells": 0
+      },
+      "completedYtdBaseMonth": 0,
+      "checks": {
+        "crossAnalysisComplete": true,
+        "summaryKeysMatch": true,
+        "summaryAmountsMatch": true,
+        "summaryQuantitiesMatch": true,
+        "monthlyKeysMatch": true,
+        "monthlyAmountsMatch": true,
+        "monthlyQuantitiesMatch": true,
+        "rawSummaryAmountTotalMatch": true,
+        "rawSummaryQuantityTotalMatch": true,
+        "summaryMonthlyAmountTotalMatch": true,
+        "summaryMonthlyQuantityTotalMatch": true,
+        "coverageMonthlyAmountTotalMatch": true,
+        "coverageMonthlyQuantityTotalMatch": true,
+        "requiredFieldsComplete": true,
+        "skuBrandStable": true,
+        "skuNameStable": true
+      },
+      "allDeterministicChecksPassed": true
+    },
+    {
+      "snapshot": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\latest_season_trend\\latest_bm3__PL.json",
+      "rawCache": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\backend\\storage\\cms_fetch_cache\\e552812929b671d2bf424f9be8a9227497e0cdac3fa6dba0910d8313201e9ea8.json",
+      "savedAt": "2026-07-31T00:09:58.539443+00:00",
+      "analysisRange": [
+        "2024-07-30",
+        "2026-07-30"
+      ],
+      "entityCode": "PL",
+      "sourceRows": {
+        "sales": 302680,
+        "productMaster": 2964
+      },
+      "pipelineStages": {
+        "rawRows": 302680,
+        "postStandardizeMergeRows": 285957,
+        "cosmeticRows": 285281,
+        "diagnosticRows": 592,
+        "finalRows": 283178,
+        "unknownCountryRowsExcluded": 0
+      },
+      "cubeRows": {
+        "countrySkuSummary": 29090,
+        "countrySkuMonthly": 115315,
+        "monthCoverage": 25
+      },
+      "totals": {
+        "rawFilteredAmount": 320444421.9,
+        "summaryAmount": 320444421.9,
+        "monthlyAmount": 320444421.9,
+        "coverageAmount": 320444421.90000004,
+        "rawFilteredQuantity": 53671897.0,
+        "summaryQuantity": 53671897.0,
+        "monthlyQuantity": 53671897.0,
+        "coverageQuantity": 53671897.0
+      },
+      "summaryReconciliation": {
+        "key_mismatches": 0,
+        "amount_mismatches": 0,
+        "quantity_mismatches": 0,
+        "max_amount_delta": 0.0,
+        "max_quantity_delta": 0.0
+      },
+      "monthlyReconciliation": {
+        "key_mismatches": 0,
+        "amount_mismatches": 0,
+        "quantity_mismatches": 0,
+        "max_amount_delta": 0.0,
+        "max_quantity_delta": 0.0
+      },
+      "requiredFieldNulls": {
+        "출고일": 0,
+        "국가": 0,
+        "상품코드": 0,
+        "브랜드": 0,
+        "상품명": 0,
+        "판매수량": 0,
+        "판매금액": 0
+      },
+      "requiredFieldBlanks": {
+        "출고일": 0,
+        "국가": 0,
+        "상품코드": 0,
+        "브랜드": 0,
+        "상품명": 0,
+        "판매수량": 0,
+        "판매금액": 0
+      },
+      "dimensionIntegrity": {
+        "skuCount": 2305,
+        "skuCodesWithMultipleBrands": 0,
+        "skuCodesWithMultipleNames": 0,
+        "productMasterDuplicateCodeRows": 0,
+        "productMasterDuplicateCodes": 0
+      },
+      "sourceDuplicateRisk": {
+        "stableIdColumn": null,
+        "exactDuplicateRowsObserved": 2475,
+        "exactDuplicateGroupsObserved": 1229,
+        "candidateGroupsInAnalysisPopulation": 1217,
+        "candidateRowsInAnalysisPopulation": 2451,
+        "candidateExcessRows": 1234,
+        "candidateAmount": 555492.0,
+        "candidateAmountSharePct": 0.172363
+      },
+      "measureEdgeCounts": {
+        "summaryNegativeAmountCells": 0,
+        "summaryZeroAmountCells": 1,
+        "summaryNegativeQuantityCells": 0,
+        "summaryZeroQuantityCells": 0,
+        "monthlyNegativeAmountCells": 183,
+        "monthlyZeroAmountCells": 2,
+        "monthlyNegativeQuantityCells": 0,
+        "monthlyZeroQuantityCells": 0
+      },
+      "completedYtdBaseMonth": 6,
+      "checks": {
+        "crossAnalysisComplete": true,
+        "summaryKeysMatch": true,
+        "summaryAmountsMatch": true,
+        "summaryQuantitiesMatch": true,
+        "monthlyKeysMatch": true,
+        "monthlyAmountsMatch": true,
+        "monthlyQuantitiesMatch": true,
+        "rawSummaryAmountTotalMatch": true,
+        "rawSummaryQuantityTotalMatch": true,
+        "summaryMonthlyAmountTotalMatch": true,
+        "summaryMonthlyQuantityTotalMatch": true,
+        "coverageMonthlyAmountTotalMatch": true,
+        "coverageMonthlyQuantityTotalMatch": true,
+        "requiredFieldsComplete": true,
+        "skuBrandStable": true,
+        "skuNameStable": true
+      },
+      "allDeterministicChecksPassed": true
+    }
+  ]
+}

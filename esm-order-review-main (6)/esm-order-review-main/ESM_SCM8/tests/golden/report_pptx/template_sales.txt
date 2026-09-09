@@ -1,0 +1,184 @@
+ppt/slides/slide1.xml
+SILICON2 ESM ANALYTICS
+골든 스냅샷 리포트
+생성일 <DATE>  |  공개용
+01 / 12
+===
+ppt/slides/slide10.xml
+부록
+ 데이터 기준 및 안전 원칙
+SILICON2 GLOBAL MARKET TREND REPORT
+공개용
+데이터 정의 및 집계 기준
+취급 및 취득 보안 주의
+본 보고서는 외부 공유 기준에 따라 원가, 마진, 거래처 집계값 및 경쟁사 실명 정보를 마스킹해 생성했습니다.
+공유 정책:
+거래처·고객명 집계 대체. 이후 표, 차트, 텍스트는 마스킹된 데이터만 사용합니다.
+· 데이터 기준: 보고서 생성 시점의 분석 데이터 기준
+· 집계 구성 단위: 국가·권역, 브랜드, SKU, 교차분석 블록
+· 통화 환산 기준: 화면에서 전달된 표시값 및 원본 수치 병행
+· 마스킹 적용: 제거 컬럼 원가율, 경쟁사 익명화 3개
+11 / 12
+===
+ppt/slides/slide11.xml
+Thank You
+12 / 12
+===
+ppt/slides/slide12.xml
+CARD 01 · 국가 순위
+국가별 판매 순위
+2개국 · 매출 기준
+국가별 판매 순위 · 2개국 · 매출 기준
+TOP 2 집계 · 60% 기준
+미국
+북미
+60%
+일본
+아시아
+40%
+Silicon2 SCM Analytics · 공개용
+03 / 12
+===
+ppt/slides/slide13.xml
+CARD 02 · 권역 비중
+권역별 매출 비중
+유럽 · 점유율 99.9%
+권역별 매출 비중 · 유럽 · 점유율 99.9%
+TOP 1 집계 · 99.9% 기준
+유럽
+99.9%
+Silicon2 SCM Analytics · 공개용
+04 / 12
+===
+ppt/slides/slide14.xml
+CARD 03 · 국가 판매 상세
+Germany 국가 판매 상세
+유럽 · 총 매출 €52.2M · 점유율 16.8%
+Germany 국가 판매 상세 · 유럽 · 총 매출 €52.2M · 점유율 16.8%
+선택 국가 판매 인사이트
+선택 국가
+Germany
+점유율 16.8%
+총 매출
+€52.2M
+약 ₩919.0억
+월 최고 매출
+€7.5M
+6월 · 약 ₩132.0억
+상위 브랜드 · 미리보기
+경쟁사 C
+€15.2M
+약 ₩267.6억
+메디큐브
+€10.9M
+약 ₩191.9억
+Top 5 카테고리
+썬케어 > 크림
+스킨케어 > 크림
+Silicon2 SCM Analytics · 공개용
+05 / 12
+===
+ppt/slides/slide15.xml
+CARD 04 · 브랜드 순위
+경쟁사 A 브랜드 판매 순위
+아누아 · 경쟁사 A · 경쟁사 B · 경쟁사 C
+경쟁사 A 브랜드 판매 순위 · 아누아 · 경쟁사 A · 경쟁사 B · 경쟁사 C
+브랜드 기준 분석
+경쟁사 A
+€7.0M
+Silicon2 SCM Analytics · 공개용
+06 / 12
+===
+ppt/slides/slide16.xml
+CARD 05 · SKU 상세
+[EU] 경쟁사 C크림 50ml SKU 분석
+경쟁사 C · 피크 10월 · €2.74M
+[EU] 경쟁사 C크림 50ml SKU 분석 · 경쟁사 C · 피크 10월 · €2.74M
+TOP 3 집계 · 44.3% 기준
+1392000%
+696000%
+0%
+620000.0%
+1200000.0%
+8월
+10월
+Silicon2 SCM Analytics · 공개용
+07 / 12
+===
+ppt/slides/slide17.xml
+CARD 06 · SKU 상세
+[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보
+메디큐브 · 피크 6월 · MECUP10-PKREUP
+[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보 · 메디큐브 · 피크 6월 · MECUP10-PKREUP
+SKU 발주 참고 정보
+매출 순위
+10위 / 613 SKU
+피크 3개월 전 준비월
+3월
+6월 피크 기준
+판매수량
+613.6K개
+매출
+€5.1M
+약 ₩89.8억
+판매 국가
+34개국
+피크월 매출
+€658.3K
+약 ₩11.6억
+6월 피크 기준 약 3개월 전인 3월부터 판매/발주 준비가 필요합니다.
+Silicon2 SCM Analytics · 공개용
+08 / 12
+===
+ppt/slides/slide18.xml
+CARD 07 · 교차 분석
+국가 × 브랜드 교차분석
+매출액 · 금액
+국가 × 브랜드 교차분석 · United Kingdom, Estonia, Netherlands The × 경쟁사 C
+매출액 · 금액
+국가 / 브랜드
+경쟁사 C
+총합
+Estonia
+€10.1M
+€10.1M
+United Kingdom
+€2.6M
+€2.6M
+Netherlands The
+€2.3M
+€2.3M
+상위 조합 기준으로 표시하며, 값이 작거나 데이터가 없는 조합은 연하게 표시됩니다.
+Silicon2 SCM Analytics · 공개용
+09 / 12
+===
+ppt/slides/slide19.xml
+CARD 08 · 교차 분석
+성분 × 국가 교차분석
+매출액 · 금액
+성분 × 국가 교차분석 · 스네일뮤신 × Estonia
+매출액 · 금액
+성분 / 국가
+Estonia
+Germany
+총합
+스네일뮤신
+€676.1K
+€218.4K
+€894.5K
+상위 조합 기준으로 표시하며, 값이 작거나 데이터가 없는 조합은 연하게 표시됩니다.
+Silicon2 SCM Analytics · 공개용
+10 / 12
+===
+ppt/slides/slide2.xml
+REPORT OVERVIEW
+CONTENTS
+01
+국가 · 권역 — 국가별 판매 순위 외 2건
+02
+브랜드 — 브랜드별 판매 순위
+03
+SKU — 상위 SKU 및 매출 구성 외 1건
+04
+교차 분석 — 선택 축 기준 매트릭스 외 1건
+02 / 12

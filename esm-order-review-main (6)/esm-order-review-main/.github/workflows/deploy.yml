@@ -1,0 +1,58 @@
+name: Deploy
+
+# App pipeline: build images -> push to ECR (:latest + :<sha>) -> force a new
+# ECS deployment. It CANNOT touch infrastructure: the OIDC role has no cdk
+# permissions. Infra changes are deployed locally with admin/SSO (infra/README.md).
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+  ACCOUNT: "634236767858"
+  ROLE_ARN: arn:aws:iam::634236767858:role/sk-an2-role-esm-github-deploy
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Only the newest develop push deploys; older in-flight runs are cancelled.
+    concurrency:
+      group: deploy-dev
+      cancel-in-progress: true
+    env:
+      ENVIRONMENT: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - name: Build & push images, force ECS redeploy
+        run: bash .github/deploy.sh "$ENVIRONMENT"
+
+  deploy-prd:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: deploy-prd
+      cancel-in-progress: true
+    env:
+      ENVIRONMENT: prd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - name: Build & push images, force ECS redeploy
+        run: bash .github/deploy.sh "$ENVIRONMENT"

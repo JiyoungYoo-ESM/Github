@@ -1,0 +1,219 @@
+{
+  "as_of": "2026-07-15T13:58:40.836270+09:00",
+  "assessment": "share_with_caveat",
+  "assessment_reason": "All current-code and full regression checks pass. Direct post-fix workbook evidence is unavailable, and 303 saved rows carry an ETA earlier than the analysis base date.",
+  "baseline_exports": {
+    "order_export": {
+      "file": "ESM_order_review_filtered_all_2026-07-15 (1).xlsx",
+      "invalid_data_validation_style": true,
+      "generated_at": "2026. 07. 15. 오전 09:18",
+      "row_count": 2571,
+      "target_count": 2571,
+      "duplicate_product_code_rows": 0,
+      "missing_product_code_rows": 0,
+      "negative_numeric_values": 0,
+      "formula_pattern_failures": 0,
+      "scenario_stock_failures": 0,
+      "scenario_qty_failures": 0,
+      "scenario_amount_failures": 0,
+      "moi_failures": 0,
+      "visible_cache_failures": 0,
+      "before_qty_sum": 1738702.0,
+      "after_qty_sum": 1260328.0,
+      "before_amount_sum_krw": 9729022894.063187,
+      "after_amount_sum_krw": 6031289118.4416,
+      "summary_qty": 1738702.0,
+      "summary_amount_krw": 9729022894.063187,
+      "summary_qty_matches": true,
+      "summary_amount_matches": true,
+      "target_count_matches": true
+    },
+    "stock_gap_export": {
+      "file": "ESM_stock_gap_filtered_all_2026-07-13 (2).xlsx",
+      "generated_at": "2026. 07. 13. 오전 11:54",
+      "row_count": 2570,
+      "target_count": 2570,
+      "target_count_matches": true,
+      "status_counts": {
+        "재고공백": 75,
+        "안전": 1024,
+        "검토필요": 1083,
+        "ETA 없음": 388
+      },
+      "duplicate_product_code_rows": 0,
+      "missing_product_code_rows": 0,
+      "missing_status_rows": 0,
+      "negative_numeric_values": 0,
+      "gap_date_failures": 0,
+      "gap_date_ambiguous_rows": 70,
+      "shortage_reconciliation_exceptions": 30,
+      "shortage_exception_displayed_total": 319995,
+      "shortage_exception_visible_formula_total": 149065,
+      "shortage_exception_delta": 170930,
+      "summary_risk": 75,
+      "computed_risk": 75,
+      "summary_long_gap": 53,
+      "computed_long_gap": 53,
+      "summary_shortage": 379001,
+      "computed_shortage": 379001,
+      "summary_waiting_eta": 388,
+      "computed_waiting_eta": 388,
+      "summary_matches": {
+        "risk": true,
+        "long_gap": true,
+        "shortage": true,
+        "waiting_eta": true
+      }
+    }
+  },
+  "saved_result_current_code": {
+    "source": {
+      "file": "backend/storage/latest_order_review/849fa1db-cffa-43bd-aaf6-832f21f35036.json",
+      "saved_at": "2026-07-14T03:19:06.137572+00:00",
+      "job_id": "20260714_031853_28553258",
+      "declared_row_count": 2571
+    },
+    "population": {
+      "input_rows": 2571,
+      "computed_rows": 2571,
+      "unique_skus": 2571
+    },
+    "stock_gap": {
+      "status_counts": {
+        "needs_check": 1051,
+        "sufficient": 1080,
+        "urgent_replenishment": 67,
+        "waiting_eta": 373
+      },
+      "risk_rows": 67,
+      "long_gap_rows": 54,
+      "total_canonical_shortage_qty": 133713,
+      "canonical_shortage_mismatches": 0,
+      "date_values_checked": 2269,
+      "full_year_date_failures": 0,
+      "timeline_warning_rows": 303,
+      "timeline_warning_categories": {
+        "out_of_order": 0,
+        "stockout_before_base": 0,
+        "eta_before_base": 303,
+        "backend_stockout_mismatch": 0
+      },
+      "eta_before_base_detail": {
+        "rows": 303,
+        "status_counts": {
+          "needs_check": 53,
+          "sufficient": 250
+        },
+        "eta_delay_flag_rows": 0,
+        "pre_arrival_stockout_risk_rows": 0,
+        "risk_status_rows": 0
+      }
+    },
+    "boundary_checks": {
+      "historical_base_date_status": "sufficient",
+      "historical_base_date_expected": "sufficient",
+      "historical_fallback_independent": true,
+      "canonical_shortage_observed": 50,
+      "canonical_shortage_expected": 50,
+      "current_session_guard_present": true,
+      "excel_error_style_stop_present": true,
+      "excel_invalid_error_style_absent": true,
+      "full_date_export_present": true
+    }
+  },
+  "python_boundary_checks": {
+    "period_start": "2026-02-01",
+    "period_end": "2026-04-30",
+    "inclusive_expected_qty": 5.0,
+    "inclusive_observed_qty": 5.0,
+    "inclusive_expected_amount_krw": 500.0,
+    "concentration_observed_amount_krw": 500.0,
+    "order_review_observed_amount_krw": 500.0,
+    "period_filter_passed": true,
+    "product_name": "-",
+    "brand": "-",
+    "missing_identity_passed": true
+  },
+  "excel_validation_smoke": {
+    "generation_passed": true,
+    "openpyxl_loaded": true,
+    "xml_has_stop": true,
+    "xml_has_invalid_error": false,
+    "passed": true,
+    "file": "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\artifacts\\order_analysis_rebacktest_20260715\\excel_validation_smoke.xlsx"
+  },
+  "counterfactual_prior_real_export": {
+    "population_rows": 2570,
+    "gap_risk_rows": 75,
+    "baseline_exception_rows": 30,
+    "baseline_exception_displayed_qty": 319995,
+    "baseline_visible_formula_qty": 149065,
+    "baseline_delta_qty": 170930,
+    "postfix_exception_rows_by_contract": 0,
+    "postfix_delta_qty_by_contract": 0,
+    "note": "Post-fix helper is the displayed gap-days × daily-sales contract; this is a counterfactual over the prior real export, not a newly downloaded workbook."
+  },
+  "test_runs": [
+    {
+      "name": "frontend_order_analysis",
+      "command": [
+        "npm.cmd",
+        "run",
+        "test:order-analysis"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "duration_seconds": 0.62,
+      "output_tail": "> esm-scm-frontend@0.1.0 test:order-analysis\n> node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/order-analysis-data-integrity.test.mjs\n\norder analysis data-integrity regression: 11 assertions passed"
+    },
+    {
+      "name": "frontend_typecheck",
+      "command": [
+        "npm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "duration_seconds": 4.53,
+      "output_tail": "> esm-scm-frontend@0.1.0 pretypecheck\n> npm run clean:next-dev-types\n\n\n> esm-scm-frontend@0.1.0 clean:next-dev-types\n> node -e \"const fs=require('fs'); const path='.next/dev/types'; if (fs.existsSync(path)) for (const file of fs.readdirSync(path)) if (/^routes\\.d-.+\\.ts$/.test(file)) fs.rmSync(require('path').join(path,file), { force: true });\"\n\n\n> esm-scm-frontend@0.1.0 typecheck\n> tsc --noEmit"
+    },
+    {
+      "name": "python_full_suite",
+      "command": [
+        "C:\\Users\\USER\\OneDrive - (주)실리콘투\\바탕 화면\\ESM_SCM10_old\\ESM_SCM8\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "duration_seconds": 37.69,
+      "output_tail": ".................s...................................................... [ 42%]\n........................................................................ [ 85%]\n.........................                                                [100%]\n============================== warnings summary ===============================\ntests/test_order_sheet_reference_layout.py: 26 warnings\n  C:\\Users\\USER\\OneDrive - (��)�Ǹ�����\\���� ȭ��\\ESM_SCM10_old\\ESM_SCM8\\core\\export_excel_report.py:337: DeprecationWarning: Call to deprecated function copy (Use copy(obj) or cell.obj = cell.obj + other).\n    source_cell.fill = cell.fill.copy()\n\ntests/test_order_sheet_reference_layout.py: 26 warnings\n  C:\\Users\\USER\\OneDrive - (��)�Ǹ�����\\���� ȭ��\\ESM_SCM10_old\\ESM_SCM8\\core\\export_excel_report.py:338: DeprecationWarning: Call to deprecated function copy (Use copy(obj) or cell.obj = cell.obj + other).\n    source_cell.font = cell.font.copy()\n\ntests/test_order_sheet_reference_layout.py: 26 warnings\n  C:\\Users\\USER\\OneDrive - (��)�Ǹ�����\\���� ȭ��\\ESM_SCM10_old\\ESM_SCM8\\core\\export_excel_report.py:339: DeprecationWarning: Call to deprecated function copy (Use copy(obj) or cell.obj = cell.obj + other).\n    source_cell.alignment = cell.alignment.copy()\n\ntests/test_order_sheet_reference_layout.py: 26 warnings\n  C:\\Users\\USER\\OneDrive - (��)�Ǹ�����\\���� ȭ��\\ESM_SCM10_old\\ESM_SCM8\\core\\export_excel_report.py:340: DeprecationWarning: Call to deprecated function copy (Use copy(obj) or cell.obj = cell.obj + other).\n    source_cell.border = cell.border.copy()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n168 passed, 1 skipped, 104 warnings in 36.50s"
+    },
+    {
+      "name": "frontend_production_build",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "duration_seconds": 34.57,
+      "output_tail": "> esm-scm-frontend@0.1.0 prebuild\n> npm run clean:next-dev-types\n\n\n> esm-scm-frontend@0.1.0 clean:next-dev-types\n> node -e \"const fs=require('fs'); const path='.next/dev/types'; if (fs.existsSync(path)) for (const file of fs.readdirSync(path)) if (/^routes\\.d-.+\\.ts$/.test(file)) fs.rmSync(require('path').join(path,file), { force: true });\"\n\n\n> esm-scm-frontend@0.1.0 build\n> next build\n\n▲ Next.js 16.2.6 (Turbopack)\n- Environments: .env.local\n- Experiments (use with caution):\n  · proxyClientMaxBodySize: \"200mb\"\n\n  Creating an optimized production build ...\n✓ Compiled successfully in 12.7s\n  Running TypeScript ...\n  Finished TypeScript in 14.0s ...\n  Collecting page data using 11 workers ...\n  Generating static pages using 11 workers (0/37) ...\n  Generating static pages using 11 workers (9/37) \n  Generating static pages using 11 workers (18/37) \n  Generating static pages using 11 workers (27/37) \n✓ Generating static pages using 11 workers (37/37) in 1326ms\n  Finalizing page optimization ...\n\nRoute (app)\n┌ ○ /\n├ ○ /_not-found\n├ ○ /about\n├ ○ /dashboard\n├ ○ /detail-guide\n├ ○ /esm\n├ ○ /ingredient-trend\n├ ○ /insight/brand\n├ ○ /insight/brand-report\n├ ○ /insight/country\n├ ○ /insight/cross\n├ ○ /insight/ingredient\n├ ○ /insight/input\n├ ○ /insight/sku\n├ ○ /integrated-order-review\n├ ○ /login\n├ ○ /manual\n├ ○ /mapping-check\n├ ○ /order-analysis\n├ ○ /order-analysis/order-review\n├ ○ /order-analysis/sku-concentration\n├ ○ /order-analysis/stock-gap\n├ ƒ /order-review\n├ ○ /season-calendar\n├ ○ /season-trend\n├ ○ /season-trend/category-top-sku\n├ ○ /season-trend/country-insight\n├ ○ /season-trend/global-demand\n├ ○ /season-trend/ingredient-top\n├ ○ /season-trend/ingredient-trend\n├ ○ /season-trend/mapping-check\n├ ○ /season-trend/season-calendar\n├ ○ /season-trend/sku-season\n├ ƒ /sku-concentration\n├ ƒ /stock-gap\n└ ○ /upload\n\n\n○  (Static)   prerendered as static content\nƒ  (Dynamic)  server-rendered on demand\nFASTAPI_INTERNAL_BASE_URL is not set. The frontend can build, but /backend-api proxy requests will use http://127.0.0.1:8002.\nFASTAPI_INTERNAL_BASE_URL is not set. The frontend can build, but /backend-api proxy requests will use http://127.0.0.1:8002."
+    }
+  ],
+  "all_executed_tests_passed": true,
+  "residual_risks": {
+    "postfix_ui_workbook_available": false,
+    "eta_before_base_rows": 303,
+    "eta_before_base_sufficient_rows": 250,
+    "eta_interpretation": "These may be completed arrivals, but receipt state is not present in the saved result; reconcile them before treating the ETA as current."
+  },
+  "postfix_acceptance_checks": {
+    "passed": 14,
+    "total": 14,
+    "all_passed": true
+  }
+}

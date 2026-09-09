@@ -1,0 +1,221 @@
+ppt/slides/slide1.xml
+SILICON2 SCM ANALYTICS
+골든 스냅샷 리포트
+Report Cart Export
+INTERNAL ONLY · 대외비
+보고 대상
+내부용
+생성일
+<DATE>
+담긴 블록
+8개
+SCM
+REPORT
+본 보고서는 실리콘투 내부 검토용이며 경쟁사 실명과 민감 지표를 포함할 수 있습니다.
+01 / 11
+===
+ppt/slides/slide10.xml
+CARD 07 · 교차 분석
+국가 × 브랜드 교차분석
+매출액 · 금액
+국가 × 브랜드 교차분석 · United Kingdom, Estonia, Netherlands The × 조선미녀
+매출액 · 금액
+국가 / 브랜드
+조선미녀
+총합
+Estonia
+€10.1M
+약 ₩177.8억
+€10.1M
+약 ₩177.8억
+United Kingdom
+€2.6M
+약 ₩45.8억
+€2.6M
+약 ₩45.8억
+Netherlands The
+€2.3M
+약 ₩40.5억
+€2.3M
+약 ₩40.5억
+상위 조합 기준으로 표시하며, 값이 작거나 데이터가 없는 조합은 연하게 표시됩니다.
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+10 / 11
+===
+ppt/slides/slide11.xml
+CARD 08 · 교차 분석
+성분 × 국가 교차분석
+매출액 · 금액
+성분 × 국가 교차분석 · 스네일뮤신 × Estonia
+매출액 · 금액
+성분 / 국가
+Estonia
+Germany
+총합
+스네일뮤신
+€676.1K
+약 ₩11.9억
+€218.4K
+약 ₩3.84억
+€894.5K
+약 ₩15.7억
+상위 조합 기준으로 표시하며, 값이 작거나 데이터가 없는 조합은 연하게 표시됩니다.
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+11 / 11
+===
+ppt/slides/slide2.xml
+CONTENTS
+보고서 구성
+01
+국가 · 권역
+국가별 판매 순위
+02
+국가 · 권역
+권역별 매출 비중
+03
+국가 · 권역
+Germany 국가 판매 상세
+04
+브랜드
+토리든 브랜드 판매 순위
+05
+SKU
+[EU] 조선미녀크림 50ml SKU 분석
+06
+SKU
+[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보
+07
+교차분석
+국가 × 브랜드 교차분석
+08
+교차분석
+성분 × 국가 교차분석
+02 / 11
+===
+ppt/slides/slide3.xml
+SUMMARY
+핵심요약
+선택된 분석 데이터를 기준으로 산출했습니다.
+전체 매출
+€144.3M
+담긴 블록 기준 최대 매출
+매출 발생 국가
+6개국
+snapshot 국가 필드 기준
+브랜드 수
+4개
+마스킹 후 표시 기준
+데이터 행
+28행
+PPT/XLSX 반영 rows
+블록 순서: 국가별 판매 순위 → 권역별 매출 비중 → Germany 국가 판매... (이후 5개)
+표시 인사이트 문장은 dataset 레이어에서 마스킹된 값만 사용합니다.
+공유 기준: INTERNAL ONLY · 대외비
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+03 / 11
+===
+ppt/slides/slide4.xml
+CARD 01 · 국가 순위
+국가별 판매 순위
+2개국 · 매출 기준
+국가별 판매 순위 · 2개국 · 매출 기준
+TOP 2 집계 · 60% 기준
+미국
+북미
+60%
+일본
+아시아
+40%
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+04 / 11
+===
+ppt/slides/slide5.xml
+CARD 02 · 권역 비중
+권역별 매출 비중
+유럽 · 점유율 99.9%
+권역별 매출 비중 · 유럽 · 점유율 99.9%
+TOP 1 집계 · 99.9% 기준
+유럽
+99.9%
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+05 / 11
+===
+ppt/slides/slide6.xml
+CARD 03 · 국가 판매 상세
+Germany 국가 판매 상세
+유럽 · 총 매출 €52.2M · 점유율 16.8%
+Germany 국가 판매 상세 · 유럽 · 총 매출 €52.2M · 점유율 16.8%
+선택 국가 판매 인사이트
+선택 국가
+Germany
+점유율 16.8%
+총 매출
+€52.2M
+약 ₩919.0억
+월 최고 매출
+€7.5M
+6월 · 약 ₩132.0억
+상위 브랜드 · 미리보기
+조선미녀
+€15.2M
+약 ₩267.6억
+메디큐브
+€10.9M
+약 ₩191.9억
+Top 5 카테고리
+썬케어 > 크림
+스킨케어 > 크림
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+06 / 11
+===
+ppt/slides/slide7.xml
+CARD 04 · 브랜드 순위
+토리든 브랜드 판매 순위
+아누아 · 토리든 · 롬앤 · 조선미녀
+토리든 브랜드 판매 순위 · 아누아 · 토리든 · 롬앤 · 조선미녀
+브랜드 기준 분석
+토리든
+€7.0M
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+07 / 11
+===
+ppt/slides/slide8.xml
+CARD 05 · SKU 상세
+[EU] 조선미녀크림 50ml SKU 분석
+조선미녀 · 피크 10월 · €2.74M
+[EU] 조선미녀크림 50ml SKU 분석 · 조선미녀 · 피크 10월 · €2.74M
+TOP 3 집계 · 44.3% 기준
+1392000%
+696000%
+0%
+620000.0%
+1200000.0%
+8월
+10월
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+08 / 11
+===
+ppt/slides/slide9.xml
+CARD 06 · SKU 상세
+[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보
+메디큐브 · 피크 6월 · MECUP10-PKREUP
+[EUP]콜라겐 나이트 랩핑 마스크 75ml 발주 참고 정보 · 메디큐브 · 피크 6월 · MECUP10-PKREUP
+SKU 발주 참고 정보
+매출 순위
+10위 / 613 SKU
+피크 3개월 전 준비월
+3월
+6월 피크 기준
+판매수량
+613.6K개
+매출
+€5.1M
+약 ₩89.8억
+판매 국가
+34개국
+피크월 매출
+€658.3K
+약 ₩11.6억
+6월 피크 기준 약 3개월 전인 3월부터 판매/발주 준비가 필요합니다.
+Silicon2 SCM Analytics · INTERNAL ONLY · 대외비
+09 / 11

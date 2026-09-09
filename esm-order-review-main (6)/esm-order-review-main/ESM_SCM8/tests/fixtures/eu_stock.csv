@@ -1,0 +1,4 @@
+브랜드,상품코드,바코드,상품명,재고수량,Hold수량,EU 입고단가,최근 3개월 판매수량,검토 운송수단,재고금액
+OTHER_BRAND,OTHER_SKU,0001,Other Product,5000,0,100,50,해운,500000
+SKU_A,SKU_A_CODE,0002,Product A,100,0,50,10,해운,5000
+SKU_B,SKU_B_CODE,0003,Product B,200,0,30,20,해운,6000

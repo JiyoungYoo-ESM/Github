@@ -1,0 +1,30 @@
+# FastAPI backend. Build context = ESM_SCM8/.
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# PYTHONPATH: uvicorn puts the cwd on sys.path but celery does not — without
+# this the worker fails lazy imports of top-level modules (e.g. `core`).
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Only what the runtime imports (see backend.main / core / alembic).
+COPY backend ./backend
+COPY core ./core
+COPY data ./data
+COPY alembic ./alembic
+COPY alembic.ini ./alembic.ini
+COPY docker/backend-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8002
+# ponytail: entrypoint runs `alembic upgrade head` then uvicorn — fine at 1
+# replica. Move migrations to a one-off ECS task if you scale to >1.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=5 \
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8002/api/health/live').status==200 else 1)"
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

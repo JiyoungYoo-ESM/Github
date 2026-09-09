@@ -1,0 +1,120 @@
+const brandDisplayNames: Record<string, string> = {
+  "-": "-",
+  Abib: "아비브",
+  ACWELL: "아크웰",
+  ALTERNATIVESTEREO: "얼터너티브스테레오",
+  ANILLO: "아닐로",
+  ANUA: "아누아",
+  APLB: "에이피엘비",
+  "APRIL SKIN": "에이프릴스킨",
+  ARENCIA: "아렌시아",
+  aromatica: "아로마티카",
+  ATOPALM: "아토팜",
+  "AXIS-Y": "엑시스와이",
+  BAREN: "바렌",
+  belif: "빌리프",
+  BENTON: "벤튼",
+  BIODANCE: "바이오던스",
+  BLITHE: "블라이드",
+  "BR MUD": "비알머드",
+  BRAYE: "브레이",
+  "Be The Skin": "비더스킨",
+  "Beauty of Joseon": "조선미녀",
+  celimax: "셀리맥스",
+  Centellian24: "센텔리안24",
+  cepolab: "세포랩",
+  ClearDea: "클리어디어",
+  COSRX: "코스알엑스",
+  "d'Alba": "달바",
+  Dasique: "데이지크",
+  DEARMAY: "디어메이",
+  Demaf: "더마프",
+  "DERMA:B": "더마비",
+  "double dare": "더블데어",
+  "Dr. Reju-All": "닥터리쥬올",
+  "Dr.Althea": "닥터엘시아",
+  "Dr.Ceuracle": "닥터슈라클",
+  "Dr.Melaxin": "닥터멜락신",
+  "Dr.LIENJANG": "닥터리엔장",
+  "Dr.VITA": "닥터비타",
+  "EDGE U": "엣지유",
+  "EITHER AND": "이더앤드",
+  ELROEL: "엘로엘",
+  Etude: "에뛰드",
+  etc: "기타",
+  Eyecandy: "아이캔디",
+  FRANKLY: "프랭클리",
+  FULLY: "풀리",
+  FWEE: "퓌",
+  glow: "글로우",
+  GROWUS: "그로우어스",
+  HEVEBLUE: "헤브블루",
+  Heimish: "헤이미쉬",
+  hince: "힌스",
+  "House of Hur": "하우스오브허",
+  HYAAH: "히아",
+  "I DEW CARE": "아이듀케어",
+  "IM From": "아임프롬",
+  ISNTREE: "이즈앤트리",
+  IUNIK: "아이유닉",
+  Jumiso: "주미소",
+  KAINE: "카인",
+  KSECRET: "케이시크릿",
+  KUNDAL: "쿤달",
+  LAKA: "라카",
+  "ma:nyo": "마녀공장",
+  "Haruharu Wonder": "하루하루원더",
+  Medicube: "메디큐브",
+  Mediheal: "메디힐",
+  Melixir: "멜릭서",
+  "Mary&May": "메리앤메이",
+  "Milk Touch": "밀크터치",
+  Missha: "미샤",
+  MIXSOON: "믹순",
+  MOIDA: "모이다",
+  "NINE LESS": "나인리스",
+  "Nature Republic": "네이처리퍼블릭",
+  Numbuzin: "넘버즈인",
+  Ongredients: "온그리디언츠",
+  Parnell: "파넬",
+  Petitfee: "쁘띠페",
+  "PURITO SEOUL": "퓨리토 서울",
+  "Pyunkang yul": "편강율",
+  "Real Barrier": "리얼베리어",
+  ROVECTIN: "로벡틴",
+  "Round Lab": "라운드랩",
+  seapuri: "세이퓨리",
+  Skin1004: "스킨1004",
+  Skinfood: "스킨푸드",
+  slowpure: "슬로우퓨어",
+  SOMEBYMI: "썸바이미",
+  "STUDIO 17": "스튜디오17",
+  "STYLEKOREAN BOX": "스타일코리안 박스",
+  "Sungboon Editor": "성분에디터",
+  TIRTIR: "티르티르",
+  TOCOBO: "토코보",
+  toolif: "툴리프",
+  Torriden: "토리든",
+  "VT COSMETICS": "브이티",
+  ZEROID: "제로이드"
+};
+
+export function displayBrandName(name: string) {
+  const trimmed = name.trim();
+  const exact = brandDisplayNames[trimmed];
+  if (exact) {
+    return exact;
+  }
+  const normalized = trimmed.toLowerCase();
+  const key = Object.keys(brandDisplayNames).find((item) => item.toLowerCase() === normalized);
+  return key ? brandDisplayNames[key] : name;
+}
+
+/**
+ * Source systems do not always agree on a brand's casing.  Keep this identity
+ * key separate from the presentation label so sales, stock and ETA rows are
+ * aggregated with the same rule.
+ */
+export function brandIdentityKey(name: string) {
+  return displayBrandName(name).trim().toLocaleLowerCase("ko-KR");
+}

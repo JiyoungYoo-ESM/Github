@@ -1,0 +1,453 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "발주분석 탭 데이터 정합성 백테스트",
+    "description": "발주검토·재고공백·SKU 집중도 계산과 Excel 내보내기의 산술, 기간, 기준일, 표시 계약을 검증한 기술 감사 보고서",
+    "generatedAt": "2026-07-15T12:10:00+09:00",
+    "sources": [
+      {
+        "id": "export_backtest",
+        "label": "최신 발주분석 Excel 내보내기 백테스트",
+        "path": "order_analysis_data_integrity_backtest.ipynb",
+        "query": {
+          "engine": "reviewed local workbook snapshots",
+          "language": "Python",
+          "sql": "python artifacts/order_analysis_backtest_20260715/backtest.py",
+          "description": "두 원본 Excel 파일을 읽기 전용으로 검사하고 합계, 수식 패턴, 시나리오 연계, 날짜, 예외 건수를 재계산했다.",
+          "executed_at": "2026-07-15T11:58:55+09:00",
+          "tables_used": [
+            "ESM_order_review_filtered_all_2026-07-15 (1).xlsx",
+            "ESM_stock_gap_filtered_all_2026-07-13 (2).xlsx"
+          ],
+          "filters": [
+            "각 내보내기의 전체 SKU 행",
+            "재고공백 부족수량 대조는 공백일수 > 0인 75행"
+          ],
+          "metric_definitions": [
+            "표시식 부족수량 = ceil(재고공백 일수 × 일평균 판매량)",
+            "발주금액 = SKU별 발주수량 × 단가"
+          ]
+        }
+      },
+      {
+        "id": "logic_backtest",
+        "label": "계산 로직 경계값 백테스트",
+        "path": "order_analysis_data_integrity_backtest.ipynb",
+        "query": {
+          "engine": "repository boundary-case runner",
+          "language": "Python and JavaScript",
+          "sql": "python artifacts/order_analysis_backtest_20260715/logic_backtest.py",
+          "description": "과거 기준일, 조회기간 밖 판매행, 결측 상품명·브랜드를 최소 합성 데이터로 주입했다.",
+          "executed_at": "2026-07-15T11:59:42+09:00",
+          "tables_used": [
+            "frontend/lib/stock-gap.ts",
+            "backend/analysis.py"
+          ],
+          "filters": [
+            "기준일 2026-01-01",
+            "SKU 집중도 선언 기간 2026-02-01~2026-04-30"
+          ],
+          "metric_definitions": [
+            "과거 상태 판정은 실행일이 아닌 분석 기준일을 사용",
+            "최근 3개월 집계는 선언된 기간 안의 판매행만 포함"
+          ]
+        }
+      },
+      {
+        "id": "repository_verification",
+        "label": "저장소 자동 검증",
+        "path": "order_analysis_data_integrity_backtest.ipynb",
+        "query": {
+          "engine": "local test and build runners",
+          "language": "Shell",
+          "sql": ".venv\\Scripts\\python.exe -m pytest -q\nnpm run typecheck\nnpm run build\nnode scripts/ui-regression.test.mjs",
+          "description": "기존 자동 테스트와 프런트엔드 정적·빌드 검증을 실행했다.",
+          "executed_at": "2026-07-15T11:50:00+09:00",
+          "tables_used": [
+            "tests",
+            "frontend/scripts"
+          ]
+        }
+      },
+      {
+        "id": "combined_audit",
+        "label": "Excel 및 계산 로직 통합 백테스트",
+        "path": "order_analysis_data_integrity_backtest.ipynb",
+        "query": {
+          "engine": "reviewed audit snapshot",
+          "language": "SQL",
+          "sql": "SELECT * FROM findings ORDER BY priority ASC;",
+          "description": "Excel 대조와 합성 경계값 테스트에서 확정된 발견사항을 우선순위로 정렬한다.",
+          "executed_at": "2026-07-15T12:02:36+09:00",
+          "tables_used": [
+            "findings",
+            "results.json",
+            "logic_results.json"
+          ]
+        }
+      }
+    ],
+    "charts": [
+      {
+        "id": "shortage_definition_comparison_chart",
+        "title": "부족수량 30건: 표시값과 설명식의 차이",
+        "subtitle": "재고공백 양수 75행 중 설명식으로 재현되지 않은 30행 합계",
+        "type": "bar",
+        "dataset": "shortage_definition_comparison",
+        "sourceId": "export_backtest",
+        "source": {
+          "id": "export_backtest",
+          "label": "최신 재고공백 Excel 내보내기 백테스트",
+          "path": "order_analysis_data_integrity_backtest.ipynb",
+          "query": {
+            "engine": "reviewed audit snapshot",
+            "language": "SQL",
+            "sql": "SELECT '내보내기 표시값' AS definition, 319995 AS shortage_qty\nUNION ALL\nSELECT '화면 설명식' AS definition, 149065 AS shortage_qty;",
+            "description": "불일치 30행에서 내보내기 부족수량과 화면 설명식 재계산 합계를 비교한다.",
+            "executed_at": "2026-07-15T11:58:55+09:00",
+            "tables_used": [
+              "ESM_stock_gap_filtered_all_2026-07-13 (2).xlsx"
+            ],
+            "filters": [
+              "재고공백 일수 > 0",
+              "표시 부족수량과 설명식 불일치 30행"
+            ],
+            "metric_definitions": [
+              "화면 설명식 = ceil(재고공백 일수 × 일평균 판매량)"
+            ]
+          }
+        },
+        "intent": "comparison",
+        "question": "표시 부족수량과 화면 설명식 부족수량은 얼마나 다른가?",
+        "rationale": "핵심 결함의 수량 규모를 두 값의 직접 비교로 보여준다.",
+        "encodings": {
+          "x": {
+            "field": "definition",
+            "type": "nominal",
+            "label": "계산 기준"
+          },
+          "y": {
+            "field": "shortage_qty",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "부족수량",
+            "unit": "개"
+          },
+          "tooltip": [
+            {
+              "field": "shortage_qty",
+              "type": "quantitative",
+              "format": "number",
+              "label": "부족수량",
+              "unit": "개"
+            }
+          ]
+        },
+        "yAxisTitle": "부족수량(개)",
+        "valueFormat": "number",
+        "unit": "개",
+        "layout": "full",
+        "maxRows": 2
+      }
+    ],
+    "unused_tables": [
+      {
+        "id": "findings_table",
+        "title": "정합성 발견사항",
+        "subtitle": "심각도는 의사결정 왜곡 가능성, 재현성, 내보내기 호환성을 기준으로 판정",
+        "dataset": "findings",
+        "density": "spacious",
+        "sourceId": "combined_audit",
+        "source": {
+          "id": "combined_audit",
+          "label": "Excel 및 계산 로직 통합 백테스트",
+          "path": "order_analysis_data_integrity_backtest.ipynb",
+          "query": {
+            "engine": "reviewed audit snapshot",
+            "language": "SQL",
+            "sql": "SELECT priority, severity, area, evidence, impact FROM findings ORDER BY priority ASC;",
+            "description": "Excel 대조와 합성 경계값 테스트에서 확정된 발견사항을 우선순위로 정렬한다.",
+            "executed_at": "2026-07-15T12:02:36+09:00",
+            "tables_used": ["findings", "results.json", "logic_results.json"]
+          }
+        },
+        "layout": "full",
+        "columns": [
+          { "field": "severity", "label": "심각도", "type": "text" },
+          { "field": "area", "label": "영역", "type": "text" },
+          { "field": "evidence", "label": "재현 근거", "type": "text" },
+          { "field": "impact", "label": "영향", "type": "text" }
+        ]
+      },
+      {
+        "id": "order_reconciliation_table",
+        "title": "발주검토 내보내기 대조",
+        "subtitle": "2,571개 SKU의 합계·수식·시나리오 계산 재검산",
+        "dataset": "order_reconciliation",
+        "defaultSort": { "field": "check_order", "direction": "asc" },
+        "density": "spacious",
+        "sourceId": "export_backtest",
+        "source": {
+          "id": "export_backtest",
+          "label": "발주검토 Excel 내보내기 백테스트",
+          "path": "order_analysis_data_integrity_backtest.ipynb",
+          "query": {
+            "engine": "reviewed audit snapshot",
+            "language": "SQL",
+            "sql": "SELECT check_order, check, observed, result FROM order_reconciliation ORDER BY check_order ASC;",
+            "description": "발주검토 2,571행의 합계, 수식, 시나리오, 파일 호환성 검증 결과를 선택한다.",
+            "executed_at": "2026-07-15T11:58:55+09:00",
+            "tables_used": ["order_reconciliation", "ESM_order_review_filtered_all_2026-07-15 (1).xlsx"]
+          }
+        },
+        "layout": "full",
+        "columns": [
+          { "field": "check_order", "label": "순서", "format": "number" },
+          { "field": "check", "label": "검증 항목", "type": "text" },
+          { "field": "observed", "label": "관측값", "type": "text" },
+          { "field": "result", "label": "판정", "type": "text" }
+        ]
+      },
+      {
+        "id": "stock_gap_reconciliation_table",
+        "title": "재고공백 내보내기 대조",
+        "subtitle": "2,570개 SKU의 상태·요약 카드·부족수량·날짜 표현 검증",
+        "dataset": "stock_gap_reconciliation",
+        "defaultSort": { "field": "check_order", "direction": "asc" },
+        "density": "spacious",
+        "sourceId": "export_backtest",
+        "source": {
+          "id": "export_backtest",
+          "label": "재고공백 Excel 내보내기 백테스트",
+          "path": "order_analysis_data_integrity_backtest.ipynb",
+          "query": {
+            "engine": "reviewed audit snapshot",
+            "language": "SQL",
+            "sql": "SELECT check_order, check, observed, result FROM stock_gap_reconciliation ORDER BY check_order ASC;",
+            "description": "재고공백 2,570행의 상태, 요약 카드, 부족수량, 날짜 표현 검증 결과를 선택한다.",
+            "executed_at": "2026-07-15T11:58:55+09:00",
+            "tables_used": ["stock_gap_reconciliation", "ESM_stock_gap_filtered_all_2026-07-13 (2).xlsx"]
+          }
+        },
+        "layout": "full",
+        "columns": [
+          { "field": "check_order", "label": "순서", "format": "number" },
+          { "field": "check", "label": "검증 항목", "type": "text" },
+          { "field": "observed", "label": "관측값", "type": "text" },
+          { "field": "result", "label": "판정", "type": "text" }
+        ]
+      },
+      {
+        "id": "verification_table",
+        "title": "자동 검증 결과",
+        "subtitle": "정적 검사, 테스트, 빌드 결과와 미완료 범위",
+        "dataset": "verification",
+        "defaultSort": { "field": "check_order", "direction": "asc" },
+        "density": "spacious",
+        "sourceId": "repository_verification",
+        "source": {
+          "id": "repository_verification",
+          "label": "저장소 자동 검증",
+          "path": "order_analysis_data_integrity_backtest.ipynb",
+          "query": {
+            "engine": "reviewed audit snapshot",
+            "language": "SQL",
+            "sql": "SELECT check_order, check, result, note FROM verification ORDER BY check_order ASC;",
+            "description": "테스트, 타입 검사, 빌드, UI 회귀 검증 결과를 선택한다.",
+            "executed_at": "2026-07-15T11:50:00+09:00",
+            "tables_used": ["verification", "tests", "frontend/scripts"]
+          }
+        },
+        "layout": "full",
+        "columns": [
+          { "field": "check_order", "label": "순서", "format": "number" },
+          { "field": "check", "label": "검증", "type": "text" },
+          { "field": "result", "label": "결과", "type": "text" },
+          { "field": "note", "label": "비고", "type": "text" }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# 발주분석 탭 데이터 정합성 백테스트\n\n**종합 판정: 수정 필요(Needs revision).** 발주검토의 산술과 시나리오 연계는 신뢰할 수 있지만, 재고공백 부족수량의 표시 정의와 SKU 집중도의 기간 경계는 현재 상태로 의사결정 기준으로 쓰기 어렵습니다."
+      },
+      {
+        "id": "technical_summary",
+        "type": "markdown",
+        "body": "## 기술 요약\n\n- **통과:** 발주검토 2,571행은 중복·누락이 없고, 발주 전 수량 1,738,702개 및 금액 9,729,022,894원은 요약과 일치했습니다. SKU별 수식, 시나리오 재고·수량·금액, MOI, 표시 캐시도 모두 일치했습니다.\n\n- **핵심 불일치:** 재고공백 75행 중 30행의 표시 부족수량은 화면 설명식 `ceil(공백일수 × 일평균 판매량)`으로 재현되지 않았습니다. 해당 30행은 표시 319,995개, 설명식 149,065개로 170,930개 차이입니다.\n\n- **기간·재현성 결함:** 과거 기준일 상태 판정이 실행 당일 시계에 의존하며, ‘최근 3개월’ SKU 집중도는 입력 판매행의 날짜를 필터링하지 않습니다.\n\n- **내보내기 계약 결함:** 발주검토 XLSX의 데이터 유효성 검사 속성이 OOXML 허용값이 아니어서 표준 파서의 전체 로드가 실패합니다."
+      },
+      {
+        "id": "key_findings_heading",
+        "type": "markdown",
+        "body": "## 주요 발견사항과 근거\n\n우선순위 1~3은 수량 또는 상태 판단을 바꿀 수 있어 배포 전 수정이 필요합니다. 4~6은 파서 호환성, 연도 경계 재현성, 표시 품질 문제입니다."
+      },
+      {
+        "id": "findings_table_block",
+        "type": "markdown",
+        "body": "### 정합성 발견사항\n\n1. **High · 재고공백 부족수량:** 공백 75행 중 30행 불일치. 표시 319,995개, 설명식 149,065개로 170,930개 차이입니다.\n2. **High · 과거 기준일 상태 판정:** 2026-01-01 기준 기대 상태 `sufficient`가 2026-07-15 실행 시 `needs_check`로 바뀝니다.\n3. **High · 최근 3개월 SKU 집중도:** 기간 안 1개·100원과 기간 밖 9개·900원을 함께 입력하면 10개·1,000원으로 집계됩니다.\n4. **Medium · 발주검토 XLSX:** `dataValidation errorStyle=error` 때문에 표준 파서 전체 로드가 실패합니다.\n5. **Medium · 날짜 연도:** MM/DD만 표시되어 70행은 내보내기만으로 연도 경계를 재현하기 어렵습니다.\n6. **Medium · 결측 식별자:** 결측 상품명·브랜드가 문자열 `nan`으로 출력됩니다.",
+        "layout": "full",
+        "sourceId": "combined_audit"
+      },
+      {
+        "id": "shortage_definition_comparison_chart_block",
+        "type": "chart",
+        "chartId": "shortage_definition_comparison_chart",
+        "layout": "full"
+      },
+      {
+        "id": "scope_and_definitions",
+        "type": "markdown",
+        "body": "## 범위·데이터·정의\n\n검증 범위는 발주검토, 재고공백, SKU 집중도와 각 Excel 내보내기입니다. 발주검토는 2026-07-15 09:18 생성본 2,571행, 재고공백은 2026-07-13 11:54 생성본 2,570행을 사용했습니다. 재고공백 표시식은 화면 도움말과 내보내기 설명에 따라 `ceil(재고공백 일수 × 일평균 판매량)`으로 정의했습니다. ‘최근 3개월’은 선언된 조회 시작일과 종료일 안의 판매행만 포함해야 한다고 정의했습니다.",
+        "sourceId": "export_backtest"
+      },
+      {
+        "id": "order_reconciliation_block",
+        "type": "markdown",
+        "body": "### 발주검토 내보내기 대조 — 2,571 SKU\n\n- **Pass:** 중복 0, 상품코드 누락 0, 음수 입력 0.\n- **Pass:** 발주 전 수량 상세 1,738,702개 = 요약 1,738,702개.\n- **Pass:** 발주 전 금액 상세 9,729,022,894.06원 = 요약 9,729,022,894.06원.\n- **Pass:** 발주 후 수량 1,260,328개, 금액 6,031,289,118.44원.\n- **Pass:** SKU별 수식·시나리오·MOI·표시 캐시 실패 0건.\n- **Fail:** XLSX 데이터 유효성 검사 속성이 OOXML 허용값이 아니어서 표준 파서 전체 로드 실패.",
+        "layout": "full",
+        "sourceId": "export_backtest"
+      },
+      {
+        "id": "stock_gap_reconciliation_block",
+        "type": "markdown",
+        "body": "### 재고공백 내보내기 대조 — 2,570 SKU\n\n- **Pass:** 중복 0, 상품코드·상태 누락 0.\n- **Reconciled:** 재고공백 75, 안전 1,024, 검토필요 1,083, ETA 없음 388.\n- **Pass:** 요약 카드 위험 75, 7일 이상 53, 부족 379,001개, ETA 대기 388.\n- **Pass:** 양수 공백 행의 날짜 차이 실패 0건.\n- **Fail:** 부족수량 설명식 불일치 30건, 차이 +170,930개.\n- **Fail:** 연도 없는 날짜로 모호한 행 70건.",
+        "layout": "full",
+        "sourceId": "export_backtest"
+      },
+      {
+        "id": "methodology",
+        "type": "markdown",
+        "body": "## 방법론\n\n1. Excel 원본의 행 수, 키 누락·중복, 음수값, 요약 카드와 상세 합계를 대조했습니다.\n2. 발주검토 숨김 계산 시트의 수식 패턴과 표시 캐시를 SKU별로 재계산했습니다.\n3. 재고공백 양수 행의 날짜 차이와 부족수량을 화면 설명식으로 재현했습니다.\n4. 과거 기준일, 기간 밖 판매행, 결측 상품명을 합성해 경계값 백테스트를 실행했습니다.\n5. Python 전체 테스트와 프런트엔드 타입 검사·프로덕션 빌드·UI 회귀를 실행했습니다.\n\n모든 원본은 읽기 전용으로 유지했으며, XLSX 파서 호환성 우회를 위해 임시 복사본만 정규화했습니다.",
+        "sourceId": "logic_backtest"
+      },
+      {
+        "id": "verification_table_block",
+        "type": "markdown",
+        "body": "### 자동 검증 결과\n\n- **Python 전체 테스트:** 165 passed, 1 skipped, 104 warnings, 53.46초.\n- **프런트엔드 타입 검사:** Pass.\n- **프런트엔드 프로덕션 빌드:** Pass — Next.js 16.2.6, 발주분석 라우트 포함.\n- **UI 회귀 테스트:** Pass.\n- **전체 npm test 묶음:** Incomplete — 발주분석 외 `cross-analysis-matrix` 스크립트 장기 실행.",
+        "layout": "full",
+        "sourceId": "repository_verification"
+      },
+      {
+        "id": "limitations",
+        "type": "markdown",
+        "body": "## 한계와 강건성\n\n- 두 Excel의 생성일이 달라 동일 시점 SKU 단위 교차 조인은 하지 않았습니다.\n- 라이브 API·DB 대신 최신 로컬 내보내기와 실제 계산 코드를 검증했습니다.\n- 부족수량 30건은 원천 데이터 오류일 수도 있고 의도된 발주모델 우선값일 수도 있습니다. 다만 도움말·열 이름·내보내기 설명과 값이 서로 다른 사실은 확정적입니다.\n- 전체 `npm test` 묶음은 발주분석과 무관한 교차분석 매트릭스 스크립트의 장기 실행으로 완료되지 않았습니다. 관련 개별 검증과 프로덕션 빌드는 통과했습니다.\n- 핵심 수량 차이 한 건만 비교 차트로 제시했고, 나머지 감사 결과는 정밀 대조가 가능한 표를 사용했습니다."
+      },
+      {
+        "id": "recommended_actions",
+        "type": "markdown",
+        "body": "## 권장 조치\n\n**P0 — 의사결정 수치 수정**\n\n1. 부족수량의 단일 계약을 정합니다. 화면 설명식을 쓸 경우 모델 우선값을 제거하고, 모델 값을 쓸 경우 열 이름을 ‘권장 발주수량’으로 바꾸고 산식·출처를 노출합니다.\n2. 재고공백 상태 계산의 모든 날짜 차이에 실행일이 아닌 분석 `baseDate`를 사용합니다.\n3. SKU 집중도 집계에서 설정된 시작일·종료일로 판매 상세를 명시적으로 필터링합니다.\n\n**P1 — 재현성과 호환성 강화**\n\n4. XLSX 데이터 유효성 검사의 `errorStyle`을 `stop` 등 OOXML 허용값으로 수정하고 표준 파서 로드 테스트를 추가합니다.\n5. 내보내기 날짜를 `YYYY-MM-DD`로 표시해 연말·연초 공백을 재현 가능하게 합니다.\n6. 상품명·브랜드 결측값을 빈 문자열 또는 명시적 ‘미지정’으로 정규화합니다.\n\n**회귀 테스트**\n\n과거 기준일 고정, 기간 밖 판매행 제외, 부족수량 정의 일치, 연도 경계 날짜, 결측 식별자, 내보낸 XLSX 재로드를 자동화해야 합니다."
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## 추가 확인 질문\n\n- 부족수량은 실제로 ‘재고 공백을 메우는 수량’입니까, 아니면 긴급보충·발주모델의 권장수량입니까?\n- SKU 집중도의 ‘최근 3개월’은 분석 기준일 기준 고정 창입니까, 업로드 파일 전체 범위입니까?\n- 재고공백과 발주검토는 반드시 같은 분석 스냅샷을 공유해야 합니까? 현재는 서로 다른 최신 결과를 읽을 가능성이 있어 소스 일관성 계약이 필요합니다."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-15T12:10:00+09:00",
+    "status": "ready",
+    "datasets": {
+      "shortage_definition_comparison": [
+        { "definition": "내보내기 표시값", "shortage_qty": 319995 },
+        { "definition": "화면 설명식", "shortage_qty": 149065 }
+      ],
+      "findings": [
+        {
+          "priority": 1,
+          "severity": "High",
+          "area": "재고공백 부족수량",
+          "evidence": "공백 75행 중 30행 불일치; 표시 319,995개 vs 설명식 149,065개; +170,930개",
+          "impact": "표시값을 설명된 산식으로 재현할 수 없어 발주량 의사결정이 왜곡될 수 있음"
+        },
+        {
+          "priority": 2,
+          "severity": "High",
+          "area": "과거 기준일 상태 판정",
+          "evidence": "기준일 2026-01-01·소진일 2026-04-10의 기대 상태 sufficient가 2026-07-15 실행 시 needs_check",
+          "impact": "동일 데이터의 결과가 실행 날짜에 따라 바뀌어 백테스트가 비결정적"
+        },
+        {
+          "priority": 3,
+          "severity": "High",
+          "area": "최근 3개월 SKU 집중도",
+          "evidence": "기간 안 1개·100원, 기간 밖 9개·900원 입력 시 관측 10개·1,000원",
+          "impact": "업로드가 사전 필터되지 않으면 최근 3개월 지표가 전체 기간으로 부풀려짐"
+        },
+        {
+          "priority": 4,
+          "severity": "Medium",
+          "area": "발주검토 XLSX 호환성",
+          "evidence": "두 최신 파일의 dataValidation errorStyle=error; 표준 openpyxl 전체 로드 실패",
+          "impact": "외부 도구·자동화 파이프라인에서 파일을 열지 못할 수 있음"
+        },
+        {
+          "priority": 5,
+          "severity": "Medium",
+          "area": "재고공백 날짜 연도",
+          "evidence": "연도 없는 MM/DD 표기로 70행의 날짜 순서를 같은 해 기준으로 해석할 수 없음",
+          "impact": "연말·연초 행의 공백일수를 내보내기만으로 재현하기 어려움"
+        },
+        {
+          "priority": 6,
+          "severity": "Medium",
+          "area": "SKU 식별자 결측 처리",
+          "evidence": "결측 상품명·브랜드가 빈값이 아니라 문자열 nan으로 출력",
+          "impact": "그룹·필터·리포트에서 가짜 식별자 nan이 생성됨"
+        }
+      ],
+      "order_reconciliation": [
+        { "check_order": 1, "check": "대상 SKU", "observed": "2,571행; 중복 0; 상품코드 누락 0", "result": "Pass" },
+        { "check_order": 2, "check": "음수 입력", "observed": "0건", "result": "Pass" },
+        { "check_order": 3, "check": "발주 전 수량", "observed": "상세 1,738,702 = 요약 1,738,702", "result": "Pass" },
+        { "check_order": 4, "check": "발주 전 금액", "observed": "상세 9,729,022,894.06원 = 요약 9,729,022,894.06원", "result": "Pass" },
+        { "check_order": 5, "check": "발주 후 수량·금액", "observed": "1,260,328개; 6,031,289,118.44원", "result": "Pass" },
+        { "check_order": 6, "check": "SKU별 수식·시나리오·MOI·표시 캐시", "observed": "실패 0건", "result": "Pass" },
+        { "check_order": 7, "check": "XLSX 표준 파서 로드", "observed": "dataValidation errorStyle=error", "result": "Fail" }
+      ],
+      "stock_gap_reconciliation": [
+        { "check_order": 1, "check": "대상 SKU", "observed": "2,570행; 중복 0; 상품코드·상태 누락 0", "result": "Pass" },
+        { "check_order": 2, "check": "상태 분포", "observed": "재고공백 75; 안전 1,024; 검토필요 1,083; ETA 없음 388", "result": "Reconciled" },
+        { "check_order": 3, "check": "요약 카드", "observed": "위험 75; 7일+ 53; 부족 379,001; ETA 대기 388", "result": "Pass" },
+        { "check_order": 4, "check": "양수 공백 날짜 차이", "observed": "실패 0건", "result": "Pass" },
+        { "check_order": 5, "check": "부족수량 설명식", "observed": "75행 중 30행 불일치; +170,930개", "result": "Fail" },
+        { "check_order": 6, "check": "연도 경계 재현", "observed": "연도 없는 날짜로 모호한 행 70건", "result": "Fail" }
+      ],
+      "verification": [
+        { "check_order": 1, "check": "Python 전체 테스트", "result": "165 passed, 1 skipped", "note": "53.46초; 경고 104건" },
+        { "check_order": 2, "check": "프런트엔드 타입 검사", "result": "Pass", "note": "npm run typecheck" },
+        { "check_order": 3, "check": "프런트엔드 프로덕션 빌드", "result": "Pass", "note": "Next.js 16.2.6; 발주분석 라우트 포함" },
+        { "check_order": 4, "check": "UI 회귀 테스트", "result": "Pass", "note": "node scripts/ui-regression.test.mjs" },
+        { "check_order": 5, "check": "전체 npm test 묶음", "result": "Incomplete", "note": "발주분석 외 cross-analysis-matrix 스크립트 장기 실행" }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "export_backtest",
+      "label": "최신 발주분석 Excel 내보내기 백테스트",
+      "path": "order_analysis_data_integrity_backtest.ipynb"
+    },
+    {
+      "id": "logic_backtest",
+      "label": "계산 로직 경계값 백테스트",
+      "path": "order_analysis_data_integrity_backtest.ipynb"
+    },
+    {
+      "id": "repository_verification",
+      "label": "저장소 자동 검증",
+      "path": "order_analysis_data_integrity_backtest.ipynb"
+    },
+    {
+      "id": "combined_audit",
+      "label": "Excel 및 계산 로직 통합 백테스트",
+      "path": "order_analysis_data_integrity_backtest.ipynb"
+    }
+  ]
+}

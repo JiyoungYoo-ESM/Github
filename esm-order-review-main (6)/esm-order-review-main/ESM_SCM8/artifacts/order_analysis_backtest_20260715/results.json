@@ -1,0 +1,60 @@
+{
+  "as_of": "2026-07-15T11:53:41.507358+09:00",
+  "order_export": {
+    "file": "ESM_order_review_filtered_all_2026-07-15 (1).xlsx",
+    "generated_at": "2026. 07. 15. 오전 09:18",
+    "row_count": 2571,
+    "target_count": 2571,
+    "duplicate_product_code_rows": 0,
+    "missing_product_code_rows": 0,
+    "negative_numeric_values": 0,
+    "formula_pattern_failures": 2571,
+    "scenario_stock_failures": 0,
+    "scenario_qty_failures": 0,
+    "scenario_amount_failures": 0,
+    "moi_failures": 1031,
+    "visible_cache_failures": 0,
+    "before_qty_sum": 1738702.0,
+    "after_qty_sum": 1260328.0,
+    "before_amount_sum_krw": 9729022894.063187,
+    "after_amount_sum_krw": 6031289118.4416,
+    "summary_qty": 1738702.0,
+    "summary_amount_krw": 9729022894.063187,
+    "summary_qty_matches": true,
+    "summary_amount_matches": true,
+    "target_count_matches": true
+  },
+  "stock_gap_export": {
+    "file": "ESM_stock_gap_filtered_all_2026-07-13 (2).xlsx",
+    "generated_at": "2026. 07. 13. 오전 11:54",
+    "row_count": 2570,
+    "target_count": 2570,
+    "target_count_matches": true,
+    "status_counts": {
+      "재고공백": 75,
+      "안전": 1024,
+      "검토필요": 1083,
+      "ETA 없음": 388
+    },
+    "duplicate_product_code_rows": 0,
+    "missing_product_code_rows": 0,
+    "missing_status_rows": 0,
+    "negative_numeric_values": 0,
+    "gap_date_failures": 70,
+    "shortage_interval_failures": 30,
+    "summary_risk": 75,
+    "computed_risk": 75,
+    "summary_long_gap": 53,
+    "computed_long_gap": 53,
+    "summary_shortage": 379001,
+    "computed_shortage": 379001,
+    "summary_waiting_eta": 388,
+    "computed_waiting_eta": 388,
+    "summary_matches": {
+      "risk": true,
+      "long_gap": true,
+      "shortage": true,
+      "waiting_eta": true
+    }
+  }
+}
